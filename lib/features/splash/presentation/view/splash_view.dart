@@ -1,8 +1,10 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:transports/core/routing/app_routing.dart';
+import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/images.dart';
-import 'package:transports/core/theming/styles.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -15,7 +17,7 @@ class _SplashViewState extends State<SplashView> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacementNamed(context, Routes.secondSplash);
     });
   }
@@ -23,26 +25,18 @@ class _SplashViewState extends State<SplashView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              'assets/lottie/bus.json',
-              width: 150,
-              height: 150,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'أتوبيسي',
-              textAlign: TextAlign.center,
-              style: TextStyles.font35BlueDark900Weight,
-            ),
-          ],
-        ),
+      body:
+      FadeIn(
+        duration: const Duration(milliseconds: 300),
+        child: Center(
+          child: Shimmer.fromColors(
+            baseColor: AppColors.greenColor,
+            highlightColor: AppColors.greyColor,
+            child: Image.asset(
+              AppImages.logo,
+              height: 350.h,
+              fit: BoxFit.contain,),
+          ),),
       ),
     );
   }

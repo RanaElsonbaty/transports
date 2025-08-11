@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  animate_do: ^4.2.0
   bloc: ^9.0.0
   cupertino_icons: ^1.0.8
   dartz: ^0.10.1
@@ -47,6 +48,7 @@ dependencies:
   lottie: ^2.6.0
   permission_handler: ^12.0.1
   shared_preferences: ^2.5.3
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_lints: ^5.0.0
