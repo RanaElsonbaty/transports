@@ -6,13 +6,11 @@ import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/back_button.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/camera_banner.dart';
-import 'package:transports/features/auth/register/presentation/view/widgets/next_button.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/upload_image.dart';
 import 'package:transports/features/home/presentation/view/widget/start_your_trip.dart';
 
 class VehicleInfoView extends StatelessWidget {
   const VehicleInfoView({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

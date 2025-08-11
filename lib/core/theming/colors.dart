@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 class AppColors {
   static const Color primaryColor = Color(0xff04A189);
   static const Color primaryDarkGradientColor = Color(0xff03A088);
@@ -22,4 +24,6 @@ class AppColors {
   static const Color mainBlackColor = Color(0xff031B1C);
   static const Color secondaryBlackColor = Color(0xff374640);
   static const Color whiteColor = Color(0xffFFFFFF);
+    static const Color red = Colors.red;
+
 }

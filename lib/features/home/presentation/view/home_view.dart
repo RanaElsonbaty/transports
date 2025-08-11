@@ -5,13 +5,14 @@ import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/icons.dart';
 import 'package:transports/core/theming/images.dart';
 import 'package:transports/core/theming/styles.dart';
+import 'package:transports/core/validator/validator.dart';
 import 'package:transports/features/home/presentation/view/bus_seat_selection_view.dart';
 import 'package:transports/features/home/presentation/view/widget/custom_drawer.dart';
 import 'package:transports/features/home/presentation/view/widget/top_widget.dart';
 import 'package:transports/features/home/presentation/view/widget/trip_details_widget.dart';
 
 class HomeView extends StatefulWidget {
-   const HomeView({super.key});
+  const HomeView({super.key});
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -22,7 +23,12 @@ class _HomeViewState extends State<HomeView> {
 
   final Set<String> selectedSeats = {};
   bool _showTripDetails = false;
-
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController seatIdController = TextEditingController();
+  final TextEditingController nationalIdController = TextEditingController();
+  final TextEditingController nationalityController = TextEditingController();
+  final GlobalKey<FormState> globalKey = GlobalKey();
   void toggleSeat(String seat) {
     if (reservedSeats.contains(seat)) return;
 
@@ -33,6 +39,97 @@ class _HomeViewState extends State<HomeView> {
         selectedSeats.add(seat);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    phoneController.dispose();
+    seatIdController.dispose();
+    nameController.dispose();
+    nationalIdController.dispose();
+    nationalityController.dispose();
+  }
+
+  void _openSeatBottomSheet(String seatId) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Form(
+          key: globalKey,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Selected Seat $seatId',
+                    style: TextStyles.font16Black700Weight,
+                  ),
+                  const SizedBox(height: 16),
+                  CustomTextFormField(
+                    validator: (value) => Validators.validateName(value!),
+                    controller: nameController,
+                    hint: 'Enter Your Name',
+                  ),
+                  const SizedBox(height: 16),
+                  CustomTextFormField(
+                    keyboardType: TextInputType.phone,
+                    validator: (value) =>
+                        Validators.validatePhoneNumber(value!),
+                    controller: phoneController,
+                    hint: 'Enter Your Phone',
+                  ),
+                  const SizedBox(height: 16),
+                  CustomTextFormField(
+                    validator: (value) => Validators.validateSeatId(value!),
+                    controller: seatIdController,
+                    hint: 'Enter your Seat ID',
+                  ),
+                  const SizedBox(height: 16),
+                  CustomTextFormField(
+                    validator: (value) => Validators.validateNationlId(value!),
+                    controller: nationalIdController,
+                    hint: 'Enter Your National ID',
+                  ),
+                  const SizedBox(height: 16),
+                  CustomTextFormField(
+                    validator: (value) =>
+                        Validators.validateNationality(value!),
+                    controller: nationalityController,
+                    hint: "Enter Your Nationality",
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
+                      backgroundColor: AppColors.primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () {
+                      if (globalKey.currentState!.validate()) {
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: const Text(
+                      'Confirm',
+                      style:
+                          TextStyle(color: AppColors.whiteColor, fontSize: 26),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -129,7 +226,13 @@ class _HomeViewState extends State<HomeView> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: GestureDetector(
-                              onTap: () => toggleSeat(row[i]),
+                              onTap: () {
+                                if (reservedSeats.contains(row[i])) return;
+                                toggleSeat(row[i]);
+                                if (selectedSeats.contains(row[i])) {
+                                  _openSeatBottomSheet(row[i]);
+                                }
+                              },
                               child: SeatBox(
                                 label: row[i],
                                 isReserved: reservedSeats.contains(row[i]),
@@ -142,7 +245,13 @@ class _HomeViewState extends State<HomeView> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: GestureDetector(
-                              onTap: () => toggleSeat(row[i]),
+                              onTap: () {
+                                if (reservedSeats.contains(row[i])) return;
+                                toggleSeat(row[i]);
+                                if (selectedSeats.contains(row[i])) {
+                                  _openSeatBottomSheet(row[i]);
+                                }
+                              },
                               child: SeatBox(
                                 label: row[i],
                                 isReserved: reservedSeats.contains(row[i]),
@@ -186,22 +295,22 @@ class _HomeViewState extends State<HomeView> {
               duration: const Duration(milliseconds: 400),
               child: _showTripDetails
                   ? Stack(
-                key: const ValueKey("TripDetails"),
-                children: [
-                  Positioned.fill(
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: Image.asset(
-                        AppImages.line,
-                        width: double.infinity,
-                        height: 800,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  TripDetailsWidget(),
-                ],
-              )
+                      key: const ValueKey("TripDetails"),
+                      children: [
+                        Positioned.fill(
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: Image.asset(
+                              AppImages.line,
+                              width: double.infinity,
+                              height: 800,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        TripDetailsWidget(),
+                      ],
+                    )
                   : const SizedBox.shrink(),
             ),
             SizedBox(height: 40.h),
@@ -210,6 +319,37 @@ class _HomeViewState extends State<HomeView> {
       ),
     );
   }
-
 }
 
+class CustomTextFormField extends StatelessWidget {
+  const CustomTextFormField({
+    super.key,
+    required this.controller,
+    required this.hint,
+    this.validator,
+    this.keyboardType = TextInputType.text,
+  });
+  final TextEditingController controller;
+  final String hint;
+  final String? Function(String?)? validator;
+  final TextInputType? keyboardType;
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      validator: validator,
+      controller: controller,
+      keyboardType: keyboardType,
+      textAlign: TextAlign.left,
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(
+            fontSize: 16, color: AppColors.lightBlackColor.withOpacity(.5)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+        enabledBorder:
+            OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+        focusedBorder:
+            OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+    );
+  }
+}

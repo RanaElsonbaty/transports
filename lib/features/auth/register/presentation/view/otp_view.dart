@@ -1,25 +1,33 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:transports/core/helper_function/extension.dart';
+import 'package:transports/core/helper_function/snack_bar.dart';
 import 'package:transports/core/routing/app_routing.dart';
+import 'package:transports/core/service/service_locater.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
+import 'package:transports/features/auth/register/presentation/view_model/cubits/resend_otp/resend_otp_cubit.dart';
+import 'package:transports/features/auth/register/presentation/view_model/cubits/verify_otp/verifying_otp_cubit.dart';
 
 class OtpView extends StatefulWidget {
-  const OtpView({super.key});
+  const OtpView({super.key, required this.phoneNumber});
+  final String phoneNumber;
 
   @override
   State<OtpView> createState() => _OtpViewState();
 }
 
 class _OtpViewState extends State<OtpView> {
-  int remainingSeconds = 20;
+  int remainingSeconds = 120;
   late Timer _timer;
+  String otpCode = '';
 
   @override
   void initState() {
     super.initState();
+
     startTimer();
   }
 
@@ -37,113 +45,178 @@ class _OtpViewState extends State<OtpView> {
 
   @override
   void dispose() {
-    _timer.cancel(); // Don't forget to cancel the timer!
+    _timer.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Directionality( // RTL for Arabic
-        textDirection: TextDirection.rtl,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 100),
-
-              // Title
-               Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  'ادخل الرمز',
-                  style: TextStyles.font30Black700Weight,
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              // Subtitle
-              Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  'ادخل الرمز المرسل الي هاتفك المحمول',
-                  style: TextStyles.font16Black400Weight,
-                ),
-              ),
-
-              const SizedBox(height: 40),
-
-              // OTP Field
-              OtpTextField(
-                numberOfFields: 5,
-                borderColor: AppColors.greyColor,
-                focusedBorderColor: AppColors.blackColor,
-                fieldWidth: 50,
-                borderRadius: BorderRadius.circular(8),
-                showFieldAsBox: true,
-                onSubmit: (code) {
-                  print("OTP is => $code");
-                },
-              ),
-
-              const SizedBox(height: 24),
-
-              // Timer Text
-              Text.rich(
-                TextSpan(
-                  text: 'ارسال الكود مره اخرى خلال ',
-                  style: TextStyles.font16Black700Weight,
+      body: Directionality(
+        textDirection: TextDirection.ltr,
+        child: BlocProvider(
+          create: (context) => getIt.get<VerifyingOtpCubit>(),
+          child: BlocConsumer<VerifyingOtpCubit, VerifyingOtpState>(
+            listener: (context, state) {
+              if (state is VerifyingOtpSuccess) {
+                showAppSnackBar(
+                    backgroundColor: AppColors.primaryDarkGradientColor,
+                    context: context,
+                    message: state.verifyingOtpModel.message ?? "no message");
+                context.pushNamed(Routes.driverInfo);
+              } else if (state is VerifyingOtpFailure) {
+                showAppSnackBar(
+                    context: context,
+                    message: state.errorMessage,
+                    backgroundColor: AppColors.red);
+              }
+            },
+            builder: (context, state) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    TextSpan(
-                      text: '00:${remainingSeconds.toString().padLeft(2, '0')}',
-                      style: TextStyles.font16Black400Weight.copyWith(color: AppColors.blackColor.withOpacity(.7)),
+                    const SizedBox(height: 100),
+
+                    // Title
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        'ادخل الرمز',
+                        style: TextStyles.font30Black700Weight,
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    // Subtitle
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        'ادخل الرمز المرسل الي هاتفك المحمول',
+                        style: TextStyles.font16Black400Weight,
+                      ),
+                    ),
+
+                    const SizedBox(height: 40),
+
+                    // OTP Field
+                    OtpTextField(
+                      numberOfFields: 6,
+                      borderColor: AppColors.greyColor,
+                      focusedBorderColor: AppColors.blackColor,
+                      fieldWidth: 50,
+                      borderRadius: BorderRadius.circular(8),
+                      showFieldAsBox: true,
+                      onSubmit: (code) {
+                        setState(() {
+                          otpCode = code;
+                        });
+                        print("OTP is => $code");
+                      },
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Timer Text
+                    CustomResendOtpTextButton(
+                        remainingSeconds: remainingSeconds, phoneNumber: widget.phoneNumber,),
+
+                    const SizedBox(height: 40),
+
+                    // Confirm Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                        ),
+                        onPressed: () {
+                          context.read<VerifyingOtpCubit>().verifyingOtp(
+                              phoneNumber: widget.phoneNumber,
+                              otpCode: otpCode);
+                        },
+                        child: Ink(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                AppColors.primaryLightGradientColor,
+                                AppColors.primaryDarkGradientColor
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'تأكيد الرمز',
+                              style: TextStyles.font14White700Weight,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ),
-
-              const SizedBox(height: 40),
-
-              // Confirm Button
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                  ),
-                  onPressed: () {
-                    context.pushNamed(Routes.success);
-                  },
-                  child: Ink(
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          AppColors.primaryLightGradientColor,
-                          AppColors.primaryDarkGradientColor
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'تأكيد الرمز',
-                        style: TextStyles.font14White700Weight,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+              );
+            },
           ),
         ),
+      ),
+    );
+  }
+}
+
+class CustomResendOtpTextButton extends StatelessWidget {
+  const CustomResendOtpTextButton({
+    super.key,
+    required this.remainingSeconds, required this.phoneNumber,
+  });
+
+  final int remainingSeconds;
+final String phoneNumber;
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => getIt.get<ResendOtpCubit>(),
+      child: BlocConsumer<ResendOtpCubit, ResendOtpState>(
+        listener: (context, state) {
+          if(state is ResendOtpSuccess){
+            showAppSnackBar(context: context, message: state.resendOtpModel.message??"",backgroundColor: AppColors.blueDarkColor);
+
+          }else if(state is ResendOtpFailure){
+                    showAppSnackBar(context: context, message: state.errorMessage,backgroundColor: AppColors.red);
+    
+          }
+        },
+        builder: (context, state) {
+          return InkWell(
+            onTap: () {
+            context.read<ResendOtpCubit>().resendOtp(phoneNumber: phoneNumber);
+
+            },
+            child: Text.rich(
+              TextSpan(
+                text: 'ارسال الكود مره اخرى خلال ',
+                style: TextStyles.font16Black700Weight,
+                children: [
+                  TextSpan(
+                    text:
+                        '${(remainingSeconds ~/ 60).toString().padLeft(2, '0')}:${(remainingSeconds % 60).toString().padLeft(2, '0')}',
+                    style: TextStyles.font16Black400Weight
+                        .copyWith(color: AppColors.blackColor.withOpacity(.7)),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

@@ -2,7 +2,6 @@ class Routes {
   static const String splash = 'splash';
   static const String secondSplash = 'secondSplash';
   static const String register = 'register';
-  static const String otp = 'otp';
   static const String driverInfo  = 'driverInfo';
   static const String attachmentInfo  = 'attachmentInfo';
   static const String vehicleInfo  = 'vehicleInfo';

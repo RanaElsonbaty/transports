@@ -22,11 +22,12 @@ class ImageUploadBox extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: DottedBorder(
-        options: RoundedRectDottedBorderOptions(
-          color: AppColors.primaryColor,
-          strokeWidth: 2,
-          dashPattern: List.filled(5, 4), radius: Radius.circular(12),
-        ),
+       color: AppColors.primaryColor,
+strokeWidth: 2,
+dashPattern: [4, 4],
+borderType: BorderType.RRect,
+radius: Radius.circular(12),
+
         child: Container(
           width: 120,
           height: 120,
