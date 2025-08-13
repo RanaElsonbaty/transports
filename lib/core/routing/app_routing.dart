@@ -8,4 +8,6 @@ class Routes {
   static const String home  = 'home';
   static const String success  = 'success';
   static const String profile  = 'profile';
+  static const String bus  = 'bus';
+
 }

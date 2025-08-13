@@ -8,12 +8,13 @@ import 'package:transports/features/auth/data/repos/driver/driver_info_repo.dart
 
 class DriverInfoRepoImpl extends DriverInfoRepo{
   ApiService apiService;
-  DriverInfoRepoImpl(this.apiService);
+  SharedPrefs sharedPrefs;
+  DriverInfoRepoImpl(this.apiService,this.sharedPrefs);
   @override
   Future<Either<Failure, DriverInfoModel>> addDriverInfo({required String name, required String nationalId, required String nationality, required String drivingLicenseNumber, required String drivingLicensExpiry})async {
 
 try {
-  final token= await SharedPrefs().getToken();
+  final token= await sharedPrefs.getToken();
   final response= await apiService.post(EndPoints.addDriverInfo,
   headers: {
     "Authorization":"Bearer $token"

@@ -5,4 +5,9 @@ abstract class EndPoints {
   static const String resendOtp = "auth/resend-otp";
   static const String passengerInfo = "auth/resend-otp";
 static const String addDriverInfo=  "driver/profile";
+static const String addVehicleInfo=  "driver/vehicles";
+static const String  seats=  "bus-types";
+static const String  cities=  "cities";
+static const String  createTrip=  "trips";
+
 }

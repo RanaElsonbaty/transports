@@ -4,7 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/upload_image_container.dart';
 
 class UploadPhotosView extends StatefulWidget {
-  const UploadPhotosView({super.key});
+  const UploadPhotosView({super.key, required this.onImagesSelected});
+  final void Function(File? stampImage, File? logoImage) onImagesSelected;
 
   @override
   State<UploadPhotosView> createState() => _UploadPhotosViewState();
@@ -26,6 +27,8 @@ class _UploadPhotosViewState extends State<UploadPhotosView> {
           boardImage = File(pickedFile.path);
         }
       });
+            widget.onImagesSelected(stampImage, boardImage);
+
     }
   }
 

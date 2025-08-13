@@ -29,7 +29,7 @@ class SuccessView extends StatelessWidget {
               SizedBox(height: 80.h,),
               CustomPrimaryButton(text: 'الصفحة الرئيسية',
                 onPressed: (){
-                context.pushNamed(Routes.driverInfo);
+                context.pushNamed(Routes.home);
               },
               )
             ],

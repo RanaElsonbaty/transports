@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/features/home/presentation/view/widget/start_your_trip.dart';
+import 'package:transports/features/home/presentation/view_model/city_cubit/city_cubit.dart';
 
 class TripDetailsWidget extends StatefulWidget {
   const TripDetailsWidget({super.key});
@@ -15,9 +17,6 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
   String? fromCity;
   String? toCity;
   bool tripStarted = false;
-
-  final List<String> cities = ['جدة', 'الرياض', 'مكة', 'الدمام', 'حفر الباطن'];
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -27,7 +26,8 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
           child: Card(
             color: AppColors.whiteColor,
             elevation: 4,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -51,92 +51,136 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                           Container(
                             width: 20,
                             height: 2,
-                            color: tripStarted ? AppColors.primaryStateColor : AppColors.greyColor,
+                            color: tripStarted
+                                ? AppColors.primaryStateColor
+                                : AppColors.greyColor,
                           ),
                           const SizedBox(width: 10),
                           Container(
                             width: 20,
                             height: 2,
-                            color: tripStarted ? AppColors.primaryStateColor : AppColors.greyColor,
+                            color: tripStarted
+                                ? AppColors.primaryStateColor
+                                : AppColors.greyColor,
                           ),
                           const SizedBox(width: 10),
                           Container(
                             width: 20,
                             height: 2,
-                            color: tripStarted ? AppColors.primaryStateColor : AppColors.greyColor,
+                            color: tripStarted
+                                ? AppColors.primaryStateColor
+                                : AppColors.greyColor,
                           ),
                           const SizedBox(width: 10),
                           Container(
                             width: 20,
                             height: 2,
-                            color: tripStarted ? AppColors.primaryStateColor : AppColors.greyColor,
+                            color: tripStarted
+                                ? AppColors.primaryStateColor
+                                : AppColors.greyColor,
                           ),
                           const SizedBox(width: 10),
                           Container(
                             width: 20,
                             height: 2,
-                            color: tripStarted ? AppColors.primaryStateColor : AppColors.greyColor,
+                            color: tripStarted
+                                ? AppColors.primaryStateColor
+                                : AppColors.greyColor,
                           ),
                           const SizedBox(width: 10),
                           Container(
                             width: 20,
                             height: 2,
-                            color: tripStarted ? AppColors.primaryStateColor : AppColors.greyColor,
+                            color: tripStarted
+                                ? AppColors.primaryStateColor
+                                : AppColors.greyColor,
                           ),
                           const SizedBox(width: 10),
                           Container(
                             width: 20,
                             height: 2,
-                            color: tripStarted ? AppColors.primaryStateColor : AppColors.greyColor,
+                            color: tripStarted
+                                ? AppColors.primaryStateColor
+                                : AppColors.greyColor,
                           ),
                           Icon(
                             Icons.arrow_right,
-                            color: tripStarted ? AppColors.primaryStateColor : AppColors.greyColor,
+                            color: tripStarted
+                                ? AppColors.primaryStateColor
+                                : AppColors.greyColor,
                             size: 40,
                           ),
                           const SizedBox(width: 10),
                           Text("إلى"),
                         ],
                       ),
-
                     ],
                   ),
                   Row(
                     children: [
-                      // from
-                      DropdownButton<String>(
-                        value: fromCity,
-                        hint: Text('من',style: TextStyles.font12SecondaryBlack500Weight,),
-                        onChanged: (value) {
-                          setState(() {
-                            fromCity = value;
-                          });
-                        },
-                        items: cities.map((city) {
-                          return DropdownMenuItem(
-                            value: city,
-                            child: Text(city),
-                          );
-                        }).toList(),
+                      Expanded(
+                        child: BlocBuilder<CityCubit, CityState>(
+                          builder: (context, state) {
+                            if (state is CitySuccess) {
+                              final cities = state.cities.map((e)=>e.nameAr).whereType<String>().toSet().toList();
+                              return DropdownButton<String>(
+                                value: cities.contains(fromCity)?fromCity:null,
+                                hint: Text('من',
+                                    style: TextStyles
+                                        .font12SecondaryBlack500Weight),
+                                onChanged: (value) {
+                                  setState(() {
+                                    fromCity = value;
+                                  });
+                                },
+                                items: cities.map((city) {
+                                  return DropdownMenuItem(
+                                    value: city,
+                                    child: Text(city),
+                                  );
+                                }).toList(),
+                              );
+                            } else if (state is CityFailure) {
+                              return Text(state.errorMessage);
+                            }
+                            return SizedBox();
+                          },
+                        ),
                       ),
                       Spacer(),
-                      // to
-                      DropdownButton<String>(
-                        value: toCity,
-                        hint: Text('إلى',style: TextStyles.font12SecondaryBlack500Weight,),
-                        onChanged: (value) {
-                          setState(() {
-                            toCity = value;
-                          });
-                        },
-                        items: cities.map((city) {
-                          return DropdownMenuItem(
-                            value: city,
-                            child: Text(city),
-                          );
-                        }).toList(),
+                      // Dropdown "إلى"
+                      Expanded(
+                        child: BlocBuilder<CityCubit, CityState>(
+                          builder: (context, state) {
+                        if (state is CitySuccess) {
+                              final cities = state.cities.map((c) => c.nameAr).whereType<String>() .toSet().toList();
+
+                              return DropdownButton<String>(
+                                value: cities.contains(toCity) ? toCity : null,
+                                hint: Text('إلى',
+                                    style: TextStyles
+                                        .font12SecondaryBlack500Weight),
+                                onChanged: (value) {
+                                  setState(() {
+                                    toCity = value;
+                                  });
+                                },
+                                items: cities.map((city) {
+                                  return DropdownMenuItem(
+                                    value: city,
+                                    child: Text(city),
+                                  );
+                                }).toList(),
+                              );
+                            } else if (state is CityFailure) {
+                              return Text(state.errorMessage);
+                            }
+                            return SizedBox();
+                          },
+                        ),
                       ),
-                  ],)
+                    ],
+                  )
                 ],
               ),
             ),
@@ -156,7 +200,8 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                     isScrollControlled: false,
                     backgroundColor: Colors.white,
                     shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20)),
                     ),
                     builder: (context) {
                       Future.delayed(const Duration(seconds: 3), () {
@@ -207,8 +252,10 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
 
                     return const SizedBox();
                   },
-                  transitionBuilder: (context, animation, secondaryAnimation, child) {
-                    final curvedValue = Curves.easeInOut.transform(animation.value);
+                  transitionBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    final curvedValue =
+                        Curves.easeInOut.transform(animation.value);
 
                     return Opacity(
                       opacity: curvedValue,
@@ -217,7 +264,8 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                         child: Center(
                           child: Container(
                             margin: const EdgeInsets.symmetric(horizontal: 30),
-                            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 16, horizontal: 20),
                             decoration: BoxDecoration(
                               color: AppColors.primaryColor,
                               borderRadius: BorderRadius.circular(15),
@@ -225,7 +273,9 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                             child: Text(
                               'يرجى اختيار المدينتين أولاً!',
                               textAlign: TextAlign.center,
-                              style: TextStyles.font14White700Weight.copyWith(decoration: TextDecoration.none,),
+                              style: TextStyles.font14White700Weight.copyWith(
+                                decoration: TextDecoration.none,
+                              ),
                             ),
                           ),
                         ),

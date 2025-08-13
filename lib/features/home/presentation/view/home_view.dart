@@ -1,25 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:transports/core/service/service_locater.dart';
 import 'package:transports/core/theming/colors.dart';
-import 'package:transports/core/theming/icons.dart';
 import 'package:transports/core/theming/images.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/core/validator/validator.dart';
+import 'package:transports/features/home/data/models/seats_model.dart';
 import 'package:transports/features/home/presentation/view/bus_seat_selection_view.dart';
 import 'package:transports/features/home/presentation/view/widget/custom_drawer.dart';
 import 'package:transports/features/home/presentation/view/widget/top_widget.dart';
 import 'package:transports/features/home/presentation/view/widget/trip_details_widget.dart';
+import 'package:transports/features/home/presentation/view_model/city_cubit/city_cubit.dart';
+import 'package:transports/features/home/presentation/view_model/seats_cubit/seats_cubit.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
-
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
   final List<String> reservedSeats = ["C2", "D4", "E4", "G4"];
+  bool miniBusSelected = false;
+  bool isBigBusSelected = false;
+  bool showDetails = false;
+  void toggleDetails() {
+    setState(() {
+      showDetails = !showDetails;
+    });
+  }
+
+  void _onBusCardTapped(bool isBigBus) {
+    setState(() {
+      miniBusSelected = !isBigBus;
+      isBigBusSelected = isBigBus;
+    });
+
+    final busType = isBigBus ? "bus" : "minibus";
+    context.read<SeatsCubit>().getSeats(busType);
+  }
 
   final Set<String> selectedSeats = {};
   bool _showTripDetails = false;
@@ -31,7 +51,6 @@ class _HomeViewState extends State<HomeView> {
   final GlobalKey<FormState> globalKey = GlobalKey();
   void toggleSeat(String seat) {
     if (reservedSeats.contains(seat)) return;
-
     setState(() {
       if (selectedSeats.contains(seat)) {
         selectedSeats.remove(seat);
@@ -134,187 +153,220 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      drawer: const CustomDrawer(),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TopWidget(),
-            SizedBox(height: 8.h),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 20.w),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-              decoration: BoxDecoration(
-                color: AppColors.whiteColor,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
+    final bool isBusSelected = miniBusSelected || isBigBusSelected;
+
+    return BlocProvider(
+      create: (context) => getIt.get<CityCubit>()..fetchCities(),
+      child: Scaffold(
+        backgroundColor: AppColors.whiteColor,
+        drawer: const CustomDrawer(),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TopWidget(
+                onMiniBusTap: () => _onBusCardTapped(false),
+                onBigBusTap: () => _onBusCardTapped(true),
               ),
-              alignment: Alignment.centerRight,
-              child: Row(
-                children: [
-                  Text(
-                    'عدد الركاب الآن:',
-                    style: TextStyles.font16Black700Weight,
-                    textAlign: TextAlign.right,
-                  ),
-                  const Spacer(),
-                  Text('09', style: TextStyles.font16LightPrimary700Weight),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              SizedBox(height: 20.h),
+              if (!isBusSelected)
                 Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: AppColors.seatBlackColor,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text('محجوز', style: TextStyles.font10SeatBlack500Weight),
-                const SizedBox(width: 32),
-                Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: AppColors.primarySeatColor.withOpacity(.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text('متاح', style: TextStyles.font10SeatBlack500Weight),
-              ],
-            ),
-            const SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                SvgPicture.asset(AppIcons.busSeat),
-                SizedBox(width: 95.w),
-              ],
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                for (var row in [
-                  ["A1", "A2", "A3", "A4"],
-                  ["B1", "B2", "B3", "B4"],
-                  ["C1", "C2", "C3", "C4"],
-                  ["D1", "D2", "D3", "D4"],
-                  ["E1", "E2", "E3", "E4"],
-                  ["F1", "F2", "F3", "F4"],
-                  ["G1", "G2", "G3", "G4"],
-                ])
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        for (var i = 0; i < 2; i++)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            child: GestureDetector(
-                              onTap: () {
-                                if (reservedSeats.contains(row[i])) return;
-                                toggleSeat(row[i]);
-                                if (selectedSeats.contains(row[i])) {
-                                  _openSeatBottomSheet(row[i]);
-                                }
-                              },
-                              child: SeatBox(
-                                label: row[i],
-                                isReserved: reservedSeats.contains(row[i]),
-                                isSelected: selectedSeats.contains(row[i]),
+                  height: 300,
+                )
+              else
+                BlocBuilder<SeatsCubit, SeatsState>(
+                  builder: (context, state) {
+                    if (state is SeatsLoading) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (state is SeatsFailure) {
+                      return Center(child: Text(state.errorMessage));
+                    } else if (state is SeatsSuccess) {
+                      final seats = state.seatsSuccess;
+
+                      final maxRow = seats
+                          .map((e) => e.rowNumber!)
+                          .reduce((a, b) => a > b ? a : b);
+                      final maxCol = seats
+                          .map((e) => e.columnNumber!)
+                          .reduce((a, b) => a > b ? a : b);
+
+                      List<List<Seats?>> seatMatrix = List.generate(
+                          maxRow, (_) => List.filled(maxCol, null));
+
+                      for (var seat in seats) {
+                        seatMatrix[seat.rowNumber! - 1]
+                            [seat.columnNumber! - 1] = seat;
+                      }
+
+                      return AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 400),
+                        transitionBuilder: (child, animation) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(0, 0.05),
+                                end: Offset.zero,
+                              ).animate(animation),
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: Column(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: seatMatrix.map((row) {
+                                final leftSeats =
+                                    row.take(maxCol ~/ 2).toList();
+                                final rightSeats =
+                                    row.skip(maxCol ~/ 2).toList();
+
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 6),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: (maxCol ~/ 2) * 60.0,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: leftSeats.map((seat) {
+                                            if (seat == null) {
+                                              return SizedBox(
+                                                  width: 40, height: 40);
+                                            }
+                                            bool isReserved =
+                                                seat.status != "available";
+                                            return GestureDetector(
+                                              onTap: () {
+                                                if (isReserved) return;
+                                                toggleSeat(
+                                                    seat.seatNumber.toString());
+                                                if (selectedSeats.contains(seat
+                                                    .seatNumber
+                                                    .toString())) {
+                                                  _openSeatBottomSheet(seat
+                                                      .seatNumber
+                                                      .toString());
+                                                }
+                                              },
+                                              child: SeatBox(
+                                                label:
+                                                    seat.seatNumber.toString(),
+                                                isReserved: isReserved,
+                                                isSelected: selectedSeats
+                                                    .contains(seat.seatNumber
+                                                        .toString()),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ),
+                                      SizedBox(width: 20.w),
+                                      SizedBox(
+                                        width: (maxCol ~/ 2) * 60.0,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: rightSeats.map((seat) {
+                                            if (seat == null)
+                                              return const SizedBox(
+                                                  width: 40, height: 40);
+                                            bool isReserved =
+                                                seat.status != "available";
+                                            return GestureDetector(
+                                              onTap: () {
+                                                if (isReserved) return;
+                                                toggleSeat(
+                                                    seat.seatNumber.toString());
+                                                if (selectedSeats.contains(seat
+                                                    .seatNumber
+                                                    .toString())) {
+                                                  _openSeatBottomSheet(seat
+                                                      .seatNumber
+                                                      .toString());
+                                                }
+                                              },
+                                              child: SeatBox(
+                                                label:
+                                                    seat.seatNumber.toString(),
+                                                isReserved: isReserved,
+                                                isSelected: selectedSeats
+                                                    .contains(seat.seatNumber
+                                                        .toString()),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(right: 20.w, top: 20.h),
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: GestureDetector(
+                                  onTap: toggleDetails,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'تفاصيل الرحلة',
+                                        style: TextStyles.font16Black700Weight,
+                                        textAlign: TextAlign.right,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      AnimatedRotation(
+                                        turns: showDetails ? 0.5 : 0.0,
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        child: const Icon(
+                                            Icons.keyboard_arrow_down),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        const SizedBox(width: 40),
-                        for (var i = 2; i < 4; i++)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            child: GestureDetector(
-                              onTap: () {
-                                if (reservedSeats.contains(row[i])) return;
-                                toggleSeat(row[i]);
-                                if (selectedSeats.contains(row[i])) {
-                                  _openSeatBottomSheet(row[i]);
-                                }
-                              },
-                              child: SeatBox(
-                                label: row[i],
-                                isReserved: reservedSeats.contains(row[i]),
-                                isSelected: selectedSeats.contains(row[i]),
-                              ),
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 400),
+                              child: showDetails
+                                  ? Stack(
+                                      children: [
+                                        Positioned.fill(
+                                          child: Align(
+                                            alignment: Alignment.topCenter,
+                                            child: Image.asset(
+                                              AppImages.line,
+                                              width: double.infinity,
+                                              height: 800,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        TripDetailsWidget(),
+                                      ],
+                                    )
+                                  : const SizedBox.shrink(),
                             ),
-                          ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-            SizedBox(height: 20.h),
-            Padding(
-              padding: EdgeInsets.only(right: 20.w),
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _showTripDetails = !_showTripDetails;
-                  });
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'تفاصيل الرحلة',
-                      style: TextStyles.font16Black700Weight,
-                      textAlign: TextAlign.right,
-                    ),
-                    const SizedBox(width: 8),
-                    AnimatedRotation(
-                      turns: _showTripDetails ? 0.5 : 0.0,
-                      duration: const Duration(milliseconds: 300),
-                      child: const Icon(Icons.keyboard_arrow_down),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 400),
-              child: _showTripDetails
-                  ? Stack(
-                      key: const ValueKey("TripDetails"),
-                      children: [
-                        Positioned.fill(
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Image.asset(
-                              AppImages.line,
-                              width: double.infinity,
-                              height: 800,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                            SizedBox(height: 40.h),
+                          ],
                         ),
-                        TripDetailsWidget(),
-                      ],
-                    )
-                  : const SizedBox.shrink(),
-            ),
-            SizedBox(height: 40.h),
-          ],
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
+                ),
+            ],
+          ),
         ),
       ),
     );

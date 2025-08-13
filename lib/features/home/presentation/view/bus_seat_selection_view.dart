@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/icons.dart';
 import 'package:transports/core/theming/styles.dart';
-import 'package:transports/features/auth/register/presentation/view/widgets/back_button.dart';
 import 'package:transports/features/home/presentation/view/passenger_data.dart';
 import 'package:transports/features/home/presentation/view/widget/start_your_trip.dart';
 

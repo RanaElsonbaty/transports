@@ -12,14 +12,10 @@ import 'package:transports/features/auth/register/presentation/view/widgets/back
 import 'package:transports/features/auth/register/presentation/view/widgets/camera_banner.dart';
 import 'package:transports/features/auth/register/presentation/view_model/cubits/driver_info/driver_info_cubit.dart';
 import 'package:transports/features/home/presentation/view/widget/start_your_trip.dart';
-
 class AttachmentsView extends StatefulWidget {
-  const AttachmentsView(
-      {super.key,
-      required this.nameController,
-      required this.nationalIdController});
-  final String nameController;
-  final String nationalIdController;
+  const AttachmentsView({
+    super.key,
+  });
   @override
   State<AttachmentsView> createState() => _AttachmentsViewState();
 }
@@ -30,7 +26,23 @@ class _AttachmentsViewState extends State<AttachmentsView> {
   final TextEditingController drivingLicenseExpiryController =
       TextEditingController();
   final TextEditingController nationalityController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController nationalIdController = TextEditingController();
   GlobalKey<FormState> globalKey = GlobalKey();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    nationalityController.dispose();
+    nationalIdController.dispose();
+    drivingLicenseExpiryController.dispose();
+    drivingLicenseNumberController.dispose();
+    nameController.dispose();
+    nationalIdController.dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -69,23 +81,22 @@ class _AttachmentsViewState extends State<AttachmentsView> {
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 16),
+                        buildInput('الاسم', nameController,
+                            (value) => Validators.validateName(value!)),
+                        buildInput('رقم الهوية', nationalIdController,
+                            (value) => Validators.validateNationalId(value!)),
                         buildInput(
-                          'رخصة السير',
-                          drivingLicenseExpiryController,
-                          (value) => Validators.validateDrivingLicenseExpiry(value!)
-                        ),
+                            'رخصة السير',
+                            drivingLicenseExpiryController,
+                            (value) => Validators.validateDrivingLicenseExpiry(
+                                value!)),
                         buildInput(
-                          'رخصة القيادة',
-                          drivingLicenseNumberController,
-        (value) => Validators.validateDrivingLicense(value!)
-
-                        ),
-                        buildInput(
-                          'الجنسية',
-                          nationalityController,
-                               (value) => Validators.validateNationality(value!)
-  
-                        ),
+                            'رخصة القيادة',
+                            drivingLicenseNumberController,
+                            (value) =>
+                                Validators.validateDrivingLicense(value!)),
+                        buildInput('الجنسية', nationalityController,
+                            (value) => Validators.validateNationality(value!)),
                         SizedBox(
                           height: 60.h,
                         ),
@@ -100,9 +111,9 @@ class _AttachmentsViewState extends State<AttachmentsView> {
                                     context
                                         .read<DriverInfoCubit>()
                                         .addDriverInfo(
-                                            name: widget.nameController,
+                                            name: nameController.text,
                                             nationalId:
-                                                widget.nationalIdController,
+                                                nationalIdController.text,
                                             nationality:
                                                 nationalityController.text,
                                             drivingLicenseNumber:

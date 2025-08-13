@@ -9,8 +9,9 @@ import 'package:transports/core/theming/styles.dart';
 import 'package:transports/features/home/presentation/view/widget/passenger_row_card.dart';
 
 class TopWidget extends StatelessWidget {
-  const TopWidget({super.key});
-
+  const TopWidget({super.key, required this.onMiniBusTap, required this.onBigBusTap});
+ final VoidCallback onMiniBusTap;
+  final VoidCallback onBigBusTap;
   @override
   Widget build(BuildContext context) {
     return  Stack(
@@ -116,8 +117,9 @@ class TopWidget extends StatelessWidget {
         Positioned(
           left: 0,
           right: 0,
-          bottom: 15,
-          child:AddPassengerCardsRow(),
+          bottom: 0,
+
+          child:AddPassengerCardsRow(onMiniBusTap: onMiniBusTap, onBigBusTap:onBigBusTap ,),
         ),
       ],
     );

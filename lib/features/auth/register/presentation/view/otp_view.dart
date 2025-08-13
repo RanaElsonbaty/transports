@@ -63,7 +63,7 @@ class _OtpViewState extends State<OtpView> {
                     backgroundColor: AppColors.primaryDarkGradientColor,
                     context: context,
                     message: state.verifyingOtpModel.message ?? "no message");
-                context.pushNamed(Routes.driverInfo);
+                context.pushNamed(Routes.success);
               } else if (state is VerifyingOtpFailure) {
                 showAppSnackBar(
                     context: context,

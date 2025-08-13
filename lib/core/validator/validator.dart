@@ -63,6 +63,31 @@ class Validators {
     }
     return null;
   }
+  static String? validatePlateNumber(String value) {
+    if (value.isEmpty) {
+      return 'Plate number cannot be empty';
+    }
+    return null;
+  }
+
+  static String? validateVehicleModel(String value) {
+    if (value.isEmpty) {
+      return 'Vehicle model cannot be empty';
+    }
+    return null;
+  }
+
+  static String? validateManufacturingYear(String value) {
+    if (value.isEmpty) {
+      return 'Manufacturing year cannot be empty';
+    }
+    int? year = int.tryParse(value);
+    if (year == null) {
+      return 'Manufacturing year must be a number';
+    }
+        return null;
+
+  }
 
 
 }

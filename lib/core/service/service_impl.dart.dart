@@ -10,7 +10,7 @@ class ApiServiceImpl extends ApiService {
 
 @override
 Future<dynamic> post(String endPoint,
-    {required Map<String, dynamic> data,
+    {required dynamic data,
     Map<String, dynamic>? headers,
     bool isFormData = false}) async {
   try {
@@ -18,7 +18,8 @@ Future<dynamic> post(String endPoint,
 
     final response = await _dio.post(
       EndPoints.baseUrl + endPoint,
-      data: isFormData ? FormData.fromMap(data) : data,
+      data: isFormData ? data : data,  
+
       options: Options(headers: headers),
     );
     print("ApiServiceImpl POST response.data: ${response.data}");
