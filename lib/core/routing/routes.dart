@@ -10,6 +10,7 @@ import 'package:transports/features/auth/register/presentation/view_model/cubits
 import 'package:transports/features/home/presentation/view/home_view.dart';
 import 'package:transports/features/home/presentation/view/profile_view.dart';
 import 'package:transports/features/home/presentation/view_model/seats_cubit/seats_cubit.dart';
+import 'package:transports/features/profile/presentation/view/my_profile_view.dart';
 import 'package:transports/features/splash/presentation/view/second_splash_view.dart';
 import 'package:transports/features/splash/presentation/view/splash_view.dart';
 
@@ -43,6 +44,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => SuccessView());
       case Routes.profile:
         return MaterialPageRoute(builder: (_) => ProfileView());
+      case Routes.myProfile:
+        return MaterialPageRoute(builder: (_) => MyProfileView());
       default:
         return MaterialPageRoute(builder: (_) => Container());
     }

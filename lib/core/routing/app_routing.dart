@@ -9,5 +9,6 @@ class Routes {
   static const String success  = 'success';
   static const String profile  = 'profile';
   static const String bus  = 'bus';
+  static const String myProfile  = 'myProfile';
 
 }

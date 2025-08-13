@@ -57,6 +57,12 @@ class TextStyles {
     fontWeight: FontWeight.w500,
     fontSize:14.sp,
   );
+  static final font14LightBlack400Weight = TextStyle(
+    overflow: TextOverflow.ellipsis,
+    color: AppColors.lightBlackColor,
+    fontWeight: FontWeight.w400,
+    fontSize:14.sp,
+  );
   static final font14SeatBlack500Weight = TextStyle(
     overflow: TextOverflow.ellipsis,
     color: AppColors.seatBlackColor,

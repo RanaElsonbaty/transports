@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:transports/core/helper_function/extension.dart';
+import 'package:transports/core/routing/app_routing.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/icons.dart';
 
@@ -16,6 +18,17 @@ class CustomDrawer extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(height: 200.h,),
+            ListTile(
+              leading: SvgPicture.asset(
+                AppIcons.userCircle,
+                colorFilter: ColorFilter.mode(AppColors.blackColor, BlendMode.srcIn),
+              ),
+                title: Text('الملف الشخصي', textAlign: TextAlign.right,style: TextStyles.font16DarkGrey400Weight),
+              trailing: IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios,color: AppColors.arrowColor,size: 16,)),
+              onTap: () {
+                context.pushNamed(Routes.myProfile);
+              },
+            ),
             ListTile(
               leading: SvgPicture.asset(AppIcons.language),
               title: Text.rich(
