@@ -9,6 +9,7 @@ import 'package:transports/features/auth/register/presentation/view/vehicle_info
 import 'package:transports/features/auth/register/presentation/view_model/cubits/sending_otp_cubit/sending_otp_cubit.dart';
 import 'package:transports/features/home/presentation/view/home_view.dart';
 import 'package:transports/features/home/presentation/view/profile_view.dart';
+import 'package:transports/features/home/presentation/view_model/reserve_cubit/cubit/reserve_seat_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/seats_cubit/seats_cubit.dart';
 import 'package:transports/features/splash/presentation/view/second_splash_view.dart';
 import 'package:transports/features/splash/presentation/view/splash_view.dart';
@@ -35,8 +36,10 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => VehicleInfoView());
       case Routes.home:
         return MaterialPageRoute(
-            builder: (_) => BlocProvider(
-                  create: (context) => getIt.get<SeatsCubit>(),
+            builder: (_) => MultiBlocProvider(
+                  providers:[BlocProvider(create: (context) => getIt.get<SeatsCubit>()),
+                  BlocProvider(create: (context) => getIt.get<ReserveSeatCubit>()),
+                   ],
                   child: HomeView(),
                 ));
       case Routes.success:

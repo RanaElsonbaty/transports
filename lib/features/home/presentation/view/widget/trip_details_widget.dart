@@ -1,13 +1,19 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
+import 'package:transports/features/home/data/models/seats_model.dart';
+import 'package:transports/features/home/presentation/view/widget/custom_drawer.dart';
 import 'package:transports/features/home/presentation/view/widget/start_your_trip.dart';
 import 'package:transports/features/home/presentation/view_model/city_cubit/city_cubit.dart';
+import 'package:transports/features/home/presentation/view_model/create_trip/creating_trip_cubit.dart';
 
 class TripDetailsWidget extends StatefulWidget {
-  const TripDetailsWidget({super.key});
+  const TripDetailsWidget(
+      {super.key,required this.passengersData });
+  final List<Map<String, dynamic>> passengersData;
 
   @override
   State<TripDetailsWidget> createState() => _TripDetailsWidgetState();
@@ -17,6 +23,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
   String? fromCity;
   String? toCity;
   bool tripStarted = false;
+   int maxPassengers=50;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -35,7 +42,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                   Row(
                     children: [
                       Text(
-                        'تفاصيل الرحلة',
+                        'tripdetails'.tr(),
                         style: TextStyles.font18MainBlack500Weight,
                       ),
                     ],
@@ -46,7 +53,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                     children: [
                       Row(
                         children: [
-                          Text("من"),
+                          Text("from".tr()),
                           const SizedBox(width: 10),
                           Container(
                             width: 20,
@@ -111,7 +118,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                             size: 40,
                           ),
                           const SizedBox(width: 10),
-                          Text("إلى"),
+                          Text("to".tr()),
                         ],
                       ),
                     ],
@@ -122,10 +129,17 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                         child: BlocBuilder<CityCubit, CityState>(
                           builder: (context, state) {
                             if (state is CitySuccess) {
-                              final cities = state.cities.map((e)=>e.nameAr).whereType<String>().toSet().toList();
+                              final cities = state.cities
+                                  .map((e) => context.locale.languageCode == 'ar' ? e.nameAr : e.nameEn)
+                                  .whereType<String>()
+                                  .toSet()
+                                  .toList();
                               return DropdownButton<String>(
-                                value: cities.contains(fromCity)?fromCity:null,
-                                hint: Text('من',
+                                  isExpanded: true,
+
+                                value:
+                                    cities.contains(fromCity) ? fromCity : null,
+                                hint: Text('from'.tr(),
                                     style: TextStyles
                                         .font12SecondaryBlack500Weight),
                                 onChanged: (value) {
@@ -152,12 +166,18 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                       Expanded(
                         child: BlocBuilder<CityCubit, CityState>(
                           builder: (context, state) {
-                        if (state is CitySuccess) {
-                              final cities = state.cities.map((c) => c.nameAr).whereType<String>() .toSet().toList();
+                            if (state is CitySuccess) {
+                              final cities = state.cities
+                                  .map((c) =>context.locale.languageCode == 'ar' ? c.nameAr : c.nameEn)
+                                  .whereType<String>()
+                                  .toSet()
+                                  .toList();
 
                               return DropdownButton<String>(
+                                  isExpanded: true,
+
                                 value: cities.contains(toCity) ? toCity : null,
-                                hint: Text('إلى',
+                                hint: Text('to'.tr(),
                                     style: TextStyles
                                         .font12SecondaryBlack500Weight),
                                 onChanged: (value) {
@@ -187,106 +207,169 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
           ),
         ),
         const SizedBox(height: 200),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: CustomPrimaryButton(
-            text: 'ابدأ الرحلة الآن',
-            onPressed: () {
-              if (fromCity != null && toCity != null) {
-                setState(() {
-                  showModalBottomSheet(
-                    context: context,
-                    isDismissible: false,
-                    isScrollControlled: false,
-                    backgroundColor: Colors.white,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(20)),
-                    ),
-                    builder: (context) {
-                      Future.delayed(const Duration(seconds: 3), () {
-                        Navigator.of(context).pop();
-                      });
-
-                      return Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Lottie.asset(
-                                'assets/lottie/loading.json',
-                                width: 80,
-                                height: 80,
-                                fit: BoxFit.contain,
-                              ),
-                              const SizedBox(height: 20),
-                              const Text(
-                                'الرجاء الإنتظار دقيقة للموافقة من الإدارة\n على بداية الرحلة',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
+ BlocConsumer<CreatingTripCubit, CreatingTripState>(
+  listener: (context, state) {
+    if (state is CreatingTripSuccess) {
+      Navigator.of(context).pop(); 
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم بدء الرحلة بنجاح ✅')),
+      );
+    } else if (state is CreatingTripFailure) {
+      Navigator.of(context).pop(); 
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('خطأ: ${state.errorMessage}')),
+      );
+    }
+  },
+  builder: (context, state) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: CustomPrimaryButton(
+        text: 'startTrip'.tr(),
+        onPressed: () {
+          if (fromCity != null && toCity != null && widget.passengersData.isNotEmpty) {
+            showModalBottomSheet(
+              context: context,
+              isDismissible: false,
+              isScrollControlled: false,
+              backgroundColor: Colors.white,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              builder: (context) {
+                return Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Lottie.asset(
+                          'assets/lottie/loading.json',
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.contain,
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'الرجاء الإنتظار دقيقة للموافقة من الإدارة\nعلى بداية الرحلة',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      );
-                    },
-                  );
-                  tripStarted = true;
+                      ],
+                    ),
+                  ),
+                );
+              }
+            );
+
+            context.read<CreatingTripCubit>().createTrip(departureLocation: toCity.toString(), 
+            destinationLocation:fromCity.toString() ,
+             maxPassengers: maxPassengers, 
+             passengers: widget.passengersData);
+
+          }else if(widget.passengersData.isEmpty){
+               showGeneralDialog(
+              context: context,
+              barrierDismissible: true,
+              barrierLabel: '',
+              transitionDuration: const Duration(milliseconds: 300),
+              pageBuilder: (context, animation1, animation2) {
+                Future.delayed(const Duration(seconds: 2), () {
+                  Navigator.of(context).pop();
                 });
-              } else {
-                showGeneralDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  barrierLabel: '',
-                  transitionDuration: const Duration(milliseconds: 300),
-                  pageBuilder: (context, animation1, animation2) {
-                    Future.delayed(const Duration(seconds: 2), () {
-                      Navigator.of(context).pop();
-                    });
-
-                    return const SizedBox();
-                  },
-                  transitionBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                    final curvedValue =
-                        Curves.easeInOut.transform(animation.value);
-
-                    return Opacity(
-                      opacity: curvedValue,
-                      child: Transform.scale(
-                        scale: curvedValue,
-                        child: Center(
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 30),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 16, horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryColor,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Text(
-                              'يرجى اختيار المدينتين أولاً!',
-                              textAlign: TextAlign.center,
-                              style: TextStyles.font14White700Weight.copyWith(
-                                decoration: TextDecoration.none,
-                              ),
-                            ),
+                return const SizedBox();
+              },
+              transitionBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                final curvedValue =
+                    Curves.easeInOut.transform(animation.value);
+                return Opacity(
+                  opacity: curvedValue,
+                  child: Transform.scale(
+                    scale: curvedValue,
+                    child: Center(
+                      child: Container(
+                        margin:
+                            const EdgeInsets.symmetric(horizontal: 30),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16, horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Text(
+                          'يرجى تحديد المقعد و ملئ بيانات الركاب أولاً!',
+                          textAlign: TextAlign.center,
+                          style: TextStyles.font14White700Weight.copyWith(
+                            decoration: TextDecoration.none,
                           ),
                         ),
                       ),
-                    );
-                  },
+                    ),
+                  ),
                 );
-              }
-            },
-          ),
-        ),
+              },
+            );
+          
+          }
+          
+          else {
+             
+
+            showGeneralDialog(
+              context: context,
+              barrierDismissible: true,
+              barrierLabel: '',
+              transitionDuration: const Duration(milliseconds: 300),
+              pageBuilder: (context, animation1, animation2) {
+                Future.delayed(const Duration(seconds: 2), () {
+                  Navigator.of(context).pop();
+                });
+                return const SizedBox();
+              },
+              transitionBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                final curvedValue =
+                    Curves.easeInOut.transform(animation.value);
+                return Opacity(
+                  opacity: curvedValue,
+                  child: Transform.scale(
+                    scale: curvedValue,
+                    child: Center(
+                      child: Container(
+                        margin:
+                            const EdgeInsets.symmetric(horizontal: 30),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16, horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Text(
+                          'يرجى اختيار المدينتين أولاً!',
+                          textAlign: TextAlign.center,
+                          style: TextStyles.font14White700Weight.copyWith(
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          }
+        },
+      ),
+    );
+  },
+)
+
       ],
     );
   }

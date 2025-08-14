@@ -1,4 +1,18 @@
 {
   "language": "اللغة",
-  "changeLanguage": "تغيير اللغة"
+  "changeLanguage": "تغيير اللغة",
+  "hello": "يسعد صباحك",
+  "deleteAccount":"حذف الحساب",
+  "previous trips":"الرحلات السابقة",
+  "bus":"باص",
+  "minibus":"مينى باص",
+  "passenger":"من 1 لـ {count} راكب",
+  "name":"ابو نواف المصرى",
+
+  "tripdetails":"تفاصيل الرحلة",
+  "to":"الى ",
+  "from":"من",
+    "startTrip":"ابدا الرحلة الان"
+
+  
 }

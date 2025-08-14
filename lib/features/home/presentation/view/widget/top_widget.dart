@@ -1,17 +1,23 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:transports/core/helper_function/extension.dart';
 import 'package:transports/core/routing/app_routing.dart';
+import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/icons.dart';
 import 'package:transports/core/theming/images.dart';
 import 'package:transports/core/theming/styles.dart';
+import 'package:transports/features/home/data/models/seats_model.dart';
+import 'package:transports/features/home/presentation/view/widget/custom_drawer.dart';
 import 'package:transports/features/home/presentation/view/widget/passenger_row_card.dart';
 
 class TopWidget extends StatelessWidget {
-  const TopWidget({super.key, required this.onMiniBusTap, required this.onBigBusTap});
+  const TopWidget({super.key, required this.onMiniBusTap, required this.onBigBusTap, required this.miniBusMaxPassengers, required this.bigBusMaxPassengers});
  final VoidCallback onMiniBusTap;
   final VoidCallback onBigBusTap;
+    final String miniBusMaxPassengers;
+  final String bigBusMaxPassengers;
   @override
   Widget build(BuildContext context) {
     return  Stack(
@@ -26,7 +32,7 @@ class TopWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'يسعد صباحك',
+              'hello'.tr(),
                     style: TextStyles.font12Black500Weight,
                   ),
                   InkWell(
@@ -34,7 +40,7 @@ class TopWidget extends StatelessWidget {
                      context.pushNamed(Routes.profile);
                     },
                     child: Text(
-                      'ابو نواف المصري',
+                      'name'.tr(),
                       style: TextStyles.font14Black700Weight,
                     ),
                   ),
@@ -119,7 +125,7 @@ class TopWidget extends StatelessWidget {
           right: 0,
           bottom: 0,
 
-          child:AddPassengerCardsRow(onMiniBusTap: onMiniBusTap, onBigBusTap:onBigBusTap ,),
+          child:AddPassengerCardsRow(onMiniBusTap: onMiniBusTap, onBigBusTap:onBigBusTap, miniBusData: miniBusMaxPassengers, bigBusData: bigBusMaxPassengers ,),
         ),
       ],
     );

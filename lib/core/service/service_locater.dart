@@ -14,12 +14,14 @@ import 'package:transports/features/auth/register/presentation/view_model/cubits
 import 'package:transports/features/auth/register/presentation/view_model/cubits/sending_otp_cubit/sending_otp_cubit.dart';
 import 'package:transports/features/auth/register/presentation/view_model/cubits/vehicle_info/vehicle_info_cubit.dart';
 import 'package:transports/features/auth/register/presentation/view_model/cubits/verify_otp/verifying_otp_cubit.dart';
-import 'package:transports/features/home/data/models/seats_model.dart';
 import 'package:transports/features/home/data/repos/city/city_repo.dart';
 import 'package:transports/features/home/data/repos/city/city_repo_impl.dart';
+import 'package:transports/features/home/data/repos/create_trip/create_trip_repo.dart';
+import 'package:transports/features/home/data/repos/create_trip/create_trip_repo_impl.dart';
 import 'package:transports/features/home/data/repos/seats/seats_repo.dart';
 import 'package:transports/features/home/data/repos/seats/seats_repo_impl.dart';
 import 'package:transports/features/home/presentation/view_model/city_cubit/city_cubit.dart';
+import 'package:transports/features/home/presentation/view_model/create_trip/creating_trip_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/seats_cubit/seats_cubit.dart';
 
 import 'api_service.dart';
@@ -60,4 +62,9 @@ getIt.registerLazySingleton<SeatsRepo>(
 
        getIt.registerFactory<CityCubit>(
       () => CityCubit(getIt.get<CityRepo>()));
+      
+       getIt.registerFactory<CreatingTripCubit>(
+      () => CreatingTripCubit(getIt.get<CreateTripRepo>()));
+      getIt.registerLazySingleton<CreateTripRepo>(
+      () => CreateTripRepoImpl(getIt.get<ApiService>(), getIt.get<SharedPrefs>()));
 }

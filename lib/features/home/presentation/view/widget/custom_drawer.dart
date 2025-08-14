@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,13 +17,24 @@ class CustomDrawer extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(height: 200.h,),
+            IconButton(
+  icon: const Icon(Icons.language),
+  onPressed: () {
+    if (context.locale.languageCode == 'ar') {
+      context.setLocale(const Locale('en'));
+    } else {
+      context.setLocale(const Locale('ar'));
+    }
+  },
+),
+
             ListTile(
               leading: SvgPicture.asset(AppIcons.language),
               title: Text.rich(
                 TextSpan(
                   children: [
                     TextSpan(
-                      text: 'اللغه ',
+                      text: 'language'.tr(),
                       style: TextStyles.font16DarkGrey400Weight,
                     ),
                     TextSpan(
@@ -41,13 +53,13 @@ class CustomDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: SvgPicture.asset(AppIcons.note),
-              title: Text('الرحلات السابقة', textAlign: TextAlign.right,style: TextStyles.font16DarkGrey400Weight),
+              title: Text('previous trips'.tr(), textAlign: TextAlign.right,style: TextStyles.font16DarkGrey400Weight),
               trailing: IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios,color: AppColors.arrowColor,size: 16,)),
               onTap: () {},
             ),
             ListTile(
               leading: SvgPicture.asset(AppIcons.closeCircle),
-              title: Text('حذف الحساب', textAlign: TextAlign.right,style: TextStyles.font16DarkGrey400Weight),
+              title: Text('deleteAccount'.tr(), textAlign: TextAlign.right,style: TextStyles.font16DarkGrey400Weight),
               trailing: IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios,color: AppColors.arrowColor,size: 16,)),
               onTap: () {},
             ),

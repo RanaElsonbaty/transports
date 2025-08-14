@@ -10,7 +10,7 @@ class ApiServiceImpl extends ApiService {
 
 @override
 Future<dynamic> post(String endPoint,
-    {required dynamic data,
+    { dynamic data,
     Map<String, dynamic>? headers,
     bool isFormData = false}) async {
   try {

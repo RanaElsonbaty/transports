@@ -7,7 +7,7 @@ abstract class ApiService {
 
   Future<dynamic> post(
     String endPoint, {
-    required dynamic data,
+     dynamic data,
     Map<String, dynamic>? headers,
     bool isFormData = false,
   });

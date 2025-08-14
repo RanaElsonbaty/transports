@@ -1,16 +1,16 @@
 
-class SeatsModel {
+class ReservingSeatModel {
     bool? success;
     String? message;
-    SeatsData? data;
+    ReservingData? data;
     dynamic errors;
 
-    SeatsModel({this.success, this.message, this.data, this.errors});
+    ReservingSeatModel({this.success, this.message, this.data, this.errors});
 
-    SeatsModel.fromJson(Map<String, dynamic> json) {
+    ReservingSeatModel.fromJson(Map<String, dynamic> json) {
         success = json["success"];
         message = json["message"];
-        data = json["data"] == null ? null : SeatsData.fromJson(json["data"]);
+        data = json["data"] == null ? null : ReservingData.fromJson(json["data"]);
         errors = json["errors"];
     }
 
@@ -26,63 +26,57 @@ class SeatsModel {
     }
 }
 
-class SeatsData {
-    List<Seats>? seats;
-    int? seatCount;
-    int? maxPassengers;
-
-    SeatsData({this.seats, this.seatCount, this.maxPassengers});
-
-    SeatsData.fromJson(Map<String, dynamic> json) {
-        seats = json["seats"] == null ? null : (json["seats"] as List).map((e) => Seats.fromJson(e)).toList();
-        seatCount = json["seat_count"];
-        maxPassengers = json["max_passengers"];
-    }
-
-    Map<String, dynamic> toJson() {
-        final Map<String, dynamic> _data = <String, dynamic>{};
-        if(seats != null) {
-            _data["seats"] = seats?.map((e) => e.toJson()).toList();
-        }
-        _data["seat_count"] = seatCount;
-        _data["max_passengers"] = maxPassengers;
-        return _data;
-    }
-}
-
-class Seats {
-    dynamic tripId;
-    int? seatNumber;
+class ReservingData {
+    int? id;
+    int? tripId;
+    String? seatNumber;
     int? rowNumber;
     int? columnNumber;
     String? seatType;
     String? status;
-    dynamic createdAt;
-    dynamic updatedAt;
+    dynamic passengerId;
+    dynamic price;
+    bool? isPremium;
+    dynamic notes;
+    String? createdAt;
+    String? updatedAt;
+    dynamic deletedAt;
 
-    Seats({this.tripId, this.seatNumber, this.rowNumber, this.columnNumber, this.seatType, this.status, this.createdAt, this.updatedAt});
+    ReservingData({this.id, this.tripId, this.seatNumber, this.rowNumber, this.columnNumber, this.seatType, this.status, this.passengerId, this.price, this.isPremium, this.notes, this.createdAt, this.updatedAt, this.deletedAt});
 
-    Seats.fromJson(Map<String, dynamic> json) {
+    ReservingData.fromJson(Map<String, dynamic> json) {
+        id = json["id"];
         tripId = json["trip_id"];
         seatNumber = json["seat_number"];
         rowNumber = json["row_number"];
         columnNumber = json["column_number"];
         seatType = json["seat_type"];
         status = json["status"];
+        passengerId = json["passenger_id"];
+        price = json["price"];
+        isPremium = json["is_premium"];
+        notes = json["notes"];
         createdAt = json["created_at"];
         updatedAt = json["updated_at"];
+        deletedAt = json["deleted_at"];
     }
 
     Map<String, dynamic> toJson() {
         final Map<String, dynamic> _data = <String, dynamic>{};
+        _data["id"] = id;
         _data["trip_id"] = tripId;
         _data["seat_number"] = seatNumber;
         _data["row_number"] = rowNumber;
         _data["column_number"] = columnNumber;
         _data["seat_type"] = seatType;
         _data["status"] = status;
+        _data["passenger_id"] = passengerId;
+        _data["price"] = price;
+        _data["is_premium"] = isPremium;
+        _data["notes"] = notes;
         _data["created_at"] = createdAt;
         _data["updated_at"] = updatedAt;
+        _data["deleted_at"] = deletedAt;
         return _data;
     }
 }

@@ -15,4 +15,7 @@ class SeatsCubit extends Cubit<SeatsState> {
 final result= await seatsRepo.fetchSeats(busType);
 result.fold((fail)=>emit(SeatsFailure(errorMessage: fail.errorMessage)), (data)=>emit(SeatsSuccess(data)));
   }
+
+
 }
+

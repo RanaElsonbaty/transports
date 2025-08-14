@@ -1,4 +1,16 @@
 {
   "language": "Language",
-  "changeLanguage": "Change Language"
+  "changeLanguage": "Change Language",
+  "hello":"good morning",
+  "deleteAccount":"Delete Account",
+  "previous trips":"Previous Trips",
+"bus":"Bus",
+  "minibus":"Mini Bus" ,
+"passenger":"From 1 to {count} Passenger",
+  "name":"Abo nawaf El_Masry",
+  "tripdetails":"Trip Details",
+ "to":" To",
+  "from":"From",
+    "startTrip":"Start Trip Now"
+
 }
