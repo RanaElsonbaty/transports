@@ -8,4 +8,5 @@ class AppImages{
   static const String gallery ='assets/images/gallery.png';
   static const String person ='assets/images/person.png';
   static const String logo ='assets/images/logo.png';
+  static const String avatar ='assets/images/Avatar.png';
 }
