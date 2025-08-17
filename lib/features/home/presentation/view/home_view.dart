@@ -14,7 +14,6 @@ import 'package:transports/features/home/presentation/view/widget/top_widget.dar
 import 'package:transports/features/home/presentation/view/widget/trip_details_widget.dart';
 import 'package:transports/features/home/presentation/view_model/city_cubit/city_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/create_trip/creating_trip_cubit.dart';
-import 'package:transports/features/home/presentation/view_model/reserve_cubit/cubit/reserve_seat_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/seats_cubit/seats_cubit.dart';
 
 class HomeView extends StatefulWidget {
@@ -291,34 +290,37 @@ class _HomeViewState extends State<HomeView> {
                       validator: (value) =>
                           Validators.validateNationality(value!)),
                   const SizedBox(height: 16),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        foregroundColor: AppColors.whiteColor,
-                        minimumSize: Size(double.infinity, 40),
-                        backgroundColor: AppColors.primaryColor,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    onPressed: () {
-                      if (globalKey.currentState!.validate()) {
-                        final passenger = {
-                          "name": nameController.text,
-                          "phone": phoneController.text,
-                          "seat_number": seatIdController.text,
-                          "national_id": nationalIdController.text,
-                          "nationality": nationalityController.text,
-                        };
-
-                        if (existingPassengerIndex != -1) {
-                          passengersData[existingPassengerIndex] = passenger;
-                        } else {
-                          passengersData.add(passenger);
-                          print("data added");
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          foregroundColor: AppColors.whiteColor,
+                          minimumSize: Size(double.infinity, 40),
+                          backgroundColor: AppColors.primaryColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                      onPressed: () {
+                        if (globalKey.currentState!.validate()) {
+                          final passenger = {
+                            "name": nameController.text,
+                            "phone": phoneController.text,
+                            "seat_number": seatIdController.text,
+                            "national_id": nationalIdController.text,
+                            "nationality": nationalityController.text,
+                          };
+                    
+                          if (existingPassengerIndex != -1) {
+                            passengersData[existingPassengerIndex] = passenger;
+                          } else {
+                            passengersData.add(passenger);
+                            print("data added");
+                          }
+                    
+                          Navigator.pop(context);
                         }
-
-                        Navigator.pop(context);
-                      }
-                    },
-                    child: const Text('Confirm'),
+                      },
+                      child: const Text('Confirm'),
+                    ),
                   ),
                 ],
               ),
@@ -335,9 +337,7 @@ class _HomeViewState extends State<HomeView> {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => getIt.get<CityCubit>()..fetchCities(),
-        ),
+
         BlocProvider(
           create: (context) => getIt.get<CreatingTripCubit>(),
         ),
@@ -366,8 +366,8 @@ class _HomeViewState extends State<HomeView> {
                   return TopWidget(
                     onMiniBusTap: () => _onBusCardTapped(false),
                     onBigBusTap: () => _onBusCardTapped(true),
-                    miniBusMaxPassengers: miniMax,
-                    bigBusMaxPassengers: bigMax,
+                    miniBusMaxPassengers: "50",
+                    bigBusMaxPassengers: "12",
                   );
                 },
               ),

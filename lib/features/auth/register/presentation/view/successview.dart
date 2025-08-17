@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
@@ -25,11 +26,11 @@ class SuccessView extends StatelessWidget {
                 fit: BoxFit.contain,
               ),
               SizedBox(height: 30.h,),
-              Text('تم تسجيل الدخول بنجاح',style: TextStyles.font20Black700Weight,),
+              Text('success'.tr(),style: TextStyles.font20Black700Weight,),
               SizedBox(height: 80.h,),
-              CustomPrimaryButton(text: 'الصفحة الرئيسية',
+              CustomPrimaryButton(text: 'home_page'.tr(),
                 onPressed: (){
-                context.pushNamed(Routes.home);
+                context.pushNamed(Routes.attachmentInfo);
               },
               )
             ],

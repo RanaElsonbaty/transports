@@ -19,23 +19,23 @@ class CustomDrawer extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(height: 200.h,),
-            IconButton(
-  icon: const Icon(Icons.language),
-  onPressed: () {
-    if (context.locale.languageCode == 'ar') {
-      context.setLocale(const Locale('en'));
-    } else {
-      context.setLocale(const Locale('ar'));
-    }
-  },
-),
+//             IconButton(
+//   icon: const Icon(Icons.language),
+//   onPressed: () {
+//     if (context.locale.languageCode == 'ar') {
+//       context.setLocale(const Locale('en'));
+//     } else {
+//       context.setLocale(const Locale('ar'));
+//     }
+//   },
+// ),
 
             ListTile(
               leading: SvgPicture.asset(
                 AppIcons.userCircle,
                 colorFilter: ColorFilter.mode(AppColors.blackColor, BlendMode.srcIn),
               ),
-                title: Text('الملف الشخصي', textAlign: TextAlign.right,style: TextStyles.font16DarkGrey400Weight),
+                title: Text('profile'.tr(), textAlign: TextAlign.right,style: TextStyles.font16DarkGrey400Weight),
               trailing: IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios,color: AppColors.arrowColor,size: 16,)),
               onTap: () {
                 context.pushNamed(Routes.myProfile);
@@ -62,7 +62,7 @@ class CustomDrawer extends StatelessWidget {
                 onPressed: () {},
                 icon: Icon(Icons.arrow_forward_ios, color: AppColors.arrowColor, size: 16),
               ),
-              onTap: () {},
+              onTap: () {context.pushNamed(Routes.changeLanguage);},
             ),
             ListTile(
               leading: SvgPicture.asset(AppIcons.note),

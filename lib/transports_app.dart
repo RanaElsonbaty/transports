@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:transports/core/routing/app_routing.dart';
 import 'package:transports/core/routing/routes.dart';
+import 'dart:ui' as ui;
 
 class TransportsApp extends StatefulWidget {
   final AppRoutes appRoutes;
@@ -21,10 +22,30 @@ class _TransportsAppState extends State<TransportsApp> {
   @override
   Widget build(BuildContext context) {
 
-    return ScreenUtilInit(
-      designSize: const Size(375, 812),
-      minTextAdapt: true,
-      child: MaterialApp(
+  //   return ScreenUtilInit(
+  //     designSize: const Size(375, 812),
+  //     minTextAdapt: true,
+  //     child: MaterialApp(
+  //       localizationsDelegates: context.localizationDelegates,
+  //       supportedLocales: context.supportedLocales,
+  //       locale: context.locale,
+  //       navigatorKey: TransportsApp.navKey,
+  //       title: "Transports",
+  //       theme: ThemeData(
+  //          // fontFamily: AppFonts.neoSansArabic
+  //       ),
+        
+  //       onGenerateRoute: widget.appRoutes.generateRoute,
+  //       debugShowCheckedModeBanner: false,
+  //       initialRoute: Routes.splash,
+  //     ),
+  //   );
+  // }
+  return ScreenUtilInit(
+    designSize: const Size(375, 812),
+    minTextAdapt: true,
+    builder: (context, child) {
+      return MaterialApp(
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,
         locale: context.locale,
@@ -36,7 +57,16 @@ class _TransportsAppState extends State<TransportsApp> {
         onGenerateRoute: widget.appRoutes.generateRoute,
         debugShowCheckedModeBanner: false,
         initialRoute: Routes.splash,
-      ),
-    );
+        builder: (context, child) {
+          return Directionality(
+            textDirection: context.locale.languageCode == 'ar'
+                ? ui.TextDirection.rtl
+                : ui.TextDirection.ltr,
+            child: child!,
+          );
+        },
+      );
+    },
+  );
   }
 }

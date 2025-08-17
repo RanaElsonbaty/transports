@@ -1,8 +1,8 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/upload_image_container.dart';
-
 class UploadPhotosView extends StatefulWidget {
   const UploadPhotosView({super.key, required this.onImagesSelected});
   final void Function(File? stampImage, File? logoImage) onImagesSelected;
@@ -40,12 +40,12 @@ class _UploadPhotosViewState extends State<UploadPhotosView> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         ImageUploadBox(
-          label: 'رفع الختم',
+          label: 'upload_stamp'.tr(),
           image: stampImage,
           onTap: () => pickImage(true),
         ),
         ImageUploadBox(
-          label: 'رفع اللوجو',
+          label: 'upload_logo'.tr(),
           image: boardImage,
           onTap: () => pickImage(false),
         ),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,6 +13,8 @@ import 'package:transports/features/auth/register/presentation/view/widgets/back
 import 'package:transports/features/auth/register/presentation/view/widgets/camera_banner.dart';
 import 'package:transports/features/auth/register/presentation/view_model/cubits/driver_info/driver_info_cubit.dart';
 import 'package:transports/features/home/presentation/view/widget/start_your_trip.dart';
+import 'dart:ui' as ui;
+
 class AttachmentsView extends StatefulWidget {
   const AttachmentsView({
     super.key,
@@ -61,7 +64,9 @@ class _AttachmentsViewState extends State<AttachmentsView> {
           return Scaffold(
             backgroundColor: AppColors.whiteColor,
             body: Directionality(
-              textDirection: TextDirection.rtl,
+textDirection: context.locale.languageCode == 'ar'
+    ? ui.TextDirection.rtl
+    :ui.TextDirection.ltr,
               child: SingleChildScrollView(
                 child: Form(
                   key: globalKey,
@@ -75,27 +80,27 @@ class _AttachmentsViewState extends State<AttachmentsView> {
                         const SizedBox(height: 16),
                         CameraBanner(),
                         const SizedBox(height: 30),
-                        const Text(
-                          'المرفقات',
+                         Text(
+                          'attachments'.tr(),
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 16),
-                        buildInput('الاسم', nameController,
+                        buildInput('nameForm'.tr(), nameController,
                             (value) => Validators.validateName(value!)),
-                        buildInput('رقم الهوية', nationalIdController,
+                        buildInput('national_id'.tr(), nationalIdController,
                             (value) => Validators.validateNationalId(value!)),
                         buildInput(
-                            'رخصة السير',
+                            'driving_license_expiry'.tr(),
                             drivingLicenseExpiryController,
                             (value) => Validators.validateDrivingLicenseExpiry(
                                 value!)),
                         buildInput(
-                            'رخصة القيادة',
+                            'driving_license_number'.tr(),
                             drivingLicenseNumberController,
                             (value) =>
                                 Validators.validateDrivingLicense(value!)),
-                        buildInput('الجنسية', nationalityController,
+                        buildInput('nationality'.tr(), nationalityController,
                             (value) => Validators.validateNationality(value!)),
                         SizedBox(
                           height: 60.h,
@@ -105,7 +110,7 @@ class _AttachmentsViewState extends State<AttachmentsView> {
                                 child: CircularProgressIndicator(),
                               )
                             : CustomPrimaryButton(
-                                text: 'التالي',
+                                text: 'next'.tr(),
                                 onPressed: () {
                                   if (globalKey.currentState!.validate()) {
                                     context

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
@@ -10,6 +11,7 @@ import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/features/auth/register/presentation/view_model/cubits/resend_otp/resend_otp_cubit.dart';
 import 'package:transports/features/auth/register/presentation/view_model/cubits/verify_otp/verifying_otp_cubit.dart';
+import 'dart:ui' as ui;
 
 class OtpView extends StatefulWidget {
   const OtpView({super.key, required this.phoneNumber});
@@ -53,7 +55,9 @@ class _OtpViewState extends State<OtpView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Directionality(
-        textDirection: TextDirection.ltr,
+textDirection: context.locale.languageCode == 'ar'
+    ? ui.TextDirection.rtl
+    :ui.TextDirection.ltr,
         child: BlocProvider(
           create: (context) => getIt.get<VerifyingOtpCubit>(),
           child: BlocConsumer<VerifyingOtpCubit, VerifyingOtpState>(
@@ -83,7 +87,7 @@ class _OtpViewState extends State<OtpView> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        'ادخل الرمز',
+                        'enter_code'.tr(),
                         style: TextStyles.font30Black700Weight,
                       ),
                     ),
@@ -94,7 +98,7 @@ class _OtpViewState extends State<OtpView> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        'ادخل الرمز المرسل الي هاتفك المحمول',
+                        'enter_code_subtitle'.tr(),
                         style: TextStyles.font16Black400Weight,
                       ),
                     ),
@@ -102,19 +106,23 @@ class _OtpViewState extends State<OtpView> {
                     const SizedBox(height: 40),
 
                     // OTP Field
-                    OtpTextField(
-                      numberOfFields: 6,
-                      borderColor: AppColors.greyColor,
-                      focusedBorderColor: AppColors.blackColor,
-                      fieldWidth: 50,
-                      borderRadius: BorderRadius.circular(8),
-                      showFieldAsBox: true,
-                      onSubmit: (code) {
-                        setState(() {
-                          otpCode = code;
-                        });
-                        print("OTP is => $code");
-                      },
+                    Directionality(
+                textDirection: ui.TextDirection.ltr,
+                      child: OtpTextField(
+                        numberOfFields: 6,
+                        borderColor: AppColors.greyColor,
+                        focusedBorderColor: AppColors.blackColor,
+                        fieldWidth: 50,
+                        
+                        borderRadius: BorderRadius.circular(8),
+                        showFieldAsBox: true,
+                        onSubmit: (code) {
+                          setState(() {
+                            otpCode = code;
+                          });
+                          print("OTP is => $code");
+                        },
+                      ),
                     ),
 
                     const SizedBox(height: 24),
@@ -155,7 +163,7 @@ class _OtpViewState extends State<OtpView> {
                           ),
                           child: Center(
                             child: Text(
-                              'تأكيد الرمز',
+                              'confirm_code'.tr(),
                               style: TextStyles.font14White700Weight,
                             ),
                           ),
@@ -188,7 +196,7 @@ final String phoneNumber;
       child: BlocConsumer<ResendOtpCubit, ResendOtpState>(
         listener: (context, state) {
           if(state is ResendOtpSuccess){
-            showAppSnackBar(context: context, message: state.resendOtpModel.message??"",backgroundColor: AppColors.blueDarkColor);
+            showAppSnackBar(context: context, message: state.resendOtpModel.message??"",backgroundColor: AppColors.primaryColor);
 
           }else if(state is ResendOtpFailure){
                     showAppSnackBar(context: context, message: state.errorMessage,backgroundColor: AppColors.red);
@@ -203,12 +211,12 @@ final String phoneNumber;
             },
             child: Text.rich(
               TextSpan(
-                text: 'ارسال الكود مره اخرى خلال ',
-                style: TextStyles.font16Black700Weight,
+  text: "resend_otp".tr() , 
+style: TextStyles.font16Black700Weight,
                 children: [
                   TextSpan(
                     text:
-                        '${(remainingSeconds ~/ 60).toString().padLeft(2, '0')}:${(remainingSeconds % 60).toString().padLeft(2, '0')}',
+                        ' ${(remainingSeconds ~/ 60).toString().padLeft(2, '0')}:${(remainingSeconds % 60).toString().padLeft(2, '0')}',
                     style: TextStyles.font16Black400Weight
                         .copyWith(color: AppColors.blackColor.withOpacity(.7)),
                   ),

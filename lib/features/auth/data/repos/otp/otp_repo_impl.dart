@@ -8,10 +8,8 @@ import 'package:transports/features/auth/data/models/otp/resend_otp_model.dart';
 import 'package:transports/features/auth/data/models/otp/send_otp_model.dart';
 import 'package:transports/features/auth/data/models/otp/verify_otp_model.dart';
 import 'package:transports/features/auth/data/repos/otp/otp_repo.dart';
-
 class OtpRepoImpl  extends OtpRepo{
-    final SharedPrefs sharedPrefService;
-
+final SharedPrefs sharedPrefService;
   ApiService apiService;
   OtpRepoImpl( {required this.apiService,required this.sharedPrefService,});
   @override

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,6 +16,7 @@ import 'package:transports/features/auth/register/presentation/view/widgets/came
 import 'package:transports/features/auth/register/presentation/view/widgets/upload_image.dart';
 import 'package:transports/features/auth/register/presentation/view_model/cubits/vehicle_info/vehicle_info_cubit.dart';
 import 'package:transports/features/home/presentation/view/widget/start_your_trip.dart';
+import 'dart:ui' as ui;
 
 class VehicleInfoView extends StatefulWidget {
   const VehicleInfoView({super.key});
@@ -66,7 +68,9 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
           return Scaffold(
             backgroundColor: AppColors.whiteColor,
             body: Directionality(
-              textDirection: TextDirection.rtl,
+              textDirection: context.locale.languageCode == 'ar'
+    ? ui.TextDirection.rtl
+    :ui.TextDirection.ltr,
               child: SingleChildScrollView(
                 child: Form(
                   key: globalKey,
@@ -80,22 +84,22 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                         const SizedBox(height: 16),
                         CameraBanner(),
                         const SizedBox(height: 30),
-                        const Text(
-                          'بيانات السيارة',
+                         Text(
+                          'vehicle_info'.tr(),
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 16),
-                        buildInput('اسم المالك', ownerNameController,
+                        buildInput('owner_name'.tr(), ownerNameController,
                             (value) => Validators.validateName(value!)),
-                        buildInput('رقم هوية المالك', ownerIdController,
+                        buildInput('owner_national_id'.tr(), ownerIdController,
                             (value) => Validators.validateNationalId(value!)),
-                        buildInput('رقم لوحة السيارة', plateNumberController,
+                        buildInput('car_plate_number'.tr(), plateNumberController,
                             (value) => Validators.validatePlateNumber(value!)),
-                        buildInput('طراز السيارة', vehicleModelControler,
+                        buildInput('vehicle_model'.tr(), vehicleModelControler,
                             (value) => Validators.validateVehicleModel(value!)),
                         buildInput(
-                            'سنة الصنع',
+                            'manufacturing_year'.tr(),
                             manufacturingYearController,
                             (value) =>
                                 Validators.validateManufacturingYear(value!)),
@@ -115,7 +119,7 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                                 child: CircularProgressIndicator(),
                               )
                             : CustomPrimaryButton(
-                                text: 'تأكيد',
+                                text: 'confirm'.tr(),
                                 onPressed: () {
                                   if (globalKey.currentState!.validate()) {
                                     if (boardImage == null ||
@@ -123,7 +127,7 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                                       showAppSnackBar(
                                         context: context,
                                         message:
-                                            "يرجى رفع صورة الختم وصورة اللوحة",
+                                            "upload_stamp_and_plate".tr(),
                                         backgroundColor: AppColors.red,
                                       );
                                       return;

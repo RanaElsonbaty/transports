@@ -123,84 +123,131 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                       ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: BlocBuilder<CityCubit, CityState>(
-                          builder: (context, state) {
-                            if (state is CitySuccess) {
-                              final cities = state.cities
-                                  .map((e) => context.locale.languageCode == 'ar' ? e.nameAr : e.nameEn)
-                                  .whereType<String>()
-                                  .toSet()
-                                  .toList();
-                              return DropdownButton<String>(
-                                  isExpanded: true,
+             Row(
+  children: [
+ 
+    Expanded(
+      child: BlocBuilder<CityCubit, CityState>(
+        builder: (context, state) {
+          final List<String> cities;
 
-                                value:
-                                    cities.contains(fromCity) ? fromCity : null,
-                                hint: Text('from'.tr(),
-                                    style: TextStyles
-                                        .font12SecondaryBlack500Weight),
-                                onChanged: (value) {
-                                  setState(() {
-                                    fromCity = value;
-                                  });
-                                },
-                                items: cities.map((city) {
-                                  return DropdownMenuItem(
-                                    value: city,
-                                    child: Text(city),
-                                  );
-                                }).toList(),
-                              );
-                            } else if (state is CityFailure) {
-                              return Text(state.errorMessage);
-                            }
-                            return SizedBox();
-                          },
-                        ),
-                      ),
-                      Spacer(),
-                      // Dropdown "إلى"
-                      Expanded(
-                        child: BlocBuilder<CityCubit, CityState>(
-                          builder: (context, state) {
-                            if (state is CitySuccess) {
-                              final cities = state.cities
-                                  .map((c) =>context.locale.languageCode == 'ar' ? c.nameAr : c.nameEn)
-                                  .whereType<String>()
-                                  .toSet()
-                                  .toList();
+          if (state is CitySuccess) {
+            cities = state.cities
+                .map((e) => context.locale.languageCode == 'ar'
+                    ? e.nameAr
+                    : e.nameEn)
+                .whereType<String>()
+                .toSet()
+                .toList();
+          } else if (state is CityFailure) {
+            cities = ["⚠ ${state.errorMessage}"];
+          } else {
+            cities = [];
+          }
 
-                              return DropdownButton<String>(
-                                  isExpanded: true,
+          final dropdownItems = cities.isEmpty
+              ? ["⚠ لا توجد مدن تحقق من الا تصال"]
+              : cities;
 
-                                value: cities.contains(toCity) ? toCity : null,
-                                hint: Text('to'.tr(),
-                                    style: TextStyles
-                                        .font12SecondaryBlack500Weight),
-                                onChanged: (value) {
-                                  setState(() {
-                                    toCity = value;
-                                  });
-                                },
-                                items: cities.map((city) {
-                                  return DropdownMenuItem(
-                                    value: city,
-                                    child: Text(city),
-                                  );
-                                }).toList(),
-                              );
-                            } else if (state is CityFailure) {
-                              return Text(state.errorMessage);
-                            }
-                            return SizedBox();
-                          },
-                        ),
-                      ),
-                    ],
-                  )
+          return DropdownButton<String>(
+            isExpanded: true,
+            value: dropdownItems.contains(fromCity) ? fromCity : null,
+            hint: Text(
+              'from'.tr(),
+              style: TextStyles.font12SecondaryBlack500Weight,
+            ),
+            onTap: () {
+              if (cities.isEmpty || cities.first.startsWith("⚠")) {
+                context.read<CityCubit>().fetchCities();
+              }
+            },
+            onChanged: (value) {
+              if (value != null && !value.startsWith("⚠")) {
+                setState(() {
+                  fromCity = value;
+                });
+              } else {
+                context.read<CityCubit>().fetchCities();
+              }
+            },
+            items: dropdownItems.map<DropdownMenuItem<String>>((city) {
+              final isError = city.startsWith("⚠");
+              return DropdownMenuItem<String>(
+                value: city,
+                child: Text(
+                  city,
+                  style: TextStyle(color: isError ? Colors.red : Colors.black),
+                ),
+              );
+            }).toList(),
+          );
+        },
+      ),
+    ),
+    const Spacer(),
+    Expanded(
+      child: BlocBuilder<CityCubit, CityState>(
+        builder: (context, state) {
+          final List<String> cities;
+
+          if (state is CitySuccess) {
+            cities = state.cities
+                .map((e) => context.locale.languageCode == 'ar'
+                    ? e.nameAr
+                    : e.nameEn)
+                .whereType<String>()
+                .toSet()
+                .toList();
+          } else if (state is CityFailure) {
+            cities = ["⚠ ${state.errorMessage}"];
+          } else {
+            cities = [];
+          }
+
+          final dropdownItems = cities.isEmpty
+              ? ["⚠ لا توجد مدن تحقق من الا تصال"]
+              : cities;
+
+          return DropdownButton<String>(
+            isExpanded: true,
+            value: dropdownItems.contains(toCity) ? toCity : null,
+            hint: Text(
+              'to'.tr(),
+              style: TextStyles.font12SecondaryBlack500Weight,
+            ),
+            onTap: () {
+              if (cities.isEmpty || cities.first.startsWith("⚠")) {
+                context.read<CityCubit>().fetchCities();
+              }
+            },
+            onChanged: (value) {
+              if (value != null && !value.startsWith("⚠")) {
+                setState(() {
+                  toCity = value;
+                });
+              } else {
+                context.read<CityCubit>().fetchCities();
+              }
+            },
+            items: dropdownItems.map<DropdownMenuItem<String>>((city) {
+              final isError = city.startsWith("⚠");
+              return DropdownMenuItem<String>(
+                value: city,
+                child: Text(
+                  city,
+                  style: TextStyle(color: isError ? Colors.red : Colors.black),
+                ),
+              );
+            }).toList(),
+          );
+        },
+      ),
+    ),
+
+
+  ],
+)
+
                 ],
               ),
             ),

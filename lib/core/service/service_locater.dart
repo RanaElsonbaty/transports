@@ -18,10 +18,13 @@ import 'package:transports/features/home/data/repos/city/city_repo.dart';
 import 'package:transports/features/home/data/repos/city/city_repo_impl.dart';
 import 'package:transports/features/home/data/repos/create_trip/create_trip_repo.dart';
 import 'package:transports/features/home/data/repos/create_trip/create_trip_repo_impl.dart';
+import 'package:transports/features/home/data/repos/profile/profile_repo.dart';
+import 'package:transports/features/home/data/repos/profile/profile_repo_impl.dart';
 import 'package:transports/features/home/data/repos/seats/seats_repo.dart';
 import 'package:transports/features/home/data/repos/seats/seats_repo_impl.dart';
 import 'package:transports/features/home/presentation/view_model/city_cubit/city_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/create_trip/creating_trip_cubit.dart';
+import 'package:transports/features/home/presentation/view_model/profile_cubit/profile_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/seats_cubit/seats_cubit.dart';
 
 import 'api_service.dart';
@@ -67,4 +70,9 @@ getIt.registerLazySingleton<SeatsRepo>(
       () => CreatingTripCubit(getIt.get<CreateTripRepo>()));
       getIt.registerLazySingleton<CreateTripRepo>(
       () => CreateTripRepoImpl(getIt.get<ApiService>(), getIt.get<SharedPrefs>()));
+    getIt.registerFactory<ProfileCubit>(
+      () => ProfileCubit(getIt.get<ProfileRepo>()));
+            getIt.registerLazySingleton<ProfileRepo>(
+      () => ProfileRepoImpl(getIt.get<ApiService>(), getIt.get<SharedPrefs>()));
+
 }
