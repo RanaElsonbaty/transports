@@ -259,12 +259,12 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
     if (state is CreatingTripSuccess) {
       Navigator.of(context).pop(); 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تم بدء الرحلة بنجاح ✅')),
+         SnackBar(content: Text('trip_started_success'.tr())),
       );
     } else if (state is CreatingTripFailure) {
       Navigator.of(context).pop(); 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('خطأ: ${state.errorMessage}')),
+        SnackBar(content: Text('${"trip_creation_error".tr()}: ${state.errorMessage}')),
       );
     }
   },
@@ -299,8 +299,8 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                           fit: BoxFit.contain,
                         ),
                         const SizedBox(height: 20),
-                        const Text(
-                          'الرجاء الإنتظار دقيقة للموافقة من الإدارة\nعلى بداية الرحلة',
+                         Text(
+"wait_for_admin_approval".tr(),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 16,
@@ -350,7 +350,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: Text(
-                          'يرجى تحديد المقعد و ملئ بيانات الركاب أولاً!',
+                        "select_seat_fill_passenger".tr(),
                           textAlign: TextAlign.center,
                           style: TextStyles.font14White700Weight.copyWith(
                             decoration: TextDecoration.none,

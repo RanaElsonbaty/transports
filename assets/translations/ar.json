@@ -54,6 +54,23 @@
   "confirm": "تأكيد",
   "upload_stamp_and_plate": "يرجى رفع صورة الختم وصورة اللوحة",
     "upload_stamp": "رفع الختم",
-  "upload_logo": "رفع اللوجو"
+  "upload_logo": "رفع اللوجو",
+      "text_button": "نعم",
+    "title": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+            "cancel_button": "الغاء",
+          
+  "previous_trips": "الرحلات السابقة",
+  "departure_time": "وقت الانطلاق",
+  "passengers": "عدد الركاب",
+  "status": "الحالة",
+  "no_time": "لا يوجد وقت",
+    "select_seat_fill_passenger": "يرجى تحديد المقعد و ملئ بيانات الركاب أولاً!",
+      "wait_for_admin_approval": "الرجاء الإنتظار دقيقة للموافقة من الإدارة\nعلى بداية الرحلة",
+        "trip_started_success": "تم بدء الرحلة بنجاح ✅",
+  "trip_creation_error": "خطأ: "
+
+
+
+
 
 }

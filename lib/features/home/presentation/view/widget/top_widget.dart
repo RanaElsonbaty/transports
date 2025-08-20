@@ -4,12 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:transports/core/helper_function/extension.dart';
 import 'package:transports/core/routing/app_routing.dart';
-import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/icons.dart';
 import 'package:transports/core/theming/images.dart';
 import 'package:transports/core/theming/styles.dart';
-import 'package:transports/features/home/data/models/seats_model.dart';
-import 'package:transports/features/home/presentation/view/widget/custom_drawer.dart';
 import 'package:transports/features/home/presentation/view/widget/passenger_row_card.dart';
 
 class TopWidget extends StatelessWidget {

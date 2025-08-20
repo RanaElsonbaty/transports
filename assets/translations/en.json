@@ -53,6 +53,20 @@
   "confirm": "Confirm",
   "upload_stamp_and_plate": "Please upload the stamp image and the plate image",
     "upload_stamp": "Upload Stamp",
-  "upload_logo": "Upload Logo"
+  "upload_logo": "Upload Logo",
+      "text_button": "Yes",
+    "title": "Are you sure you want to log out?",
+        "cancel_button": "Cancel",
+         "previous_trips": "Previous Trips",
+  "departure_time": "Departure Time",
+  "passengers": "Passengers",
+  "status": "Status",
+  "no_time": "No Time",
+    "select_seat_fill_passenger": "Please select a seat and fill in passenger details first!",
+      "wait_for_admin_approval": "Please wait a minute for admin approval\nbefore starting the trip",
+
+"trip_started_success": "Trip started successfully ✅",
+  "trip_creation_error": "Error: "
+
 
 }

@@ -5,7 +5,6 @@ import 'package:transports/core/service/api_service.dart';
 import 'package:transports/core/storage/shared_prefs.dart';
 import 'package:transports/features/home/data/models/reserve_model.dart';
 import 'package:transports/features/home/data/repos/reserve_seat/reserve_repo.dart';
-
 class ReserveRepoImpl  extends ReserveRepo{
   ApiService apiService;
   SharedPrefs sharedPrefs;

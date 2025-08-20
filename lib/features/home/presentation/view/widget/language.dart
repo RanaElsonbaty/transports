@@ -1,11 +1,12 @@
 
 import 'package:easy_localization/easy_localization.dart';
-imort 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:transports/core/helper_function/extension.dart';
 import 'package:transports/core/locale_keys.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
+import 'package:transports/features/auth/register/presentation/view/widgets/back_button.dart';
 
 class ChangeLanguageView extends StatefulWidget {
   const ChangeLanguageView({super.key});
@@ -62,7 +63,7 @@ class _ChangeLanguageViewState extends State<ChangeLanguageView> {
                             ),
                           ],
                         ),
-                        child: BackButton()
+                        child: BackButtonWidget(),
                         
                       ),
                     ),

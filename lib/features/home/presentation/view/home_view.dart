@@ -12,7 +12,6 @@ import 'package:transports/features/home/presentation/view/bus_seat_selection_vi
 import 'package:transports/features/home/presentation/view/widget/custom_drawer.dart';
 import 'package:transports/features/home/presentation/view/widget/top_widget.dart';
 import 'package:transports/features/home/presentation/view/widget/trip_details_widget.dart';
-import 'package:transports/features/home/presentation/view_model/city_cubit/city_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/create_trip/creating_trip_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/seats_cubit/seats_cubit.dart';
 
@@ -53,8 +52,8 @@ class _HomeViewState extends State<HomeView> {
   final TextEditingController nationalIdController = TextEditingController();
   final TextEditingController nationalityController = TextEditingController();
   final GlobalKey<FormState> globalKey = GlobalKey();
-  List<Map<String, dynamic>> passengersData = [];
-
+  List<Map<String, dynamic>> miniBusPassengersData = [];
+  List<Map<String, dynamic>> bigBusPassengersData = [];
 
   void toggleSeat(String seat, {required bool isMiniBus}) {
     if (reservedSeats.contains(seat)) return;
@@ -215,14 +214,42 @@ class _HomeViewState extends State<HomeView> {
 //     },
 //   );
 // }
+  Set<String> occupiedMiniBusSeats = {};
+  Set<String> occupiedBigBusSeats = {};
 
+  bool isOccupied(String seatNumber, {required bool isMiniBus}) {
+    return reservedSeats.contains(seatNumber) ||
+        (isMiniBus
+            ? occupiedMiniBusSeats.contains(seatNumber)
+            : occupiedBigBusSeats.contains(seatNumber));
+  }
 
-  void _openSeatBottomSheet(String seatNummber) {
+  Color seatColor(bool isMiniBus, String seatNumber, String status) {
+    if (isMiniBus) {
+      if (occupiedMiniBusSeats.contains(seatNumber))
+        return Colors.black; // محجوز
+      if (selectedMiniBusSeats.contains(seatNumber))
+        return AppColors.primarySeatColor; // مختار
+    } else {
+      if (occupiedBigBusSeats.contains(seatNumber)) return Colors.black;
+      if (selectedBusSeats.contains(seatNumber))
+        return AppColors.primarySeatColor;
+    }
+
+    if (status != "available") return AppColors.primarySeatColor;
+
+    return AppColors.primarySeatColor.withOpacity(0.1);
+  }
+
+  void _openSeatBottomSheet(String seatNumber) {
+    final currentPassengersData =
+        miniBusSelected ? miniBusPassengersData : bigBusPassengersData;
+
     final existingPassengerIndex =
-        passengersData.indexWhere((p) => p['seat_number'] == seatNummber);
+        currentPassengersData.indexWhere((p) => p['seat_number'] == seatNumber);
 
     if (existingPassengerIndex != -1) {
-      final existingData = passengersData[existingPassengerIndex];
+      final existingData = currentPassengersData[existingPassengerIndex];
       nameController.text = existingData['name'];
       phoneController.text = existingData['phone'];
       seatIdController.text = existingData['seat_number'];
@@ -231,7 +258,7 @@ class _HomeViewState extends State<HomeView> {
     } else {
       nameController.clear();
       phoneController.clear();
-      seatIdController.text = seatNummber;
+      seatIdController.text = seatNumber;
       nationalIdController.clear();
       nationalityController.clear();
     }
@@ -245,17 +272,18 @@ class _HomeViewState extends State<HomeView> {
       builder: (context) {
         return Padding(
           padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-              left: 20,
-              right: 20,
-              top: 20),
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: 20,
+            right: 20,
+            top: 20,
+          ),
           child: SingleChildScrollView(
             child: Form(
               key: globalKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Selected Seat $seatNummber'),
+                  Text('Selected Seat $seatNumber'),
                   const SizedBox(height: 16),
                   CustomTextFormField(
                     controller: nameController,
@@ -285,20 +313,23 @@ class _HomeViewState extends State<HomeView> {
                   ),
                   const SizedBox(height: 16),
                   CustomTextFormField(
-                      controller: nationalityController,
-                      hint: 'Nationality',
-                      validator: (value) =>
-                          Validators.validateNationality(value!)),
+                    controller: nationalityController,
+                    hint: 'Nationality',
+                    validator: (value) =>
+                        Validators.validateNationality(value!),
+                  ),
                   const SizedBox(height: 16),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          foregroundColor: AppColors.whiteColor,
-                          minimumSize: Size(double.infinity, 40),
-                          backgroundColor: AppColors.primaryColor,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10))),
+                        foregroundColor: AppColors.whiteColor,
+                        minimumSize: Size(double.infinity, 40),
+                        backgroundColor: AppColors.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
                       onPressed: () {
                         if (globalKey.currentState!.validate()) {
                           final passenger = {
@@ -308,14 +339,22 @@ class _HomeViewState extends State<HomeView> {
                             "national_id": nationalIdController.text,
                             "nationality": nationalityController.text,
                           };
-                    
+
                           if (existingPassengerIndex != -1) {
-                            passengersData[existingPassengerIndex] = passenger;
+                            currentPassengersData[existingPassengerIndex] =
+                                passenger;
                           } else {
-                            passengersData.add(passenger);
+                            currentPassengersData.add(passenger);
+                            if (miniBusSelected) {
+                              occupiedMiniBusSeats.add(seatIdController.text);
+                            } else {
+                              occupiedBigBusSeats.add(seatIdController.text);
+                            }
+                            setState(() {});
+
                             print("data added");
                           }
-                    
+
                           Navigator.pop(context);
                         }
                       },
@@ -337,7 +376,6 @@ class _HomeViewState extends State<HomeView> {
 
     return MultiBlocProvider(
       providers: [
-
         BlocProvider(
           create: (context) => getIt.get<CreatingTripCubit>(),
         ),
@@ -352,8 +390,8 @@ class _HomeViewState extends State<HomeView> {
             children: [
               BlocBuilder<SeatsCubit, SeatsState>(
                 builder: (context, state) {
-                  String miniMax = "50"; 
-                  String bigMax = "13"; 
+                  String miniMax = "50";
+                  String bigMax = "13";
 
                   if (state is SeatsSuccess) {
                     final seatsData = state.seatsSuccess;
@@ -445,6 +483,14 @@ class _HomeViewState extends State<HomeView> {
                                                 seat.status != "available";
                                             return GestureDetector(
                                               onTap: () {
+                                                if (isReserved ||
+                                                    isOccupied(
+                                                        seat.seatNumber
+                                                            .toString(),
+                                                        isMiniBus:
+                                                            miniBusSelected))
+                                                  return;
+
                                                 if (isReserved) return;
                                                 toggleSeat(
                                                     seat.seatNumber.toString(),
@@ -463,11 +509,13 @@ class _HomeViewState extends State<HomeView> {
                                                       .seatNumber
                                                       .toString());
                                                 }
+                                                setState(() {});
                                               },
                                               child: SeatBox(
                                                 label:
                                                     seat.seatNumber.toString(),
-                                                isReserved: isReserved,
+                                                isReserved:
+                                                    seat.status != "available",
                                                 isSelected: miniBusSelected
                                                     ? selectedMiniBusSeats
                                                         .contains(seat
@@ -476,9 +524,12 @@ class _HomeViewState extends State<HomeView> {
                                                     : selectedBusSeats.contains(
                                                         seat.seatNumber
                                                             .toString()),
+                                                color: seatColor(
+                                                    miniBusSelected,
+                                                    seat.seatNumber.toString(),
+                                                    seat.status!),
                                               ),
                                             );
-                                            
                                           }).toList(),
                                         ),
                                       ),
@@ -496,6 +547,14 @@ class _HomeViewState extends State<HomeView> {
                                                 seat.status != "available";
                                             return GestureDetector(
                                               onTap: () {
+                                                if (isReserved ||
+                                                    isOccupied(
+                                                        seat.seatNumber
+                                                            .toString(),
+                                                        isMiniBus:
+                                                            miniBusSelected))
+                                                  return;
+
                                                 if (isReserved) return;
                                                 toggleSeat(
                                                     seat.seatNumber.toString(),
@@ -518,7 +577,8 @@ class _HomeViewState extends State<HomeView> {
                                               child: SeatBox(
                                                 label:
                                                     seat.seatNumber.toString(),
-                                                isReserved: isReserved,
+                                                isReserved:
+                                                    seat.status != "available",
                                                 isSelected: miniBusSelected
                                                     ? selectedMiniBusSeats
                                                         .contains(seat
@@ -527,6 +587,10 @@ class _HomeViewState extends State<HomeView> {
                                                     : selectedBusSeats.contains(
                                                         seat.seatNumber
                                                             .toString()),
+                                                color: seatColor(
+                                                    miniBusSelected,
+                                                    seat.seatNumber.toString(),
+                                                    seat.status!),
                                               ),
                                             );
                                           }).toList(),
@@ -547,7 +611,7 @@ class _HomeViewState extends State<HomeView> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                             'tripdetails'.tr(),
+                                        'tripdetails'.tr(),
                                         style: TextStyles.font16Black700Weight,
                                         textAlign: TextAlign.right,
                                       ),
@@ -581,7 +645,9 @@ class _HomeViewState extends State<HomeView> {
                                           ),
                                         ),
                                         TripDetailsWidget(
-                                          passengersData: passengersData,
+                                          passengersData: miniBusSelected
+                                              ? miniBusPassengersData
+                                              : bigBusPassengersData,
                                         ),
                                       ],
                                     )

@@ -30,7 +30,7 @@ class SuccessView extends StatelessWidget {
               SizedBox(height: 80.h,),
               CustomPrimaryButton(text: 'home_page'.tr(),
                 onPressed: (){
-                context.pushNamed(Routes.attachmentInfo);
+                context.pushNamed(Routes.home);
               },
               )
             ],

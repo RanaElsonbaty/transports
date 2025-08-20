@@ -133,7 +133,7 @@ textDirection: context.locale.languageCode == 'ar'
 
                     const SizedBox(height: 40),
 
-                    // Confirm Button
+state is VerifyingOtpLoading?Center(child: CircularProgressIndicator(),):
                     SizedBox(
                       width: double.infinity,
                       height: 50,

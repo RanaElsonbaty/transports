@@ -7,7 +7,8 @@ import 'dart:ui' as ui;
 
 class TransportsApp extends StatefulWidget {
   final AppRoutes appRoutes;
-  const TransportsApp({super.key, required this.appRoutes});
+  final String initialRoute;
+  const TransportsApp({super.key, required this.appRoutes, required this.initialRoute});
   static GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
   @override
@@ -56,7 +57,7 @@ class _TransportsAppState extends State<TransportsApp> {
         ),
         onGenerateRoute: widget.appRoutes.generateRoute,
         debugShowCheckedModeBanner: false,
-        initialRoute: Routes.splash,
+        initialRoute:  widget.initialRoute,
         builder: (context, child) {
           return Directionality(
             textDirection: context.locale.languageCode == 'ar'

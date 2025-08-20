@@ -4,8 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/images.dart';
 import 'package:transports/core/theming/styles.dart';
-import 'package:transports/features/home/data/models/seats_model.dart';
-import 'package:transports/features/home/presentation/view/widget/custom_drawer.dart';
 
 // class AddPassengerCardsRow extends StatelessWidget {
 //   const AddPassengerCardsRow({super.key, required this.onMiniBusTap, required this.onBigBusTap});

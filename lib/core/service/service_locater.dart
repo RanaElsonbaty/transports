@@ -5,6 +5,8 @@ import 'package:transports/core/service/service_impl.dart.dart';
 import 'package:transports/core/storage/shared_prefs.dart';
 import 'package:transports/features/auth/data/repos/driver/driver_info_repo.dart';
 import 'package:transports/features/auth/data/repos/driver/driver_info_repo_impl.dart';
+import 'package:transports/features/auth/data/repos/log_out/log_out_repo.dart';
+import 'package:transports/features/auth/data/repos/log_out/log_out_repo_impl.dart';
 import 'package:transports/features/auth/data/repos/otp/otp_repo.dart';
 import 'package:transports/features/auth/data/repos/otp/otp_repo_impl.dart';
 import 'package:transports/features/auth/data/repos/vehicle/vehicle_repo.dart';
@@ -18,17 +20,19 @@ import 'package:transports/features/home/data/repos/city/city_repo.dart';
 import 'package:transports/features/home/data/repos/city/city_repo_impl.dart';
 import 'package:transports/features/home/data/repos/create_trip/create_trip_repo.dart';
 import 'package:transports/features/home/data/repos/create_trip/create_trip_repo_impl.dart';
+import 'package:transports/features/home/data/repos/previous_trips/previous_trip_repo.dart';
+import 'package:transports/features/home/data/repos/previous_trips/previous_trip_repo_impl.dart';
 import 'package:transports/features/home/data/repos/profile/profile_repo.dart';
 import 'package:transports/features/home/data/repos/profile/profile_repo_impl.dart';
 import 'package:transports/features/home/data/repos/seats/seats_repo.dart';
 import 'package:transports/features/home/data/repos/seats/seats_repo_impl.dart';
 import 'package:transports/features/home/presentation/view_model/city_cubit/city_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/create_trip/creating_trip_cubit.dart';
+import 'package:transports/features/home/presentation/view_model/logout_cubit/log_out_cubit.dart';
+import 'package:transports/features/home/presentation/view_model/previouse_trip/previous_trips_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/profile_cubit/profile_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/seats_cubit/seats_cubit.dart';
-
 import 'api_service.dart';
-
 final getIt = GetIt.instance;
 void setupServiceLocator() {
   getIt.registerLazySingleton<Dio>(() => Dio());
@@ -38,6 +42,7 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<OtpRepo>(() => OtpRepoImpl(
       apiService: getIt.get<ApiService>(),
       sharedPrefService: getIt.get<SharedPrefs>()));
+      
   getIt.registerFactory<SendingOtpCubit>(
       () => SendingOtpCubit(otpRepo: getIt.get<OtpRepo>()));
   getIt.registerFactory<VerifyingOtpCubit>(
@@ -52,27 +57,35 @@ void setupServiceLocator() {
   getIt.registerFactory<DriverInfoCubit>(() => DriverInfoCubit(
         driverInfoRepo: getIt.get<DriverInfoRepo>(),
       ));
-getIt.registerLazySingleton<SeatsRepo>(
+  getIt.registerLazySingleton<SeatsRepo>(
       () => SeatsRepoImpl(getIt.get<ApiService>(), getIt.get<SharedPrefs>()));
 
-        getIt.registerFactory<SeatsCubit>(() => SeatsCubit(
-         getIt.get<SeatsRepo>(),
+  getIt.registerFactory<SeatsCubit>(() => SeatsCubit(
+        getIt.get<SeatsRepo>(),
       ));
   getIt.registerFactory<VehicleInfoCubit>(
       () => VehicleInfoCubit(getIt.get<VehicleRepo>()));
-      getIt.registerLazySingleton<CityRepo>(
-      () => CityRepoImpl(  apiService: getIt.get<ApiService>(), sharedPrefs: getIt.get<SharedPrefs>()));
+  getIt.registerLazySingleton<CityRepo>(() => CityRepoImpl(
+      apiService: getIt.get<ApiService>(),
+      sharedPrefs: getIt.get<SharedPrefs>()));
 
-       getIt.registerFactory<CityCubit>(
-      () => CityCubit(getIt.get<CityRepo>()));
-      
-       getIt.registerFactory<CreatingTripCubit>(
+  getIt.registerFactory<CityCubit>(() => CityCubit(getIt.get<CityRepo>()));
+
+  getIt.registerFactory<CreatingTripCubit>(
       () => CreatingTripCubit(getIt.get<CreateTripRepo>()));
-      getIt.registerLazySingleton<CreateTripRepo>(
-      () => CreateTripRepoImpl(getIt.get<ApiService>(), getIt.get<SharedPrefs>()));
-    getIt.registerFactory<ProfileCubit>(
+  getIt.registerLazySingleton<CreateTripRepo>(() =>
+      CreateTripRepoImpl(getIt.get<ApiService>(), getIt.get<SharedPrefs>()));
+  getIt.registerFactory<ProfileCubit>(
       () => ProfileCubit(getIt.get<ProfileRepo>()));
-            getIt.registerLazySingleton<ProfileRepo>(
+  getIt.registerLazySingleton<ProfileRepo>(
       () => ProfileRepoImpl(getIt.get<ApiService>(), getIt.get<SharedPrefs>()));
-
+  getIt
+      .registerFactory<LogOutCubit>(() => LogOutCubit(getIt.get<LogOutRepo>()));
+  getIt.registerLazySingleton<LogOutRepo>(
+      () => LogOutRepoImpl(getIt.get<ApiService>(), getIt.get<SharedPrefs>()));
+  getIt.registerLazySingleton<PreviousTripRepo>(() => PreviousTripRepoImpl(
+      apiService: getIt.get<ApiService>(),
+      sharedPreferences: getIt.get<SharedPrefs>()));
+  getIt.registerFactory<PreviousTripsCubit>(
+      () => PreviousTripsCubit(getIt.get<PreviousTripRepo>()));
 }

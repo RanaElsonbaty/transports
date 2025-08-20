@@ -8,13 +8,15 @@ import 'package:transports/features/auth/register/presentation/view/successview.
 import 'package:transports/features/auth/register/presentation/view/vehicle_info_view.dart';
 import 'package:transports/features/auth/register/presentation/view_model/cubits/sending_otp_cubit/sending_otp_cubit.dart';
 import 'package:transports/features/home/presentation/view/home_view.dart';
+import 'package:transports/features/home/presentation/view/previous_trips_view.dart';
 import 'package:transports/features/home/presentation/view/profile_view.dart';
 import 'package:transports/features/home/presentation/view/widget/language.dart';
 import 'package:transports/features/home/presentation/view_model/city_cubit/city_cubit.dart';
+import 'package:transports/features/home/presentation/view_model/logout_cubit/log_out_cubit.dart';
+import 'package:transports/features/home/presentation/view_model/previouse_trip/previous_trips_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/profile_cubit/profile_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/reserve_cubit/cubit/reserve_seat_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/seats_cubit/seats_cubit.dart';
-import 'package:transports/features/profile/presentation/view/my_profile_view.dart';
 import 'package:transports/features/splash/presentation/view/second_splash_view.dart';
 import 'package:transports/features/splash/presentation/view/splash_view.dart';
 
@@ -44,6 +46,9 @@ class AppRoutes {
             builder: (_) => MultiBlocProvider(
                   providers: [
                     BlocProvider(
+                      create: (context) => getIt.get<LogOutCubit>(),
+                    ),
+                    BlocProvider(
                       create: (context) =>
                           getIt.get<CityCubit>()..fetchCities(),
                     ),
@@ -53,6 +58,12 @@ class AppRoutes {
                   ],
                   child: HomeView(),
                 ));
+      case Routes.previousTrip:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+                  create: (context) =>getIt.get<PreviousTripsCubit>()..getTrips(),
+                  child: PreviousTripsView(),
+                ));
       case Routes.success:
         return MaterialPageRoute(builder: (_) => SuccessView());
       case Routes.profile:
@@ -60,7 +71,8 @@ class AppRoutes {
       case Routes.myProfile:
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
-                  create: (context) => getIt.get<ProfileCubit>()..getProfileInfo(),
+                  create: (context) =>
+                      getIt.get<ProfileCubit>()..getProfileInfo(),
                   child: ProfileView(),
                 ));
       default:

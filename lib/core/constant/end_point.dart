@@ -10,6 +10,9 @@ static const String  seats=  "bus-types";
 static const String  cities=  "cities";
 static const String  createTrip=  "trips";
 static const String  profile= "auth/profile";
+static const String  logOut= "auth/logout";
+static const String  previousTrip= "trips";
+
  static String reserveSeat(String tripId, String seatId) {
     return "trips/$tripId/seats/$seatId/reserve";
   }

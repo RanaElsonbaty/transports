@@ -5,11 +5,11 @@ import 'package:transports/core/service/api_service.dart';
 import 'package:transports/core/storage/shared_prefs.dart';
 import 'package:transports/features/home/data/models/profile_view.dart';
 import 'package:transports/features/home/data/repos/profile/profile_repo.dart';
-
 class ProfileRepoImpl extends ProfileRepo{
-    ApiService apiService;
+  ApiService apiService;
   SharedPrefs sharedPrefs;
   ProfileRepoImpl(this.apiService,this.sharedPrefs);
+
   @override
   Future<Either<Failure,ProfileModel>> getProfiles()async {
       final token=await sharedPrefs.getToken();

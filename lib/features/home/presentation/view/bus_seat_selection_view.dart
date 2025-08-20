@@ -143,37 +143,36 @@ class SeatBox extends StatelessWidget {
   final String label;
   final bool isReserved;
   final bool isSelected;
+    final Color? color; 
 
   const SeatBox({
     super.key,
     required this.label,
     this.isReserved = false,
-    this.isSelected = false,
+    this.isSelected = false, this.color,
   });
 
   @override
   Widget build(BuildContext context) {
-    Color color = AppColors.primarySeatColor.withOpacity(.1);
-    if (isReserved) {
-      color = AppColors.seatBlackColor;
-    } else if (isSelected) {
-      color = AppColors.primarySeatColor;
-    }
+ final boxColor = color ??
+        (isReserved
+            ? Colors.black
+            : isSelected
+                ? AppColors.primarySeatColor
+                : AppColors.primarySeatColor.withOpacity(.1));
+    final textStyle = TextStyles.font14SeatBlack500Weight;
 
     return Container(
       height: 40.h,
       width: 40.w,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: color,
+        color: boxColor,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         label,
-        style:isReserved?
-            TextStyles.font14White500Weight
-            :isSelected?TextStyles.font14White500Weight
-            : TextStyles.font14SeatBlack500Weight,
+        style:textStyle
       ),
     );
   }
