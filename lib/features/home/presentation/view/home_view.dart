@@ -382,7 +382,7 @@ class _HomeViewState extends State<HomeView> {
       ],
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
-        drawer: const CustomDrawer(),
+        drawer: CustomDrawer(),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
