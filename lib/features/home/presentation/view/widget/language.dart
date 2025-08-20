@@ -1,9 +1,10 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:transports/core/helper_function/extension.dart';
 import 'package:transports/core/locale_keys.dart';
+import 'package:transports/core/service/service_locater.dart';
+import 'package:transports/core/storage/shared_prefs.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/back_button.dart';
@@ -16,13 +17,31 @@ class ChangeLanguageView extends StatefulWidget {
 }
 
 class _ChangeLanguageViewState extends State<ChangeLanguageView> {
-  String selectedLanguage = 'ar'; 
+  String? selectedLanguage;
 
-  void _changeLanguage(String langCode) {
+  @override
+  void initState() {
+    super.initState();
+    _loadSelectedLanguage();
+  }
+
+  Future<void> _loadSelectedLanguage() async {
+    final prefs = getIt<SharedPrefs>();
+    final savedLang = await prefs.getSelectedLanguage();
+    setState(() {
+      selectedLanguage = savedLang ?? context.locale.languageCode;
+    });
+  }
+
+  Future<void> _changeLanguage(String langCode) async {
+    final prefs = getIt<SharedPrefs>();
+    await prefs.saveSelectedLanguage(langCode);
+
     setState(() {
       selectedLanguage = langCode;
     });
-    context.setLocale(Locale(langCode));
+
+    await context.setLocale(Locale(langCode));
   }
 
   @override
@@ -46,7 +65,7 @@ class _ChangeLanguageViewState extends State<ChangeLanguageView> {
                   Positioned(
                     right: 0,
                     child: GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         context.pop();
                       },
                       child: Container(
@@ -64,13 +83,11 @@ class _ChangeLanguageViewState extends State<ChangeLanguageView> {
                           ],
                         ),
                         child: BackButtonWidget(),
-                        
                       ),
                     ),
                   ),
                 ],
               ),
-      
               SizedBox(height: 30.h),
               Text(
                 context.tr(LocaleKeys.changeLanguage),
@@ -79,7 +96,7 @@ class _ChangeLanguageViewState extends State<ChangeLanguageView> {
               SizedBox(height: 20.h),
               _buildLanguageOption(
                 langCode: 'ar',
-                name: 'العربيه',
+                name: 'العربية',
                 flag: '🇰🇼',
               ),
               SizedBox(height: 10.h),

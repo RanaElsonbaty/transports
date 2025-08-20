@@ -16,14 +16,15 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   final prefs = getIt.get<SharedPrefs>();
   final String? token = await prefs.getToken();
-  runApp(EasyLocalization(
-      supportedLocales: const [Locale('ar'), Locale('en')],
-      path: 'assets/translations',
-      startLocale: const Locale('ar'),
-      fallbackLocale: const Locale('en'),
-      child: TransportsApp(
-        appRoutes: AppRoutes(),
-        initialRoute:
-            (token != null && token.isNotEmpty) ? Routes.home : Routes.splash,
-      )));
+  runApp(
+    
+      EasyLocalization(
+
+          supportedLocales: const [Locale('ar'), Locale('en')],
+          path: 'assets/translations',
+          startLocale: const Locale('ar'),
+          fallbackLocale: const Locale('en'),
+          child: TransportsApp(appRoutes: AppRoutes(), initialRoute: (token != null && token.isNotEmpty) ? Routes.home : Routes.splash,
+)));
+
 }

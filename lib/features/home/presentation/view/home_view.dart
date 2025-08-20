@@ -390,7 +390,7 @@ List<Map<String, String>> currentBigBusPassengers = [];
       ],
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
-        drawer:  CustomDrawer(),
+        drawer: const CustomDrawer(),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

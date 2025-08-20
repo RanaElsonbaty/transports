@@ -11,6 +11,8 @@ import 'package:transports/features/auth/register/presentation/view/otp_view.dar
 import 'package:transports/features/auth/register/presentation/view_model/cubits/sending_otp_cubit/sending_otp_cubit.dart';
 import 'dart:ui' as ui;
 
+import 'package:transports/features/home/presentation/view/widget/language_drop_down.dart';
+
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
 
@@ -56,8 +58,13 @@ textDirection: context.locale.languageCode == 'ar'
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 80),
-            
+                    const SizedBox(height: 30),
+                    Row(
+                      children: [
+                        LanguageDropdown()
+                      ],
+                    ),
+                    const SizedBox(height: 20),
                     // Title
                     Text(
                       'passenger_report_title'.tr(),
