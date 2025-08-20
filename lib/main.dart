@@ -5,22 +5,25 @@ import 'package:transports/core/routing/routes.dart';
 import 'package:transports/core/service/service_locater.dart';
 import 'package:transports/core/storage/shared_prefs.dart';
 import 'package:transports/transports_app.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-                setupServiceLocator();
+  setupServiceLocator();
+  WebViewPlatform.instance = AndroidWebViewPlatform();
+
   await EasyLocalization.ensureInitialized();
   final prefs = getIt.get<SharedPrefs>();
   final String? token = await prefs.getToken();
-  runApp(
-    
-      EasyLocalization(
-
-          supportedLocales: const [Locale('ar'), Locale('en')],
-          path: 'assets/translations',
-          startLocale: const Locale('ar'),
-          fallbackLocale: const Locale('en'),
-          child: TransportsApp(appRoutes: AppRoutes(), initialRoute: (token != null && token.isNotEmpty) ? Routes.home : Routes.splash,
-)));
-
+  runApp(EasyLocalization(
+      supportedLocales: const [Locale('ar'), Locale('en')],
+      path: 'assets/translations',
+      startLocale: const Locale('ar'),
+      fallbackLocale: const Locale('en'),
+      child: TransportsApp(
+        appRoutes: AppRoutes(),
+        initialRoute:
+            (token != null && token.isNotEmpty) ? Routes.home : Routes.splash,
+      )));
 }

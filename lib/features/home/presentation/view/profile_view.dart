@@ -30,7 +30,7 @@ class ProfileView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Row(
             children: [
-              const BackButtonWidget(),
+               BackButtonWidget(),
               SizedBox(width: 80.w),
               Text(
                 "profile".tr(),
@@ -39,10 +39,11 @@ class ProfileView extends StatelessWidget {
             ],
           ),
         ),
-       CachedNetworkImage(imageUrl:state.profile.data?.user?.avatarUrl??"", height: 85, width: 85,
-      placeholder: (context,url)=>CircularProgressIndicator(),
-       errorWidget: (context,url,error)=>Icon(Icons.error, color: Colors.red),
-        ),
+      //  CachedNetworkImage(imageUrl:state.profile.data?.user?.avatarUrl??"", height: 85, width: 85,
+      // placeholder: (context,url)=>CircularProgressIndicator(),
+      //  errorWidget: (context,url,error)=>Icon(Icons.error, color: Colors.red),
+      //   ),
+      Image.asset(AppImages.avatar,height: 85, width: 85),
         const SizedBox(height: 12),
         _buildListTile(
           title: 'phone'.tr(),

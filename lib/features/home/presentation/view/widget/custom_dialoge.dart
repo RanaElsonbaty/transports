@@ -3,7 +3,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:transports/core/helper_function/extension.dart';
 import 'package:transports/core/theming/colors.dart';
-import 'package:transports/features/auth/register/presentation/view/widgets/upload_image.dart';
 import 'package:transports/features/home/presentation/view/widget/custom_Button.dart';
 import 'package:transports/features/home/presentation/view/widget/custom_outline.dart';
 

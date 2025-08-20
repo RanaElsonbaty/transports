@@ -2,8 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:transports/core/service/service_locater.dart';
 import 'package:transports/core/theming/colors.dart';
+import 'package:transports/core/theming/icons.dart';
 import 'package:transports/core/theming/images.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/core/validator/validator.dart';
@@ -24,6 +26,9 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   final List<String> reservedSeats = ["C2", "D4", "E4", "G4"];
   bool miniBusSelected = false;
+  List<Map<String, String>> currentMiniBusPassengers = [];
+List<Map<String, String>> currentBigBusPassengers = [];
+
   bool isBigBusSelected = false;
   bool showDetails = false;
   void toggleDetails() {
@@ -346,10 +351,13 @@ class _HomeViewState extends State<HomeView> {
                           } else {
                             currentPassengersData.add(passenger);
                             if (miniBusSelected) {
-                              occupiedMiniBusSeats.add(seatIdController.text);
-                            } else {
-                              occupiedBigBusSeats.add(seatIdController.text);
-                            }
+      currentMiniBusPassengers.add(passenger);
+      occupiedMiniBusSeats.add(seatIdController.text);
+    } else {
+      currentBigBusPassengers.add(passenger);
+      occupiedBigBusSeats.add(seatIdController.text);
+    }
+
                             setState(() {});
 
                             print("data added");
@@ -382,7 +390,7 @@ class _HomeViewState extends State<HomeView> {
       ],
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
-        drawer: const CustomDrawer(),
+        drawer:  CustomDrawer(),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -409,7 +417,15 @@ class _HomeViewState extends State<HomeView> {
                   );
                 },
               ),
-              SizedBox(height: 20.h),
+              //               SizedBox(height: 20.h),
+
+              // Container( margin: EdgeInsets.symmetric(horizontal: 20.w), padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14), decoration: BoxDecoration( color: AppColors.whiteColor, borderRadius: BorderRadius.circular(8), boxShadow: [ BoxShadow( color: Colors.black.withOpacity(0.1), blurRadius: 6, offset: const Offset(0, 3), ), ], ), alignment: Alignment.centerRight, child: Row( children: [ Text( 'عدد الركاب الآن:', style: TextStyles.font16Black700Weight, textAlign: TextAlign.right, ), const Spacer(), Text('09', style: TextStyles.font16LightPrimary700Weight), ], ), ),
+              // SizedBox(height: 20.h),
+              // Row( mainAxisAlignment: MainAxisAlignment.center, children: [ Container( width: 20, height: 20, decoration: BoxDecoration( color: AppColors.seatBlackColor, borderRadius: BorderRadius.circular(4), ), ), const SizedBox(width: 8),
+              //  Text('محجوز',style: TextStyles.font10SeatBlack500Weight,),
+              //   const SizedBox(width: 32),
+              //    Container( width: 20, height: 20, decoration: BoxDecoration( color: AppColors.primarySeatColor.withOpacity(.1), borderRadius: BorderRadius.circular(4), ), ), const SizedBox(width: 8), Text('متاح',style: TextStyles.font10SeatBlack500Weight), ], ), const SizedBox(height: 40), Row( mainAxisAlignment: MainAxisAlignment.end, children: [ SvgPicture.asset(AppIcons.busSeat), 
+              //    SizedBox(width: 95.w,), ], ),
               if (!isBusSelected)
                 Container(
                   height: 300,
@@ -455,6 +471,29 @@ class _HomeViewState extends State<HomeView> {
                         },
                         child: Column(
                           children: [
+                            
+                            SizedBox(height: 20.h),
+
+              Container( margin: EdgeInsets.symmetric(horizontal: 20.w), 
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14), 
+              decoration: BoxDecoration( color: AppColors.whiteColor,
+               borderRadius: BorderRadius.circular(8), 
+               boxShadow: [ BoxShadow( color: Colors.black.withOpacity(0.1),
+                blurRadius: 6, offset: const Offset(0, 3), ), ], ), 
+                alignment: Alignment.centerRight,
+                 child: Row( children: [ Text( 'current_passengers'.tr(), style: TextStyles.font16Black700Weight, textAlign: TextAlign.right, ), const Spacer(), 
+                 Text( miniBusSelected
+      ? currentMiniBusPassengers.length.toString()
+      : currentBigBusPassengers.length.toString(), style: TextStyles.font16LightPrimary700Weight), ], ), ),
+              SizedBox(height: 20.h),
+              Row( mainAxisAlignment: MainAxisAlignment.center, children: [ Container( width: 20, height: 20, decoration: BoxDecoration( color: AppColors.seatBlackColor, borderRadius: BorderRadius.circular(4), ), ), const SizedBox(width: 8),
+               Text('reserved'.tr(),style: TextStyles.font10SeatBlack500Weight,),
+                const SizedBox(width: 32),
+                 Container( width: 20, height: 20, decoration: BoxDecoration( color: AppColors.primarySeatColor.withOpacity(.1), borderRadius: BorderRadius.circular(4), ), ), const SizedBox(width: 8),
+                  Text('available'.tr(),style: TextStyles.font10SeatBlack500Weight), ], ), 
+                 const SizedBox(height: 40), 
+                 Row( mainAxisAlignment: MainAxisAlignment.end, children: [ SvgPicture.asset(AppIcons.busSeat), 
+                 SizedBox(width: 95.w,), ], ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: seatMatrix.map((row) {
@@ -488,8 +527,9 @@ class _HomeViewState extends State<HomeView> {
                                                         seat.seatNumber
                                                             .toString(),
                                                         isMiniBus:
-                                                            miniBusSelected))
+                                                            miniBusSelected)) {
                                                   return;
+                                                }
 
                                                 if (isReserved) return;
                                                 toggleSeat(
@@ -540,9 +580,10 @@ class _HomeViewState extends State<HomeView> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceEvenly,
                                           children: rightSeats.map((seat) {
-                                            if (seat == null)
+                                            if (seat == null) {
                                               return const SizedBox(
                                                   width: 40, height: 40);
+                                            }
                                             bool isReserved =
                                                 seat.status != "available";
                                             return GestureDetector(
@@ -552,8 +593,9 @@ class _HomeViewState extends State<HomeView> {
                                                         seat.seatNumber
                                                             .toString(),
                                                         isMiniBus:
-                                                            miniBusSelected))
+                                                            miniBusSelected)) {
                                                   return;
+                                                }
 
                                                 if (isReserved) return;
                                                 toggleSeat(

@@ -167,10 +167,18 @@ class AddPassengerCard extends StatelessWidget {
                     isBigBus ? 'bus'.tr() : 'minibus'.tr(),
                     style: TextStyles.font16White500Weight,
                   ),
-                  Text(
-                    'من 1 لـ $maxPassengers راكب', // الرقم ديناميك
-                    style: TextStyles.font20White700Weight,
-                  ),
+                 if (context.locale.languageCode == 'en') 
+      Text(
+        '1 to $maxPassengers\npassenger${int.parse(maxPassengers) > 1 ? "s" : ""}',
+        style: TextStyles.font20White700Weight,
+        textAlign: TextAlign.center,
+      )
+    else
+      Text(
+        'passenger_range'.tr(args: [maxPassengers]), // عربي يظل سطر واحد
+        style: TextStyles.font20White700Weight,
+        textAlign: TextAlign.center,
+      ),
                 ],
               ),
             ),

@@ -44,48 +44,48 @@ class TopWidget extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              Container(
-                width: 32.w,
-                height: 32.h,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Center(
-                      child: SvgPicture.asset(
-                        AppIcons.notification,
-                        width: 20.w,
-                        height: 20.h,
-                      ),
-                    ),
-                    Positioned(
-                      top: -8,
-                      right: -6,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Text(
-                          '12',
-                          style: TextStyles.font8White500Weight,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   width: 32.w,
+              //   height: 32.h,
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(8),
+              //     boxShadow: [
+              //       BoxShadow(
+              //         color: Colors.black.withOpacity(0.1),
+              //         blurRadius: 4,
+              //         offset: const Offset(0, 2),
+              //       ),
+              //     ],
+              //   ),
+              //   child: Stack(
+              //     clipBehavior: Clip.none,
+              //     children: [
+              //       // Center(
+              //       //   child: SvgPicture.asset(
+              //       //     AppIcons.notification,
+              //       //     width: 20.w,
+              //       //     height: 20.h,
+              //       //   ),
+              //       // ),
+              //       // Positioned(
+              //       //   top: -8,
+              //       //   right: -6,
+              //       //   child: Container(
+              //       //     padding: const EdgeInsets.all(4),
+              //       //     decoration: const BoxDecoration(
+              //       //       color: Colors.red,
+              //       //       shape: BoxShape.circle,
+              //       //     ),
+              //       //     child: Text(
+              //       //       '12',
+              //       //       style: TextStyles.font8White500Weight,
+              //       //     ),
+              //       //   ),
+              //       // ),
+              //     ],
+              //   ),
+              // ),
               SizedBox(width: 12.w),
               Builder(
                 builder: (context) => GestureDetector(

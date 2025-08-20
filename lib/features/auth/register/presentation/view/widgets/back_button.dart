@@ -36,8 +36,8 @@ class BackButtonWidget extends StatelessWidget {
           child: Center(
             child: Icon(
             context.locale.languageCode == "ar"
-                ? Icons.arrow_back 
-                : Icons.arrow_forward,   
+                  ? Icons.arrow_forward  
+      : Icons.arrow_back,  
             size: 18,
             color: Colors.black,
           ),

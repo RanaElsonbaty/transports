@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
-import 'package:transports/features/home/data/models/seats_model.dart';
-import 'package:transports/features/home/presentation/view/widget/custom_drawer.dart';
 import 'package:transports/features/home/presentation/view/widget/start_your_trip.dart';
 import 'package:transports/features/home/presentation/view_model/city_cubit/city_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/create_trip/creating_trip_cubit.dart';

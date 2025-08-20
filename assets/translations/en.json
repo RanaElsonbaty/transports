@@ -66,7 +66,12 @@
       "wait_for_admin_approval": "Please wait a minute for admin approval\nbefore starting the trip",
 
 "trip_started_success": "Trip started successfully ✅",
-  "trip_creation_error": "Error: "
+  "trip_creation_error": "Error: ",
+"passenger_range": "From 1 to {} ",
+  "current_passengers": "Current passengers:",
+  "reserved": "Reserved",
+  "available": "Available"
+
 
 
 }
