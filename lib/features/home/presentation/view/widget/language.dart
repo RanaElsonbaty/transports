@@ -63,8 +63,8 @@ class _ChangeLanguageViewState extends State<ChangeLanguageView> {
                     ),
                   ),
                   Positioned(
-                    right: 0,
-                    child: GestureDetector(
+  right: context.locale.languageCode == 'ar' ? 0 : null,
+  left: context.locale.languageCode != 'ar' ? 0 : null,                    child: GestureDetector(
                       onTap: () {
                         context.pop();
                       },
