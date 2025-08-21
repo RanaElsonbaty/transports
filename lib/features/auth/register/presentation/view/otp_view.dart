@@ -67,7 +67,7 @@ textDirection: context.locale.languageCode == 'ar'
                     backgroundColor: AppColors.primaryDarkGradientColor,
                     context: context,
                     message: state.verifyingOtpModel.message ?? "no message");
-                context.pushNamed(Routes.success);
+                context.pushNamed(Routes.attachmentInfo);
               } else if (state is VerifyingOtpFailure) {
                 showAppSnackBar(
                     context: context,

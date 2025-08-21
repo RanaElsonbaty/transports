@@ -56,7 +56,7 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                 backgroundColor: AppColors.primaryDarkGradientColor,
                 context: context,
                 message: state.vehicleInfoModel.message ?? "No Message");
-            context.pushNamed(Routes.home);
+            context.pushNamed(Routes.success);
           } else if (state is VehicleInfoFailure) {
             showAppSnackBar(
                 context: context,
