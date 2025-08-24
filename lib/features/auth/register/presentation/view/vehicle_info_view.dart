@@ -82,7 +82,7 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                       children: [
                         BackButtonWidget(),
                         const SizedBox(height: 16),
-                        CameraBanner(),
+                        CameraBanner(title: "إضافة بيانات السيارة",),
                         const SizedBox(height: 30),
                          Text(
                           'vehicle_info'.tr(),

@@ -5,8 +5,9 @@ import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/icons.dart';
 
 class CameraBanner extends StatelessWidget {
-  const CameraBanner({super.key, this.isPassengerText});
+  const CameraBanner({super.key, this.isPassengerText,  this.title});
   final bool? isPassengerText;
+  final String ?title;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,7 +28,8 @@ class CameraBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isPassengerText==true?'إضافة بيانات ركاب':'إضافة بيانات السائق',
+                  title??"اضافة بيانات ركاب",
+                  // isPassengerText==true?'إضافة بيانات ركاب':'إضافة بيانات السائق',
                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 Text(
