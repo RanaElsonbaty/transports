@@ -35,8 +35,11 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
     setState(() {
       _selectedLanguage = langCode;
     });
-
+ if (langCode == 'ar_JO') {
+    await context.setLocale(Locale('ar', 'JO'));
+  } else {
     await context.setLocale(Locale(langCode));
+  }
   }
 
   @override
@@ -53,6 +56,16 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
                 Text('🇰🇼', style: TextStyle(fontSize: 20)),
                 SizedBox(width: 8),
                 Text('العربية',style: TextStyles.font14Black400Weight,),
+              ],
+            ),
+          ),
+           DropdownMenuItem(
+            value: 'ar_JO',
+            child: Row(
+              children: [
+                Text('🇯🇴', style: TextStyle(fontSize: 20)),
+                SizedBox(width: 8),
+                Text('الاردنية',style: TextStyles.font14Black400Weight,),
               ],
             ),
           ),

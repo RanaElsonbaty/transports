@@ -131,7 +131,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
 
           if (state is CitySuccess) {
             cities = state.cities
-                .map((e) => context.locale.languageCode == 'ar'
+                .map((e) => context.locale.languageCode == 'ar'&& context.locale.countryCode == 'JO'
                     ? e.nameAr
                     : e.nameEn)
                 .whereType<String>()

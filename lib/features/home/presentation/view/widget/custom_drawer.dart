@@ -25,7 +25,7 @@ class CustomDrawer extends StatelessWidget {
 if(state  is LogOutSuccess){
    showAppSnackBar(context: context, message:state. logOutSuccess) ;
   Navigator.of(context).pushNamedAndRemoveUntil(
-                  Routes.register, (route) => false);
+                  Routes.splash, (route) => false);
             
 }else if(state is LogOutFailure){
     return showAppSnackBar(context: context, message:state.errorMessage) ;

@@ -160,9 +160,13 @@ class SeatBox extends StatelessWidget {
             : isSelected
                 ? AppColors.primarySeatColor
                 : AppColors.primarySeatColor.withOpacity(.1));
- final textStyle = TextStyles.font14SeatBlack500Weight.copyWith(
-      color: isSelected || isReserved ? Colors.white : Colors.black,
+
+    final textStyle = TextStyles.font14SeatBlack500Weight.copyWith(
+      color: isReserved || isSelected
+          ? Colors.white
+          : Colors.black, 
     );
+
     return Container(
       height: 40.h,
       width: 40.w,

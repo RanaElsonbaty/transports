@@ -9,4 +9,5 @@ class AppImages{
   static const String person ='assets/images/person.png';
   static const String logo ='assets/images/logo.png';
   static const String avatar ='assets/images/Avatar.png';
+  static const String tigerLogo  ="assets/images/tiger_logo.jpeg";
 }

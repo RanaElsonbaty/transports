@@ -89,7 +89,7 @@ textDirection: context.locale.languageCode == 'ar'
                                                      ),
                                                      SizedBox(width:10),
                             Text(
-                              '(بيانات السائق)',
+                              'driverInfo'.tr(),
                               style: TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold),
                                                      ),

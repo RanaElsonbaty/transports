@@ -71,7 +71,8 @@
 "passenger_range": "من 1 إلى {} راكب",
   "current_passengers": "عدد الركاب الآن:",
   "reserved": "محجوز",
-  "available": "متاح"
+  "available": "متاح",
+ "driverInfo"   :        "(بيانات السائق)"
 
 
 

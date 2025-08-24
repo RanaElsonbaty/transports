@@ -105,6 +105,12 @@ class _ChangeLanguageViewState extends State<ChangeLanguageView> {
                 name: 'English (UK)',
                 flag: '🇺🇸',
               ),
+               SizedBox(height: 10.h),
+              _buildLanguageOption(
+                langCode: 'ar_JO',
+                name: 'الاردنية',
+                flag: '🇯🇴',
+              ),
             ],
           ),
         ),
