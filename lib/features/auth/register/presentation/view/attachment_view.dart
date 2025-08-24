@@ -78,13 +78,24 @@ textDirection: context.locale.languageCode == 'ar'
                       children: [
                         BackButtonWidget(),
                         const SizedBox(height: 16),
-                        CameraBanner(),
+                        CameraBanner(title: "إضافة بيانات السائق",),
                         const SizedBox(height: 30),
-                         Text(
-                          'attachments'.tr(),
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
+                         Row(
+                           children: [
+                            Text(
+                              'attachments'.tr(),
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                                                     ),
+                                                     SizedBox(width:10),
+                            Text(
+                              '(بيانات السائق)',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                                                     ),
+                             
+                           ],
+                         ),
                         const SizedBox(height: 16),
                         buildInput('nameForm'.tr(), nameController,
                             (value) => Validators.validateName(value!)),
