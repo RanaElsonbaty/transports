@@ -11,7 +11,7 @@ class DriverInfoRepoImpl extends DriverInfoRepo{
   SharedPrefs sharedPrefs;
   DriverInfoRepoImpl(this.apiService,this.sharedPrefs);
   @override
-  Future<Either<Failure, DriverInfoModel>> addDriverInfo({required String name, required String nationalId, required String nationality, required String drivingLicenseNumber, required String drivingLicensExpiry})async {
+  Future<Either<Failure, DriverInfoModel>> addDriverInfo({required String name, required String nationalId, required String nationality})async {
 
 try {
   final token= await sharedPrefs.getToken();
@@ -23,8 +23,7 @@ try {
     "national_id": nationalId,
     "driver_name":name,
     "nationality": nationality,
-    "driving_license_number": drivingLicenseNumber,
-    "driving_license_expiry":drivingLicensExpiry,
+
   });
 
 

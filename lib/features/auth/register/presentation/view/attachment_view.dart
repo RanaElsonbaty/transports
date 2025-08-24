@@ -101,16 +101,8 @@ textDirection: context.locale.languageCode == 'ar'
                             (value) => Validators.validateName(value!)),
                         buildInput('national_id'.tr(), nationalIdController,
                             (value) => Validators.validateNationalId(value!)),
-                        buildInput(
-                            'driving_license_expiry'.tr(),
-                            drivingLicenseExpiryController,
-                            (value) => Validators.validateDrivingLicenseExpiry(
-                                value!)),
-                        buildInput(
-                            'driving_license_number'.tr(),
-                            drivingLicenseNumberController,
-                            (value) =>
-                                Validators.validateDrivingLicense(value!)),
+                       
+                       
                         buildInput('nationality'.tr(), nationalityController,
                             (value) => Validators.validateNationality(value!)),
                         SizedBox(

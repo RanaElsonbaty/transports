@@ -10,7 +10,7 @@ class DriverInfoCubit extends Cubit<DriverInfoState> {
   DriverInfoRepo driverInfoRepo;
   Future<void>addDriverInfo({required String name, required String nationalId, required String nationality, required String drivingLicenseNumber, required String drivingLicensExpiry})async{
 emit(DriverInfoLoading());
-final result=  await driverInfoRepo.addDriverInfo(name: name, nationalId: nationalId, nationality: nationality, drivingLicenseNumber: drivingLicenseNumber, drivingLicensExpiry: drivingLicensExpiry);
+final result=  await driverInfoRepo.addDriverInfo(name: name, nationalId: nationalId, nationality: nationality,  );
   result.fold((fail)=>emit(DriverInfoFailure(errorMessage: fail.errorMessage)), (data)=>emit(DriverInfoSuccess(data)));
   }
 }
