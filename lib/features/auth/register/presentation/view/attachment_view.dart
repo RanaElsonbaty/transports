@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'dart:ui' as ui;
-
-import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,6 +16,8 @@ import 'package:transports/features/auth/register/presentation/view/widgets/back
 import 'package:transports/features/auth/register/presentation/view/widgets/camera_banner.dart';
 import 'package:transports/features/auth/register/presentation/view_model/cubits/driver_info/driver_info_cubit.dart';
 import 'package:transports/features/home/presentation/view/widget/start_your_trip.dart';
+import 'package:transports/features/home/presentation/view_model/pick_data/extract_image_cubit.dart';
+import 'package:transports/features/home/data/models/extract_image_model.dart';
 
 class AttachmentsView extends StatefulWidget {
   const AttachmentsView({super.key});
@@ -34,7 +34,7 @@ class _AttachmentsViewState extends State<AttachmentsView> {
   final TextEditingController nationalityController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController nationalIdController = TextEditingController();
-  GlobalKey<FormState> globalKey = GlobalKey();
+  final GlobalKey<FormState> globalKey = GlobalKey();
 
   File? selectedImage;
   final ImagePicker _picker = ImagePicker();
@@ -50,136 +50,161 @@ class _AttachmentsViewState extends State<AttachmentsView> {
     super.dispose();
   }
 
-  /// pick image and send to API
-  Future<void> _pickAndExtract() async {
+  Future<void> _pickAndExtract(BuildContext context) async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile == null) return;
 
     setState(() => isLoadingImage = true);
     selectedImage = File(pickedFile.path);
 
-    try {
-      final dio = Dio(BaseOptions(baseUrl: "https://my-bus.storage-te.com/api/"));
-      final formData = FormData.fromMap({
-        "file": await MultipartFile.fromFile(selectedImage!.path,
-            filename: selectedImage!.path.split('/').last),
-      });
-
-      final response = await dio.post("extract-images", data: formData);
-
-      if (response.statusCode == 200 && response.data["success"] == true) {
-        final data = response.data["data"]["extracted_data"];
-
-        setState(() {
-          nameController.text = data["full_name"] ?? "";
-          nationalIdController.text = data["national_id"] ?? "";
-          nationalityController.text = data["nationality"] ?? "";
-          drivingLicenseExpiryController.text = data["date_of_expiry"] ?? "";
-        });
-
-        showAppSnackBar(
-            context: context, message: response.data["message"] ?? "تم استخراج البيانات بنجاح");
-      } else {
-        showAppSnackBar(context: context, message: "فشل في استخراج البيانات");
-      }
-    } catch (e) {
-      showAppSnackBar(context: context, message: "حدث خطأ أثناء الإرسال: $e");
-    } finally {
-      setState(() => isLoadingImage = false);
-    }
+    context.read<ExtractImageCubit>().extractImageData(selectedImage!);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt.get<DriverInfoCubit>(),
-      child: BlocConsumer<DriverInfoCubit, DriverInfoState>(
-        listener: (context, state) {
-          if (state is DriverInfoSuccess) {
-            showAppSnackBar(
-                context: context, message: state.driverInfoModel.message ?? "");
-            context.pushNamed(Routes.vehicleInfo);
-          } else if (state is DriverInfoFailure) {
-            showAppSnackBar(context: context, message: state.errorMessage);
-          }
-        },
-        builder: (context, state) {
-          return Scaffold(
-            backgroundColor: AppColors.whiteColor,
-            body: Directionality(
-              textDirection: context.locale.languageCode == 'ar'
-                  ? ui.TextDirection.rtl
-                  : ui.TextDirection.ltr,
-              child: SingleChildScrollView(
-                child: Form(
-                  key: globalKey,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24.0, vertical: 40),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        BackButtonWidget(),
-                        const SizedBox(height: 16),
-                        CameraBanner(
-                          title: "إضافة بيانات السائق",
-                          onTap: _pickAndExtract,
-                        ),
-                        if (isLoadingImage)
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 12),
-                            child: Center(child: CircularProgressIndicator()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => getIt.get<DriverInfoCubit>()),
+      ],
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<DriverInfoCubit, DriverInfoState>(
+            listener: (context, state) {
+              if (state is DriverInfoSuccess) {
+                showAppSnackBar(
+                  context: context,
+                  message: state.driverInfoModel.message ?? "",
+                );
+                context.pushNamed(Routes.vehicleInfo);
+              } else if (state is DriverInfoFailure) {
+                showAppSnackBar(context: context, message: state.errorMessage);
+              }
+            },
+          ),
+          BlocListener<ExtractImageCubit, ExtractImageState>(
+            listener: (context, state) {
+              setState(() => isLoadingImage = state is ExtractImageLoading);
+
+              if (state is ExtractImageSuccess) {
+                final ExtractedData? data = state.model.data!.extractedData;
+                if (data != null) {
+                  setState(() {
+                    nameController.text = data.fullNameAr ?? '';
+                    nationalIdController.text = data.nationalId ?? '';
+                    nationalityController.text =
+                        data.nationalityAr ?? '';
+                    drivingLicenseNumberController.text =
+                        data.drivingLicenseNumber ?? '';
+                    drivingLicenseExpiryController.text =
+                        data.drivingLicenseExpiry ?? '';
+                  });
+                }
+
+                showAppSnackBar(
+                  context: context,
+                  message: state.model.message ?? "تم استخراج البيانات بنجاح",
+                );
+              } else if (state is ExtractImageFailure) {
+                showAppSnackBar(
+                  context: context,
+                  message: state.message,
+                );
+              }
+            },
+          ),
+        ],
+        child: Scaffold(
+          backgroundColor: AppColors.whiteColor,
+          body: Directionality(
+            textDirection: context.locale.languageCode == 'ar'
+                ? ui.TextDirection.rtl
+                : ui.TextDirection.ltr,
+            child: SingleChildScrollView(
+              child: Form(
+                key: globalKey,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0, vertical: 40),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BackButtonWidget(),
+                      const SizedBox(height: 16),
+                      CameraBanner(
+                        title: "إضافة بيانات السائق",
+                        onTap: () => _pickAndExtract(context),
+                      ),
+                      if (selectedImage != null)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.file(
+                              selectedImage!,
+                              width: double.infinity,
+                              height: 200,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        const SizedBox(height: 30),
-                        Row(
-                          children: [
-                            Text(
-                              'attachments'.tr(),
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(width: 10),
-                            const Text(
-                              '(بيانات السائق)',
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                          ],
+                        )
+                      else if (isLoadingImage)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Center(child: CircularProgressIndicator()),
                         ),
-                        const SizedBox(height: 16),
-                        buildInput('nameForm'.tr(), nameController,
-                                (value) => Validators.validateName(value!)),
-                        buildInput('national_id'.tr(), nationalIdController,
-                                (value) => Validators.validateNationalId(value!)),
-                        buildInput('nationality'.tr(), nationalityController,
-                                (value) => Validators.validateNationality(value!)),
-                        SizedBox(height: 60.h),
-                        state is DriverInfoLoading
-                            ? const Center(child: CircularProgressIndicator())
-                            : CustomPrimaryButton(
-                          text: 'next'.tr(),
-                          onPressed: () {
-                            if (globalKey.currentState!.validate()) {
-                              context.read<DriverInfoCubit>().addDriverInfo(
-                                name: nameController.text,
-                                nationalId: nationalIdController.text,
-                                nationality: nationalityController.text,
-                                drivingLicenseNumber:
-                                drivingLicenseNumberController.text,
-                                drivingLicensExpiry:
-                                drivingLicenseExpiryController.text,
-                              );
-                            }
-                          },
-                        ),
-                      ],
-                    ),
+                      const SizedBox(height: 30),
+                      Row(
+                        children: [
+                          Text(
+                            'attachments'.tr(),
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 10),
+                          const Text(
+                            '(بيانات السائق)',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      buildInput('nameForm'.tr(), nameController,
+                              (value) => Validators.validateName(value!)),
+                      buildInput('national_id'.tr(), nationalIdController,
+                              (value) => Validators.validateNationalId(value!)),
+                      buildInput('nationality'.tr(), nationalityController,
+                              (value) => Validators.validateNationality(value!)),
+                      SizedBox(height: 60.h),
+                      BlocBuilder<DriverInfoCubit, DriverInfoState>(
+                        builder: (context, state) {
+                          return state is DriverInfoLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : CustomPrimaryButton(
+                            text: 'next'.tr(),
+                            onPressed: () {
+                              if (globalKey.currentState!.validate()) {
+                                context
+                                    .read<DriverInfoCubit>()
+                                    .addDriverInfo(
+                                  name: nameController.text,
+                                  nationalId:
+                                  nationalIdController.text,
+                                  nationality:
+                                  nationalityController.text,
+                                );
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -196,21 +221,16 @@ class _AttachmentsViewState extends State<AttachmentsView> {
           hintStyle: TextStyles.font14Black700Weight,
           filled: true,
           fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.sp),
-            borderSide: BorderSide(color: AppColors.borderColor),
-          ),
+              borderRadius: BorderRadius.circular(10.sp),
+              borderSide: BorderSide(color: AppColors.borderColor)),
           disabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.sp),
-            borderSide: BorderSide(color: AppColors.greyColor),
-          ),
+              borderRadius: BorderRadius.circular(10.sp),
+              borderSide: BorderSide(color: AppColors.greyColor)),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.sp),
-            borderSide: BorderSide(color: AppColors.greyColor),
-          ),
+              borderRadius: BorderRadius.circular(10.sp),
+              borderSide: BorderSide(color: AppColors.greyColor)),
         ),
       ),
     );

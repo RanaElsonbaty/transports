@@ -13,6 +13,7 @@ import 'package:transports/features/home/presentation/view/profile_view.dart';
 import 'package:transports/features/home/presentation/view/widget/language.dart';
 import 'package:transports/features/home/presentation/view_model/city_cubit/city_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/logout_cubit/log_out_cubit.dart';
+import 'package:transports/features/home/presentation/view_model/pick_data/extract_image_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/previouse_trip/previous_trips_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/profile_cubit/profile_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/reserve_cubit/cubit/reserve_seat_cubit.dart';
@@ -37,10 +38,14 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => ChangeLanguageView());
 
       case Routes.attachmentInfo:
-        return MaterialPageRoute(builder: (_) => AttachmentsView());
+        return MaterialPageRoute(builder: (_) => BlocProvider(
+            create: (context) => ExtractImageCubit(),
+            child: AttachmentsView()));
 
       case Routes.vehicleInfo:
-        return MaterialPageRoute(builder: (_) => VehicleInfoView());
+        return MaterialPageRoute(builder: (_) => BlocProvider(
+            create: (context) => ExtractImageCubit(),
+            child: VehicleInfoView()));
       case Routes.home:
         return MaterialPageRoute(
             builder: (_) => MultiBlocProvider(
