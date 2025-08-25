@@ -60,6 +60,8 @@ class AppRoutes {
                     BlocProvider(create: (context) => getIt.get<SeatsCubit>()),
                     BlocProvider(
                         create: (context) => getIt.get<ReserveSeatCubit>()),
+                    BlocProvider(
+                        create: (context) => ExtractImageCubit()),
                   ],
                   child: HomeView(),
                 ));

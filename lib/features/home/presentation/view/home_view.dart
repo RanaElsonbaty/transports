@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:transports/core/helper_function/snack_bar.dart';
 import 'package:transports/core/service/service_locater.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/icons.dart';
@@ -16,6 +20,7 @@ import 'package:transports/features/home/presentation/view/widget/custom_drawer.
 import 'package:transports/features/home/presentation/view/widget/top_widget.dart';
 import 'package:transports/features/home/presentation/view/widget/trip_details_widget.dart';
 import 'package:transports/features/home/presentation/view_model/create_trip/creating_trip_cubit.dart';
+import 'package:transports/features/home/presentation/view_model/pick_data/extract_image_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/seats_cubit/seats_cubit.dart';
 
 class HomeView extends StatefulWidget {
@@ -249,10 +254,11 @@ List<Map<String, String>> currentBigBusPassengers = [];
 
   void _openSeatBottomSheet(String seatNumber) {
     final currentPassengersData =
-        miniBusSelected ? miniBusPassengersData : bigBusPassengersData;
+    miniBusSelected ? miniBusPassengersData : bigBusPassengersData;
 
+    // Check if seat already has passenger data
     final existingPassengerIndex =
-        currentPassengersData.indexWhere((p) => p['seat_number'] == seatNumber);
+    currentPassengersData.indexWhere((p) => p['seat_number'] == seatNumber);
 
     if (existingPassengerIndex != -1) {
       final existingData = currentPassengersData[existingPassengerIndex];
@@ -273,96 +279,147 @@ List<Map<String, String>> currentBigBusPassengers = [];
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       isScrollControlled: true,
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 20,
-            right: 20,
-            top: 20,
-          ),
-          child: SingleChildScrollView(
-
-            child: Form(
-              key: globalKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CameraBanner(),
-                  // Text('Selected Seat $seatNumber'),
-                  const SizedBox(height: 16),
-                  CustomTextFormField(
-                    controller: nameController,
-                    hint: 'Enter Name',
-                    validator: (value) => Validators.validateName(value!),
-                  ),
-                 
-                  const SizedBox(height: 16),
-                  CustomTextFormField(
-                    controller: seatIdController,
-                    hint: 'Seat ID',
-                    enabled: false,
-                    validator: (value) => Validators.validateSeatId(value!),
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextFormField(
-                    controller: nationalIdController,
-                    hint: 'National ID',
-                    validator: (value) => Validators.validateNationalId(value),
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextFormField(
-                    controller: nationalityController,
-                    hint: 'Nationality',
-                    validator: (value) =>
-                        Validators.validateNationality(value!),
-                  ),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: AppColors.whiteColor,
-                        minimumSize: Size(double.infinity, 40),
-                        backgroundColor: AppColors.primaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+      builder: (ctx) {
+        return BlocProvider.value(
+          value: context.read<ExtractImageCubit>(),
+          child: MultiBlocListener(
+            listeners: [
+              BlocListener<ExtractImageCubit, ExtractImageState>(
+                listener: (context, state) {
+                  if (state is ExtractImageLoading) {
+                    showAppSnackBar(
+                      context: context,
+                      message: "جارٍ استخراج البيانات...",
+                    );
+                  } else if (state is ExtractImageSuccess) {
+                    final extracted = state.model.data?.extractedData;
+                    if (extracted != null) {
+                      setState(() {
+                        nameController.text = extracted.fullNameAr ?? '';
+                        nationalIdController.text = extracted.nationalId ?? '';
+                        nationalityController.text = extracted.nationalityAr ?? '';
+                      });
+                    }
+                    showAppSnackBar(
+                      context: context,
+                      message: state.model.message ?? "تم استخراج البيانات بنجاح",
+                    );
+                  } else if (state is ExtractImageFailure) {
+                    showAppSnackBar(
+                      context: context,
+                      message: state.message,
+                    );
+                  }
+                },
+              ),
+            ],
+            child: Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 20,
+                right: 20,
+                top: 20,
+              ),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: globalKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      /// Upload ID Image
+                      CameraBanner(
+                        title: "رفع صورة لاستخراج البيانات",
+                        onTap: () async {
+                          final pickedFile = await ImagePicker().pickImage(
+                            source: ImageSource.gallery,
+                          );
+                          if (pickedFile != null) {
+                            final selectedImage = File(pickedFile.path);
+                            context
+                                .read<ExtractImageCubit>()
+                                .extractImageData(selectedImage);
+                          }
+                        },
                       ),
-                      onPressed: () {
-                        if (globalKey.currentState!.validate()) {
-                          final passenger = {
-                            "name": nameController.text,
-                            "seat_number": seatIdController.text,
-                            "national_id": nationalIdController.text,
-                            "nationality": nationalityController.text,
-                          };
+                      const SizedBox(height: 16),
 
-                          if (existingPassengerIndex != -1) {
-                            currentPassengersData[existingPassengerIndex] =
-                                passenger;
-                          } else {
-                            currentPassengersData.add(passenger);
-                            if (miniBusSelected) {
-      currentMiniBusPassengers.add(passenger);
-      occupiedMiniBusSeats.add(seatIdController.text);
-    } else {
-      currentBigBusPassengers.add(passenger);
-      occupiedBigBusSeats.add(seatIdController.text);
-    }
+                      /// Name Field
+                      CustomTextFormField(
+                        controller: nameController,
+                        hint: 'Enter Name',
+                        validator: (value) => Validators.validateName(value!),
+                      ),
+                      const SizedBox(height: 16),
+
+                      /// Seat ID Field
+                      CustomTextFormField(
+                        controller: seatIdController,
+                        hint: 'Seat ID',
+                        enabled: false,
+                        validator: (value) => Validators.validateSeatId(value!),
+                      ),
+                      const SizedBox(height: 16),
+
+                      /// National ID Field
+                      CustomTextFormField(
+                        controller: nationalIdController,
+                        hint: 'National ID',
+                        validator: (value) => Validators.validateNationalId(value),
+                      ),
+                      const SizedBox(height: 16),
+
+                      /// Nationality Field
+                      CustomTextFormField(
+                        controller: nationalityController,
+                        hint: 'Nationality',
+                        validator: (value) =>
+                            Validators.validateNationality(value!),
+                      ),
+                      const SizedBox(height: 16),
+
+                      /// Confirm Button
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: AppColors.whiteColor,
+                          minimumSize: const Size(double.infinity, 40),
+                          backgroundColor: AppColors.primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () {
+                          if (globalKey.currentState!.validate()) {
+                            final passenger = {
+                              "name": nameController.text,
+                              "seat_number": seatIdController.text,
+                              "national_id": nationalIdController.text,
+                              "nationality": nationalityController.text,
+                            };
+
+                            // Update or Add passenger to the correct bus data
+                            if (existingPassengerIndex != -1) {
+                              currentPassengersData[existingPassengerIndex] =
+                                  passenger;
+                            } else {
+                              currentPassengersData.add(passenger);
+                              if (miniBusSelected) {
+                                currentMiniBusPassengers.add(passenger);
+                                occupiedMiniBusSeats.add(seatIdController.text);
+                              } else {
+                                currentBigBusPassengers.add(passenger);
+                                occupiedBigBusSeats.add(seatIdController.text);
+                              }
+                            }
 
                             setState(() {});
-
-                            print("data added");
+                            Navigator.pop(context);
                           }
-
-                          Navigator.pop(context);
-                        }
-                      },
-                      child: const Text('Confirm'),
-                    ),
+                        },
+                        child: const Text('Confirm'),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -379,6 +436,9 @@ List<Map<String, String>> currentBigBusPassengers = [];
       providers: [
         BlocProvider(
           create: (context) => getIt.get<CreatingTripCubit>(),
+        ),
+        BlocProvider(
+          create: (context) => ExtractImageCubit(),
         ),
       ],
       child: Scaffold(
