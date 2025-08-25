@@ -70,7 +70,8 @@
 "passenger_range": "From 1 to {} ",
   "current_passengers": "Current passengers:",
   "reserved": "Reserved",
-  "available": "Available"
+  "available": "Available",
+ "driverInfo"   :          "(Driver Information)"
 
 
 

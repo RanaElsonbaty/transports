@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:transports/core/constant/end_point.dart';
 import 'package:transports/core/failure/failure.dart';
-import 'package:transports/core/failure/failure.dart';
 import 'package:transports/core/service/api_service.dart';
 import 'package:transports/core/storage/shared_prefs.dart';
 import 'package:transports/features/auth/data/models/log_out_model.dart';

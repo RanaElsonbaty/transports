@@ -9,6 +9,7 @@ import 'package:transports/core/theming/icons.dart';
 import 'package:transports/core/theming/images.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/core/validator/validator.dart';
+import 'package:transports/features/auth/register/presentation/view/widgets/camera_banner.dart';
 import 'package:transports/features/home/data/models/seats_model.dart';
 import 'package:transports/features/home/presentation/view/bus_seat_selection_view.dart';
 import 'package:transports/features/home/presentation/view/widget/custom_drawer.dart';
@@ -232,9 +233,9 @@ List<Map<String, String>> currentBigBusPassengers = [];
   Color seatColor(bool isMiniBus, String seatNumber, String status) {
     if (isMiniBus) {
       if (occupiedMiniBusSeats.contains(seatNumber))
-        return Colors.black; // محجوز
+        return Colors.black; 
       if (selectedMiniBusSeats.contains(seatNumber))
-        return AppColors.primarySeatColor; // مختار
+        return AppColors.primarySeatColor; 
     } else {
       if (occupiedBigBusSeats.contains(seatNumber)) return Colors.black;
       if (selectedBusSeats.contains(seatNumber))
@@ -256,13 +257,11 @@ List<Map<String, String>> currentBigBusPassengers = [];
     if (existingPassengerIndex != -1) {
       final existingData = currentPassengersData[existingPassengerIndex];
       nameController.text = existingData['name'];
-      phoneController.text = existingData['phone'];
       seatIdController.text = existingData['seat_number'];
       nationalIdController.text = existingData['national_id'];
       nationalityController.text = existingData['nationality'];
     } else {
       nameController.clear();
-      phoneController.clear();
       seatIdController.text = seatNumber;
       nationalIdController.clear();
       nationalityController.clear();
@@ -283,26 +282,21 @@ List<Map<String, String>> currentBigBusPassengers = [];
             top: 20,
           ),
           child: SingleChildScrollView(
+
             child: Form(
               key: globalKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Selected Seat $seatNumber'),
+                  CameraBanner(),
+                  // Text('Selected Seat $seatNumber'),
                   const SizedBox(height: 16),
                   CustomTextFormField(
                     controller: nameController,
                     hint: 'Enter Name',
                     validator: (value) => Validators.validateName(value!),
                   ),
-                  const SizedBox(height: 16),
-                  CustomTextFormField(
-                    controller: phoneController,
-                    hint: 'Enter Phone',
-                    keyboardType: TextInputType.phone,
-                    validator: (value) =>
-                        Validators.validatePhoneNumber(value!),
-                  ),
+                 
                   const SizedBox(height: 16),
                   CustomTextFormField(
                     controller: seatIdController,
@@ -339,7 +333,6 @@ List<Map<String, String>> currentBigBusPassengers = [];
                         if (globalKey.currentState!.validate()) {
                           final passenger = {
                             "name": nameController.text,
-                            "phone": phoneController.text,
                             "seat_number": seatIdController.text,
                             "national_id": nationalIdController.text,
                             "nationality": nationalityController.text,
@@ -492,157 +485,175 @@ List<Map<String, String>> currentBigBusPassengers = [];
                  Container( width: 20, height: 20, decoration: BoxDecoration( color: AppColors.primarySeatColor.withOpacity(.1), borderRadius: BorderRadius.circular(4), ), ), const SizedBox(width: 8),
                   Text('available'.tr(),style: TextStyles.font10SeatBlack500Weight), ], ), 
                  const SizedBox(height: 40), 
-                 Row( mainAxisAlignment: MainAxisAlignment.end, children: [ SvgPicture.asset(AppIcons.busSeat), 
-                 SizedBox(width: 95.w,), ], ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: seatMatrix.map((row) {
-                                final leftSeats =
-                                    row.take(maxCol ~/ 2).toList();
-                                final rightSeats =
-                                    row.skip(maxCol ~/ 2).toList();
+                // //  Row( mainAxisAlignment: MainAxisAlignment.end, children: [ SvgPicture.asset(AppIcons.busSeat), 
+                //  SizedBox(width: 95.w,), ], ),
+Column(
+  crossAxisAlignment: CrossAxisAlignment.center,
+  children: [
+    if (!miniBusSelected)
+      Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          SvgPicture.asset(AppIcons.busSeat),
+          SizedBox(width: 120.w),
+        ],
+      ),
+    SizedBox(height: 12),
 
-                                return Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 6),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                        width: (maxCol ~/ 2) * 60.0,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: leftSeats.map((seat) {
-                                            if (seat == null) {
-                                              return SizedBox(
-                                                  width: 40, height: 40);
-                                            }
-                                            bool isReserved =
-                                                seat.status != "available";
-                                            return GestureDetector(
-                                              onTap: () {
-                                                if (isReserved ||
-                                                    isOccupied(
-                                                        seat.seatNumber
-                                                            .toString(),
-                                                        isMiniBus:
-                                                            miniBusSelected)) {
-                                                  return;
-                                                }
+    if (miniBusSelected) ...[
+      // العمود الأول: أول كرسيين + أيقونة
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // أول كرسيين
+              ...seatMatrix[0].take(2).map((seat) {
+                if (seat == null) return const SizedBox(width: 40, height: 40);
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      toggleSeat(seat.seatNumber.toString(), isMiniBus: true);
+                      if (selectedMiniBusSeats.contains(seat.seatNumber.toString())) {
+                        _openSeatBottomSheet(seat.seatNumber.toString());
+                      }
+                    },
+                    child: SeatBox(
+                      label: seat.seatNumber.toString(),
+                      isReserved: seat.status != "available",
+                      isSelected: selectedMiniBusSeats.contains(seat.seatNumber.toString()),
+                      color: seatColor(true, seat.seatNumber.toString(), seat.status!),
+                    ),
+                  ),
+                );
+              }).toList(),
 
-                                                if (isReserved) return;
-                                                toggleSeat(
-                                                    seat.seatNumber.toString(),
-                                                    isMiniBus: miniBusSelected);
-                                                if (miniBusSelected &&
-                                                        selectedMiniBusSeats
-                                                            .contains(seat
-                                                                .seatNumber
-                                                                .toString()) ||
-                                                    !miniBusSelected &&
-                                                        selectedBusSeats
-                                                            .contains(seat
-                                                                .seatNumber
-                                                                .toString())) {
-                                                  _openSeatBottomSheet(seat
-                                                      .seatNumber
-                                                      .toString());
-                                                }
-                                                setState(() {});
-                                              },
-                                              child: SeatBox(
-                                                label:
-                                                    seat.seatNumber.toString(),
-                                                isReserved:
-                                                    seat.status != "available",
-                                                isSelected: miniBusSelected
-                                                    ? selectedMiniBusSeats
-                                                        .contains(seat
-                                                            .seatNumber
-                                                            .toString())
-                                                    : selectedBusSeats.contains(
-                                                        seat.seatNumber
-                                                            .toString()),
-                                                color: seatColor(
-                                                    miniBusSelected,
-                                                    seat.seatNumber.toString(),
-                                                    seat.status!),
-                                              ),
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ),
-                                      SizedBox(width: 20.w),
-                                      SizedBox(
-                                        width: (maxCol ~/ 2) * 60.0,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: rightSeats.map((seat) {
-                                            if (seat == null) {
-                                              return const SizedBox(
-                                                  width: 40, height: 40);
-                                            }
-                                            bool isReserved =
-                                                seat.status != "available";
-                                            return GestureDetector(
-                                              onTap: () {
-                                                if (isReserved ||
-                                                    isOccupied(
-                                                        seat.seatNumber
-                                                            .toString(),
-                                                        isMiniBus:
-                                                            miniBusSelected)) {
-                                                  return;
-                                                }
+              // أيقونة بعد أول كرسيين
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: SvgPicture.asset(AppIcons.busSeat),
+              ),
+            ],
+          ),
+          SizedBox(height: 12),
 
-                                                if (isReserved) return;
-                                                toggleSeat(
-                                                    seat.seatNumber.toString(),
-                                                    isMiniBus: miniBusSelected);
-                                                if (miniBusSelected &&
-                                                        selectedMiniBusSeats
-                                                            .contains(seat
-                                                                .seatNumber
-                                                                .toString()) ||
-                                                    !miniBusSelected &&
-                                                        selectedBusSeats
-                                                            .contains(seat
-                                                                .seatNumber
-                                                                .toString())) {
-                                                  _openSeatBottomSheet(seat
-                                                      .seatNumber
-                                                      .toString());
-                                                }
-                                              },
-                                              child: SeatBox(
-                                                label:
-                                                    seat.seatNumber.toString(),
-                                                isReserved:
-                                                    seat.status != "available",
-                                                isSelected: miniBusSelected
-                                                    ? selectedMiniBusSeats
-                                                        .contains(seat
-                                                            .seatNumber
-                                                            .toString())
-                                                    : selectedBusSeats.contains(
-                                                        seat.seatNumber
-                                                            .toString()),
-                                                color: seatColor(
-                                                    miniBusSelected,
-                                                    seat.seatNumber.toString(),
-                                                    seat.status!),
-                                              ),
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
-                            ),
+          // باقي المقاعد مقسمة على عمودين
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // العمود الأول
+              Column(
+                children: seatMatrix
+                    .expand((row) => row)
+                    .skip(2)
+                    .toList()
+                    .asMap()
+                    .entries
+                    .where((entry) => entry.key % 2 == 0)
+                    .map((entry) {
+                  final seat = entry.value;
+                  if (seat == null) return const SizedBox(height: 40, width: 40);
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        toggleSeat(seat.seatNumber.toString(), isMiniBus: true);
+                        if (selectedMiniBusSeats.contains(seat.seatNumber.toString())) {
+                          _openSeatBottomSheet(seat.seatNumber.toString());
+                        }
+                      },
+                      child: SeatBox(
+                        label: seat.seatNumber.toString(),
+                        isReserved: seat.status != "available",
+                        isSelected: selectedMiniBusSeats.contains(seat.seatNumber.toString()),
+                        color: seatColor(true, seat.seatNumber.toString(), seat.status!),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+
+              // مسافة أكبر بين العمودين
+              SizedBox(width: 40.w),
+
+              // العمود الثاني
+              Column(
+                children: seatMatrix
+                    .expand((row) => row)
+                    .skip(2)
+                    .toList()
+                    .asMap()
+                    .entries
+                    .where((entry) => entry.key % 2 == 1)
+                    .map((entry) {
+                  final seat = entry.value;
+                  if (seat == null) return const SizedBox(height: 40, width: 40);
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        toggleSeat(seat.seatNumber.toString(), isMiniBus: true);
+                        if (selectedMiniBusSeats.contains(seat.seatNumber.toString())) {
+                          _openSeatBottomSheet(seat.seatNumber.toString());
+                        }
+                      },
+                      child: SeatBox(
+                        label: seat.seatNumber.toString(),
+                        isReserved: seat.status != "available",
+                        isSelected: selectedMiniBusSeats.contains(seat.seatNumber.toString()),
+                        color: seatColor(true, seat.seatNumber.toString(), seat.status!),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ] else ...[
+      // الباص العادي
+      ...seatMatrix.asMap().entries.map((entry) {
+        final row = entry.value;
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: row.map((seat) {
+              if (seat == null) return const SizedBox(width: 40, height: 40);
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: GestureDetector(
+                  onTap: () {
+                    toggleSeat(seat.seatNumber.toString(), isMiniBus: false);
+                    if (selectedBusSeats.contains(seat.seatNumber.toString())) {
+                      _openSeatBottomSheet(seat.seatNumber.toString());
+                    }
+                  },
+                  child: SeatBox(
+                    label: seat.seatNumber.toString(),
+                    isReserved: seat.status != "available",
+                    isSelected: selectedBusSeats.contains(seat.seatNumber.toString()),
+                    color: seatColor(false, seat.seatNumber.toString(), seat.status!),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        );
+      }).toList(),
+    ],
+  ],
+)
+
+
+,
+
+
+
+
                             Padding(
                               padding: EdgeInsets.only(right: 20.w, top: 20.h),
                               child: Align(

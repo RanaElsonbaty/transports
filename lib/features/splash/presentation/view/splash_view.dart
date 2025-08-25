@@ -28,15 +28,10 @@ class _SplashViewState extends State<SplashView> {
       body:
       FadeIn(
         duration: const Duration(milliseconds: 300),
-        child: Center(
-          child: Shimmer.fromColors(
-            baseColor: AppColors.greenColor,
-            highlightColor: AppColors.greyColor,
-            child: Image.asset(
-              AppImages.logo,
-              height: 350.h,
-              fit: BoxFit.contain,),
-          ),),
+        child: Image.asset(
+          AppImages.tigerLogo,
+          height: double.infinity,
+          fit: BoxFit.fill,),
       ),
     );
   }
