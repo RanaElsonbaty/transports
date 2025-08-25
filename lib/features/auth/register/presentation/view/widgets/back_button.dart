@@ -7,7 +7,6 @@ import 'dart:ui' as ui;
 
 class BackButtonWidget extends StatelessWidget {
   const BackButtonWidget({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Directionality(
