@@ -7,6 +7,7 @@ import 'package:transports/features/home/data/models/previous_trips.dart';
 import 'package:transports/features/home/presentation/view/widget/custom_shimmer_body.dart';
 import 'package:transports/features/home/presentation/view/widget/web_view_page.dart';
 import 'package:transports/features/home/presentation/view_model/previouse_trip/previous_trips_cubit.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PreviousTripsView extends StatelessWidget {
   const PreviousTripsView({super.key});
@@ -66,20 +67,65 @@ class PreviousTripItem extends StatelessWidget {
             Text("${"status".tr()}: ${trips.status}"),
           ],
         ),
-         trailing: IconButton(
-      icon: const Icon(Icons.visibility, color: AppColors.primaryColor),
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => HtmlViewerPage(
-              // url: "https://my-app-livid-ten-94.vercel.app/?tripId=${trips.id}",
-           url: "https://my-app-livid-ten-94.vercel.app/trips/${trips.id}",
-            ),
-          ),
-        );
-      },
-    ),
+         trailing: Row(
+           mainAxisSize: MainAxisSize.min,
+           children: [
+             IconButton(
+                   icon: const Icon(Icons.visibility, color: AppColors.primaryColor),
+                   onPressed: () {
+                     Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => HtmlViewerPage(
+                  // url: "https://my-app-livid-ten-94.vercel.app/?tripId=${trips.id}",
+               url: "https://my-app-livid-ten-94.vercel.app/trips/${trips.id}",
+                ),
+              ),
+                     );
+                   },
+                 ),
+             IconButton(
+               icon: const Icon(Icons.ios_share_outlined, color: AppColors.primaryColor),
+               onPressed: () async {
+                 final rawPhone = trips.driver?.phone ?? "";
+                 final tripUrl = "https://my-app-livid-ten-94.vercel.app/trips/${trips.id}";
+
+                 // تحقق من وجود رقم
+                 if (rawPhone.isEmpty) {
+                   ScaffoldMessenger.of(context).showSnackBar(
+                     const SnackBar(content: Text("No phone number found for this driver.")),
+                   );
+                   return;
+                 }
+
+                 // نظف الرقم (أزل أي رموز غير أرقام)
+                 final phone = rawPhone.replaceAll(RegExp(r'[^0-9]'), '');
+
+                 // لو الرقم بدون كود دولة، أضف الكود يدويًا
+                 final formattedPhone = phone.startsWith("966") ? phone : "966$phone";
+
+                 final whatsappUrl = Uri.parse("https://wa.me/$formattedPhone?text=$tripUrl");
+
+                 try {
+                   if (await canLaunchUrl(whatsappUrl)) {
+                     await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+                   } else {
+                     ScaffoldMessenger.of(context).showSnackBar(
+                       const SnackBar(content: Text("Could not open WhatsApp.")),
+                     );
+                   }
+                 } catch (e) {
+                   debugPrint("Error launching WhatsApp: $e");
+                   ScaffoldMessenger.of(context).showSnackBar(
+                     SnackBar(content: Text("Failed to share on WhatsApp: $e")),
+                   );
+                 }
+               },
+             ),
+
+
+           ],
+         ),
 //           Row(
 //   mainAxisSize: MainAxisSize.min,
 //   children: [
