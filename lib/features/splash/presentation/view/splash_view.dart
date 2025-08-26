@@ -1,9 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:transports/core/routing/app_routing.dart';
-import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/images.dart';
 
 class SplashView extends StatefulWidget {

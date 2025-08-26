@@ -71,7 +71,11 @@
   "current_passengers": "Current passengers:",
   "reserved": "Reserved",
   "available": "Available",
- "driverInfo"   :          "(Driver Information)"
+ "driverInfo"   : "(Driver Information)",
+   "select_bus_type": "Select bus type",
+     "no_trips": "No previous trips"
+
+
 
 
 

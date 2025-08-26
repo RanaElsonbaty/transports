@@ -72,7 +72,11 @@
   "current_passengers": "عدد الركاب الآن:",
   "reserved": "محجوز",
   "available": "متاح",
- "driverInfo"   :        "(بيانات السائق)"
+ "driverInfo"   :        "(بيانات السائق)",
+   "select_bus_type": "حدِّد نوع الباص",
+     "no_trips": "لا يوجد رحلات سابقة"
+
+
 
 
 

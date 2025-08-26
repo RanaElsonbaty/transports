@@ -70,5 +70,9 @@
   "passenger_range": "من 1 لـ {} راكب",
   "current_passengers": "عدد الركاب الحالي:",
   "reserved": "محجوز",
-  "available": "متاح"
+  "available": "متاح",
+    "select_bus_type": "اختار نوع الباص",
+      "no_trips": "ما في رحلات سابقة"
+
+
 }

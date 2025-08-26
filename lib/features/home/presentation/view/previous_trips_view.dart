@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/features/home/data/models/previous_trips.dart';
 import 'package:transports/features/home/presentation/view/widget/custom_shimmer_body.dart';
+import 'package:transports/features/home/presentation/view/widget/previous_empty_trip.dart';
 import 'package:transports/features/home/presentation/view/widget/web_view_page.dart';
 import 'package:transports/features/home/presentation/view_model/previouse_trip/previous_trips_cubit.dart';
 
@@ -19,6 +20,9 @@ class PreviousTripsView extends StatelessWidget {
       body: BlocBuilder<PreviousTripsCubit, PreviousTripsState>(
         builder: (context, state) {
           if (state is PreviousTripsSuccess) {
+            if(state.trips.isEmpty){
+              return PreviousEmptyTrip();
+            }
   return ListView.builder(
 
       itemCount:state.trips.length ,

@@ -13,6 +13,7 @@ import 'package:transports/features/auth/register/presentation/view/widgets/came
 import 'package:transports/features/home/data/models/seats_model.dart';
 import 'package:transports/features/home/presentation/view/bus_seat_selection_view.dart';
 import 'package:transports/features/home/presentation/view/widget/custom_drawer.dart';
+import 'package:transports/features/home/presentation/view/widget/empty_widgets.dart';
 import 'package:transports/features/home/presentation/view/widget/top_widget.dart';
 import 'package:transports/features/home/presentation/view/widget/trip_details_widget.dart';
 import 'package:transports/features/home/presentation/view_model/create_trip/creating_trip_cubit.dart';
@@ -391,22 +392,22 @@ List<Map<String, String>> currentBigBusPassengers = [];
             children: [
               BlocBuilder<SeatsCubit, SeatsState>(
                 builder: (context, state) {
-                  String miniMax = "50";
-                  String bigMax = "13";
+                  String miniMax = "";
+                  String bigMax = "";
 
                   if (state is SeatsSuccess) {
                     final seatsData = state.seatsSuccess;
-                    miniMax = (seatsData.length <= 13 ? seatsData.length : 13)
+                    miniMax = (seatsData.length <= 13 ? seatsData.length : "")
                         .toString();
-                    bigMax = (seatsData.length > 13 ? seatsData.length : 50)
+                    bigMax = (seatsData.length > 13 ? seatsData.length : "")
                         .toString();
                   }
 
                   return TopWidget(
                     onMiniBusTap: () => _onBusCardTapped(false),
                     onBigBusTap: () => _onBusCardTapped(true),
-                    miniBusMaxPassengers: "50",
-                    bigBusMaxPassengers: "12",
+                    miniBusMaxPassengers: miniMax,
+                    bigBusMaxPassengers: bigMax,
                   );
                 },
               ),
@@ -420,9 +421,7 @@ List<Map<String, String>> currentBigBusPassengers = [];
               //    Container( width: 20, height: 20, decoration: BoxDecoration( color: AppColors.primarySeatColor.withOpacity(.1), borderRadius: BorderRadius.circular(4), ), ), const SizedBox(width: 8), Text('متاح',style: TextStyles.font10SeatBlack500Weight), ], ), const SizedBox(height: 40), Row( mainAxisAlignment: MainAxisAlignment.end, children: [ SvgPicture.asset(AppIcons.busSeat), 
               //    SizedBox(width: 95.w,), ], ),
               if (!isBusSelected)
-                Container(
-                  height: 300,
-                )
+               EmptyWidget()
               else
                 BlocBuilder<SeatsCubit, SeatsState>(
                   builder: (context, state) {
@@ -490,6 +489,7 @@ List<Map<String, String>> currentBigBusPassengers = [];
 Column(
   crossAxisAlignment: CrossAxisAlignment.center,
   children: [
+    /// أيقونة الكرسي فوق لو باص عادي
     if (!miniBusSelected)
       Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -500,143 +500,73 @@ Column(
       ),
     SizedBox(height: 12),
 
-    if (miniBusSelected) ...[
-      // العمود الأول: أول كرسيين + أيقونة
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+    /// 🚌 الميني باص
+   /// 🚌 الميني باص
+if (miniBusSelected) ...[
+  Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      /// الصف الأول (كرسيين + السواق)
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // أول كرسيين
-              ...seatMatrix[0].take(2).map((seat) {
-                if (seat == null) return const SizedBox(width: 40, height: 40);
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      toggleSeat(seat.seatNumber.toString(), isMiniBus: true);
-                      if (selectedMiniBusSeats.contains(seat.seatNumber.toString())) {
-                        _openSeatBottomSheet(seat.seatNumber.toString());
-                      }
-                    },
-                    child: SeatBox(
-                      label: seat.seatNumber.toString(),
-                      isReserved: seat.status != "available",
-                      isSelected: selectedMiniBusSeats.contains(seat.seatNumber.toString()),
-                      color: seatColor(true, seat.seatNumber.toString(), seat.status!),
-                    ),
-                  ),
-                );
-              }).toList(),
-
-              // أيقونة بعد أول كرسيين
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: SvgPicture.asset(AppIcons.busSeat),
+          ...seatMatrix[0].take(2).map((seat) {
+            if (seat == null) return const SizedBox(width: 40, height: 40);
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              child: GestureDetector(
+                onTap: () {
+                  if (seat.status != "available" ||
+                      isOccupied(seat.seatNumber.toString(), isMiniBus: true)) {
+                    return;
+                  }
+                  toggleSeat(seat.seatNumber.toString(), isMiniBus: true);
+                  if (selectedMiniBusSeats.contains(seat.seatNumber.toString())) {
+                    _openSeatBottomSheet(seat.seatNumber.toString());
+                  }
+                },
+                child: SeatBox(
+                  label: seat.seatNumber.toString(),
+                  isReserved: seat.status != "available",
+                  isSelected: selectedMiniBusSeats.contains(seat.seatNumber.toString()),
+                  color: seatColor(true, seat.seatNumber.toString(), seat.status!),
+                ),
               ),
-            ],
-          ),
-          SizedBox(height: 12),
+            );
+          }).toList(),
 
-          // باقي المقاعد مقسمة على عمودين
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // العمود الأول
-              Column(
-                children: seatMatrix
-                    .expand((row) => row)
-                    .skip(2)
-                    .toList()
-                    .asMap()
-                    .entries
-                    .where((entry) => entry.key % 2 == 0)
-                    .map((entry) {
-                  final seat = entry.value;
-                  if (seat == null) return const SizedBox(height: 40, width: 40);
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        toggleSeat(seat.seatNumber.toString(), isMiniBus: true);
-                        if (selectedMiniBusSeats.contains(seat.seatNumber.toString())) {
-                          _openSeatBottomSheet(seat.seatNumber.toString());
-                        }
-                      },
-                      child: SeatBox(
-                        label: seat.seatNumber.toString(),
-                        isReserved: seat.status != "available",
-                        isSelected: selectedMiniBusSeats.contains(seat.seatNumber.toString()),
-                        color: seatColor(true, seat.seatNumber.toString(), seat.status!),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-
-              // مسافة أكبر بين العمودين
-              SizedBox(width: 40.w),
-
-              // العمود الثاني
-              Column(
-                children: seatMatrix
-                    .expand((row) => row)
-                    .skip(2)
-                    .toList()
-                    .asMap()
-                    .entries
-                    .where((entry) => entry.key % 2 == 1)
-                    .map((entry) {
-                  final seat = entry.value;
-                  if (seat == null) return const SizedBox(height: 40, width: 40);
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        toggleSeat(seat.seatNumber.toString(), isMiniBus: true);
-                        if (selectedMiniBusSeats.contains(seat.seatNumber.toString())) {
-                          _openSeatBottomSheet(seat.seatNumber.toString());
-                        }
-                      },
-                      child: SeatBox(
-                        label: seat.seatNumber.toString(),
-                        isReserved: seat.status != "available",
-                        isSelected: selectedMiniBusSeats.contains(seat.seatNumber.toString()),
-                        color: seatColor(true, seat.seatNumber.toString(), seat.status!),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
+          const SizedBox(width: 12),
+          SvgPicture.asset(AppIcons.busSeat), // أيقونة السواق
         ],
       ),
-    ] else ...[
-      // الباص العادي
-      ...seatMatrix.asMap().entries.map((entry) {
-        final row = entry.value;
+      const SizedBox(height: 16),
+
+      /// ✨ باقي الصفوف (كل صف فيه 3 كراسي جنب بعض)
+      ...seatMatrix.skip(1).map((row) {
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: row.map((seat) {
+            children: row.take(3).map((seat) {
               if (seat == null) return const SizedBox(width: 40, height: 40);
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                 child: GestureDetector(
                   onTap: () {
-                    toggleSeat(seat.seatNumber.toString(), isMiniBus: false);
-                    if (selectedBusSeats.contains(seat.seatNumber.toString())) {
+                    if (seat.status != "available" ||
+                        isOccupied(seat.seatNumber.toString(), isMiniBus: true)) {
+                      return;
+                    }
+                    toggleSeat(seat.seatNumber.toString(), isMiniBus: true);
+                    if (selectedMiniBusSeats.contains(seat.seatNumber.toString())) {
                       _openSeatBottomSheet(seat.seatNumber.toString());
                     }
                   },
                   child: SeatBox(
                     label: seat.seatNumber.toString(),
                     isReserved: seat.status != "available",
-                    isSelected: selectedBusSeats.contains(seat.seatNumber.toString()),
-                    color: seatColor(false, seat.seatNumber.toString(), seat.status!),
+                    isSelected: selectedMiniBusSeats.contains(seat.seatNumber.toString()),
+                    color: seatColor(true, seat.seatNumber.toString(), seat.status!),
                   ),
                 ),
               );
@@ -645,13 +575,83 @@ Column(
         );
       }).toList(),
     ],
+  ),
+]
+
+ /// 🚌 الباص العادي (2 شمال + ممر + 2 يمين)
+else ...[
+  /// 🚌 الباص العادي (2 شمال + ممر + 2 يمين)
+  ...seatMatrix.asMap().entries.map((entry) {
+    final row = entry.value;
+
+    // ✨ تأكد أن الصف فيه 4 عناصر
+    final fixedRow = [
+      ...row,
+      ...List.filled(4 - row.length, null), // لو أقل من 4 يكمل null
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // أول عمودين شمال
+          ...fixedRow.take(2).map((seat) {
+            if (seat == null) return const SizedBox(width: 40, height: 40);
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: GestureDetector(
+                onTap: () {
+                  toggleSeat(seat.seatNumber.toString(), isMiniBus: false);
+                  if (selectedBusSeats.contains(seat.seatNumber.toString())) {
+                    _openSeatBottomSheet(seat.seatNumber.toString());
+                  }
+                },
+                child: SeatBox(
+                  label: seat.seatNumber.toString(),
+                  isReserved: seat.status != "available",
+                  isSelected: selectedBusSeats.contains(seat.seatNumber.toString()),
+                  color: seatColor(false, seat.seatNumber.toString(), seat.status!),
+                ),
+              ),
+            );
+          }).toList(),
+
+          const SizedBox(width: 50), 
+
+          ...fixedRow.skip(2).take(2).map((seat) {
+            if (seat == null) return const SizedBox(width: 40, height: 40);
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: GestureDetector(
+                onTap: () {
+                  toggleSeat(seat.seatNumber.toString(), isMiniBus: false);
+                  if (selectedBusSeats.contains(seat.seatNumber.toString())) {
+                    _openSeatBottomSheet(seat.seatNumber.toString());
+                  }
+                },
+                child: SeatBox(
+                  label: seat.seatNumber.toString(),
+                  isReserved: seat.status != "available",
+                  isSelected: selectedBusSeats.contains(seat.seatNumber.toString()),
+                  color: seatColor(false, seat.seatNumber.toString(), seat.status!),
+                ),
+              ),
+            );
+          }).toList(),
+        ],
+      ),
+    );
+  }).toList(),
+],
+
+
   ],
 )
-
-
 ,
+                        
 
-
+                   
 
 
                             Padding(
