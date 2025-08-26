@@ -12,6 +12,7 @@ import 'package:transports/features/home/presentation/view/previous_trips_view.d
 import 'package:transports/features/home/presentation/view/profile_view.dart';
 import 'package:transports/features/home/presentation/view/widget/language.dart';
 import 'package:transports/features/home/presentation/view_model/city_cubit/city_cubit.dart';
+import 'package:transports/features/home/presentation/view_model/distance/distance_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/logout_cubit/log_out_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/pick_data/extract_image_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/previouse_trip/previous_trips_cubit.dart';
@@ -62,6 +63,8 @@ class AppRoutes {
                         create: (context) => getIt.get<ReserveSeatCubit>()),
                     BlocProvider(
                         create: (context) => ExtractImageCubit()),
+                    BlocProvider(
+                        create: (context) => DistanceCubit()),
                   ],
                   child: HomeView(),
                 ));
