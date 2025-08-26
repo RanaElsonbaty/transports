@@ -127,7 +127,7 @@ class Data1 {
     dynamic destinationRegionId;
     dynamic departureCityId;
     dynamic destinationCityId;
-
+    Driver? driver;
     Data1({this.id, this.driverId, this.departureLocation, this.destinationLocation, this.departureTime, this.estimatedArrivalTime, this.actualDepartureTime, this.actualArrivalTime, this.status, this.totalPassengers, this.maxPassengers, this.distanceKm, this.estimatedDurationMinutes, this.notes, this.routeCoordinates, this.createdAt, this.updatedAt, this.deletedAt, this.departureRegionId, this.destinationRegionId, this.departureCityId, this.destinationCityId});
 
     Data1.fromJson(Map<String, dynamic> json) {
@@ -153,6 +153,7 @@ class Data1 {
         destinationRegionId = json["destination_region_id"];
         departureCityId = json["departure_city_id"];
         destinationCityId = json["destination_city_id"];
+        driver = json["driver"] == null ? null : Driver.fromJson(json["driver"]);
     }
 
     Map<String, dynamic> toJson() {
@@ -179,6 +180,77 @@ class Data1 {
         _data["destination_region_id"] = destinationRegionId;
         _data["departure_city_id"] = departureCityId;
         _data["destination_city_id"] = destinationCityId;
+        if (driver != null) {
+            _data["driver"] = driver?.toJson();
+        }
+        return _data;
+    }
+}
+class Driver {
+    int? id;
+    String? name;
+    String? email;
+    String? username;
+    String? phone;
+    String? avatar;
+    String? status;
+    dynamic emailVerifiedAt;
+    String? createdAt;
+    String? updatedAt;
+    dynamic deletedAt;
+    dynamic countryId;
+    dynamic regionId;
+    dynamic cityId;
+
+    Driver(
+        {this.id,
+            this.name,
+            this.email,
+            this.username,
+            this.phone,
+            this.avatar,
+            this.status,
+            this.emailVerifiedAt,
+            this.createdAt,
+            this.updatedAt,
+            this.deletedAt,
+            this.countryId,
+            this.regionId,
+            this.cityId});
+
+    Driver.fromJson(Map<String, dynamic> json) {
+        id = json["id"];
+        name = json["name"];
+        email = json["email"];
+        username = json["username"];
+        phone = json["phone"];
+        avatar = json["avatar"];
+        status = json["status"];
+        emailVerifiedAt = json["email_verified_at"];
+        createdAt = json["created_at"];
+        updatedAt = json["updated_at"];
+        deletedAt = json["deleted_at"];
+        countryId = json["country_id"];
+        regionId = json["region_id"];
+        cityId = json["city_id"];
+    }
+
+    Map<String, dynamic> toJson() {
+        final Map<String, dynamic> _data = <String, dynamic>{};
+        _data["id"] = id;
+        _data["name"] = name;
+        _data["email"] = email;
+        _data["username"] = username;
+        _data["phone"] = phone;
+        _data["avatar"] = avatar;
+        _data["status"] = status;
+        _data["email_verified_at"] = emailVerifiedAt;
+        _data["created_at"] = createdAt;
+        _data["updated_at"] = updatedAt;
+        _data["deleted_at"] = deletedAt;
+        _data["country_id"] = countryId;
+        _data["region_id"] = regionId;
+        _data["city_id"] = cityId;
         return _data;
     }
 }
