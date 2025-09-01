@@ -65,7 +65,7 @@
   "status": "الحالة",
   "no_time": "لا يوجد وقت",
     "select_seat_fill_passenger": "يرجى تحديد المقعد و ملئ بيانات الركاب أولاً!",
-      "wait_for_admin_approval": "الرجاء الإنتظار دقيقة للموافقة من الإدارة\nعلى بداية الرحلة",
+      "wait_for_admin_approval": "الرجاء الإنتظار لحين الموافقة من الإدارة\nعلى بداية الرحلة",
         "trip_started_success": "تم بدء الرحلة بنجاح ✅",
   "trip_creation_error": "خطأ: ",
 "passenger_range": "من 1 إلى {} راكب",

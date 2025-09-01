@@ -61,11 +61,38 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                         final km = state.distanceModel.data?.distance?.kilometers ?? 0;
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'المسافة: ${km.toStringAsFixed(2)} كم',
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                const TextSpan(
+                                  text: 'المسافة: ',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black, // اللون الافتراضي
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: '${km.toInt()}',
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                                const TextSpan(
+                                  text: ' كم',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        );
+                        )
+                        ;
                       } else if (state is DistanceFailure) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -265,7 +292,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
         /// Start Trip Button
         BlocConsumer<CreatingTripCubit, CreatingTripState>(
           listener: (context, state) {
-            Navigator.of(context).pop();
+            // Navigator.of(context).pop();
             if (state is CreatingTripSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('trip_started_success'.tr())),
@@ -285,6 +312,9 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                   if (fromCityId != null &&
                       toCityId != null &&
                       widget.passengersData.isNotEmpty) {
+                    setState(() {
+                      tripStarted = true; // هنا يبدأ التغيير
+                    });
                     showModalBottomSheet(
                       context: context,
                       isDismissible: false,
@@ -321,7 +351,12 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                         );
                       },
                     );
-
+                    // Close the bottom sheet after 2 seconds
+                    Future.delayed(const Duration(seconds: 2), () {
+                      if (Navigator.of(context).canPop()) {
+                        Navigator.of(context).pop();
+                      }
+                    });
                     context.read<CreatingTripCubit>().createTrip(
                       departureLocation: toCity.toString(),
                       destinationLocation: fromCity.toString(),
@@ -380,6 +415,87 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
           ),
         );
       },
+    );
+  }
+}
+
+class TripArrowAnimation extends StatefulWidget {
+  final bool tripStarted;
+
+  const TripArrowAnimation({super.key, required this.tripStarted});
+
+  @override
+  State<TripArrowAnimation> createState() => _TripArrowAnimationState();
+}
+
+class _TripArrowAnimationState extends State<TripArrowAnimation>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Offset> _offsetAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    )..repeat(reverse: true); // تكرار الحركة ذهابًا وإيابًا
+
+    _offsetAnimation = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(-0.3, 0), // تحريك السهم لليسار
+    ).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant TripArrowAnimation oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.tripStarted) {
+      _controller.repeat(reverse: true);
+    } else {
+      _controller.stop();
+      _controller.reset();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text("from"),
+        const SizedBox(width: 10),
+        ...List.generate(
+          7,
+              (index) => Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: Container(
+              width: 20,
+              height: 2,
+              color: widget.tripStarted
+                  ? Colors.blue
+                  : Colors.grey,
+            ),
+          ),
+        ),
+        SlideTransition(
+          position: _offsetAnimation,
+          child: Icon(
+            Icons.arrow_right,
+            color: widget.tripStarted ? Colors.blue : Colors.grey,
+            size: 40,
+          ),
+        ),
+        const SizedBox(width: 10),
+        Text("to"),
+      ],
     );
   }
 }

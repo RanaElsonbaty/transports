@@ -12,6 +12,7 @@ import 'package:transports/core/service/service_locater.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/core/validator/validator.dart';
+import 'package:transports/features/auth/register/presentation/view/register_view.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/back_button.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/camera_banner.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/upload_image.dart';
@@ -32,7 +33,10 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
   final TextEditingController ownerNameController = TextEditingController();
   final TextEditingController ownerIdController = TextEditingController();
   final TextEditingController plateNumberController = TextEditingController();
-  final TextEditingController vehicleModelControler = TextEditingController();
+  final TextEditingController vehicleModelController = TextEditingController();
+  final TextEditingController companyPhoneController = TextEditingController();
+  final TextEditingController companyTaxNumberController = TextEditingController();
+  final TextEditingController companyAddressController = TextEditingController();
   final TextEditingController manufacturingYearController =
   TextEditingController();
 
@@ -47,7 +51,7 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
     ownerNameController.dispose();
     ownerIdController.dispose();
     plateNumberController.dispose();
-    vehicleModelControler.dispose();
+    vehicleModelController.dispose();
     manufacturingYearController.dispose();
     super.dispose();
   }
@@ -101,7 +105,7 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                     ownerNameController.text = data.ownerName ?? '';
                     ownerIdController.text = data.nationalId ?? '';
                     plateNumberController.text = data.plateNumber ?? '';
-                    vehicleModelControler.text = data.vehicleModel ?? '';
+                    vehicleModelController.text = data.vehicleModel ?? '';
                     manufacturingYearController.text =
                         data.manufacturingYear ?? '';
                   });
@@ -172,7 +176,7 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                               (value) => Validators.validateNationalId(value!)),
                       buildInput('car_plate_number'.tr(), plateNumberController,
                               (value) => Validators.validatePlateNumber(value!)),
-                      buildInput('vehicle_model'.tr(), vehicleModelControler,
+                      buildInput('vehicle_model'.tr(), vehicleModelController,
                               (value) => Validators.validateVehicleModel(value!)),
                       buildInput(
                           'manufacturing_year'.tr(),
@@ -188,6 +192,16 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                         },
                       ),
                       SizedBox(height: 20.h),
+                      Text(
+                        'المرفقات إن وُجدت',
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 20.h),
+                      buildInput('رقم الشركة'.tr(), companyPhoneController,null),
+                      buildInput('الرقم الضريبي للشركة'.tr(), companyTaxNumberController,null),
+                      buildInput('عنوان الشركة'.tr(), companyAddressController,null),
+                      SizedBox(height: 20.h),
                       BlocBuilder<VehicleInfoCubit, VehicleInfoState>(
                         builder: (context, state) {
                           return state is VehicleInfoLoading
@@ -196,33 +210,50 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                             text: 'confirm'.tr(),
                             onPressed: () {
                               if (globalKey.currentState!.validate()) {
-                                if (boardImage == null ||
-                                    stampImage == null) {
-                                  showAppSnackBar(
-                                    context: context,
-                                    message:
-                                    "upload_stamp_and_plate".tr(),
-                                    backgroundColor: AppColors.red,
-                                  );
-                                  return;
-                                }
+                                // if (boardImage == null ||
+                                //     stampImage == null) {
+                                //   showAppSnackBar(
+                                //     context: context,
+                                //     message:
+                                //     "upload_stamp_and_plate".tr(),
+                                //     backgroundColor: AppColors.red,
+                                //   );
+                                //   return;
+                                // }
                                 context.read<VehicleInfoCubit>().addVehicleInfo(
-                                    ownerName: ownerNameController.text,
-                                    ownerNationalId:
-                                    ownerIdController.text,
-                                    plateNumber:
-                                    plateNumberController.text,
-                                    vehicleModel:
-                                    vehicleModelControler.text,
-                                    manufacturingYear:
-                                    manufacturingYearController.text,
-                                    logo: boardImage!.path,
-                                    stamp: stampImage!.path);
+                                  ownerName: ownerNameController.text,
+                                  ownerNationalId: ownerIdController.text,
+                                  plateNumber: plateNumberController.text,
+                                  vehicleModel: vehicleModelController.text,
+                                  manufacturingYear: manufacturingYearController.text,
+                                  logo: boardImage?.path, // optional
+                                  stamp: stampImage?.path, // optional
+                                  companyPhone: companyPhoneController.text.isNotEmpty
+                                      ? companyPhoneController.text
+                                      : null,
+                                  companyTaxNumber: companyTaxNumberController.text.isNotEmpty
+                                      ? companyTaxNumberController.text
+                                      : null,
+                                  companyAddress: companyAddressController.text.isNotEmpty
+                                      ? companyAddressController.text
+                                      : null,
+                                );
+
                               }
                             },
                           );
                         },
                       ),
+                      SizedBox(height: 20.h),
+                      GestureDetector(
+                          onTap: (){
+                            ContactUtils.openWhatsApp('0556742234');
+                          },
+                          child: Row(
+                            children: [
+                              Image.asset('assets/svgs/whatsapp_icon.png',height: 36,width: 36,),
+                            ],
+                          ))
                     ],
                   ),
                 ),

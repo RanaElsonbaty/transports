@@ -3,5 +3,10 @@ import 'package:transports/core/failure/failure.dart';
 import 'package:transports/features/auth/data/models/vehicle_info_model.dart';
 
 abstract class VehicleRepo {
-  Future<Either<Failure,VehicleInfoModel>>addVehicleInfo({required String ownerName,required String ownerNationalId,required String plateNumber,  required String vehicleModel ,required String manufacturingYear,required String stamp,required String logo });
+  Future<Either<Failure,VehicleInfoModel>>addVehicleInfo({required String ownerName,required String ownerNationalId,required String plateNumber,  required String vehicleModel ,required String manufacturingYear,
+    String? stamp,
+    String? logo,
+    String? companyPhone,
+    String? companyTaxNumber,
+    String? companyAddress, });
 }

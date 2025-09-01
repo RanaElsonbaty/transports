@@ -36,7 +36,7 @@ class CameraBanner extends StatelessWidget {
                     style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    isPassengerText==true? "يمكنك إضافة بينات ركاب الي الحافلة\n الخاصه بك عن طريق الكاميرا":'بإمكانك إضافة بيانات سائق الحافلة\n الخاصة بك عن طريق الكاميرا',
+                    isPassengerText==true? "يإمكنك إضافة بيانات الراكب\n الخاصه بك عن طريق الكاميرا":'بإمكانك إضافة بيانات السائق \n الخاصة بك عن طريق الكاميرا',
                     style: TextStyle(color: Colors.white, fontSize: 12),
                   ),
                 ],

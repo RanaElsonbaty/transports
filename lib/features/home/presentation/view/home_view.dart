@@ -329,6 +329,7 @@ List<Map<String, String>> currentBigBusPassengers = [];
                     children: [
                       /// Upload ID Image
                       CameraBanner(
+                        isPassengerText: true,
                         title: "رفع صورة لاستخراج البيانات",
                         onTap: () async {
                           final pickedFile = await ImagePicker().pickImage(

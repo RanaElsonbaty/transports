@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:transports/core/routing/app_routing.dart';
 import 'package:transports/core/theming/images.dart';
+import 'package:transports/features/splash/presentation/view/third_splash_view.dart';
 
 class SecondSplashView extends StatefulWidget {
   const SecondSplashView({super.key});
@@ -13,9 +13,10 @@ class _SecondSplashViewState extends State<SecondSplashView> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pushReplacementNamed(context, Routes.register);
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ThirdSplashView()));
     });
+
   }
 
   @override
@@ -35,7 +36,7 @@ class _SecondSplashViewState extends State<SecondSplashView> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset(AppImages.logo,height: 300,),
+                Image.asset(AppImages.logo,),
               ],
             ),
           ),

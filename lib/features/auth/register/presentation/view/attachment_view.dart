@@ -12,6 +12,7 @@ import 'package:transports/core/service/service_locater.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/core/validator/validator.dart';
+import 'package:transports/features/auth/register/presentation/view/register_view.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/back_button.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/camera_banner.dart';
 import 'package:transports/features/auth/register/presentation/view_model/cubits/driver_info/driver_info_cubit.dart';
@@ -198,6 +199,16 @@ class _AttachmentsViewState extends State<AttachmentsView> {
                           );
                         },
                       ),
+                      SizedBox(height: 20.h),
+                      GestureDetector(
+                          onTap: (){
+                            ContactUtils.openWhatsApp('0556742234');
+                          },
+                          child: Row(
+                            children: [
+                              Image.asset('assets/svgs/whatsapp_icon.png',height: 36,width: 36,),
+                            ],
+                          ))
                     ],
                   ),
                 ),

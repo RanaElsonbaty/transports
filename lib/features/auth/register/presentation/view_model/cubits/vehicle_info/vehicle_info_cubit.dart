@@ -8,9 +8,36 @@ part 'vehicle_info_state.dart';
 class VehicleInfoCubit extends Cubit<VehicleInfoState> {
   VehicleInfoCubit(this.vehicleRepo) : super(VehicleInfoInitial());
  VehicleRepo vehicleRepo;
-  Future<void>addVehicleInfo({required String ownerName, required String ownerNationalId, required String plateNumber, required String vehicleModel, required String manufacturingYear, required String logo,required String stamp})async{
+  Future<void> addVehicleInfo({
+    required String ownerName,
+    required String ownerNationalId,
+    required String plateNumber,
+    required String vehicleModel,
+    required String manufacturingYear,
+    String? logo,
+    String? stamp,
+    String? companyPhone,
+    String? companyTaxNumber,
+    String? companyAddress,
+  }) async {
     emit(VehicleInfoLoading());
-final otp= await vehicleRepo.addVehicleInfo(ownerName: ownerName, ownerNationalId: ownerNationalId, plateNumber: plateNumber, vehicleModel:vehicleModel , manufacturingYear:manufacturingYear, stamp: stamp, logo: logo );
-  otp.fold((fail)=>emit(VehicleInfoFailure(errorMessage: fail.errorMessage)), (data)=>emit(VehicleInfoSuccess(data)));
+
+    final result = await vehicleRepo.addVehicleInfo(
+      ownerName: ownerName,
+      ownerNationalId: ownerNationalId,
+      plateNumber: plateNumber,
+      vehicleModel: vehicleModel,
+      manufacturingYear: manufacturingYear,
+      logo: logo,
+      stamp: stamp,
+      companyPhone: companyPhone,
+      companyTaxNumber: companyTaxNumber,
+      companyAddress: companyAddress,
+    );
+
+    result.fold(
+          (fail) => emit(VehicleInfoFailure(errorMessage: fail.errorMessage)),
+          (data) => emit(VehicleInfoSuccess(data)),
+    );
   }
 }

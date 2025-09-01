@@ -282,7 +282,7 @@ class _ChangeLanguageViewState extends State<ChangeLanguageView> {
               SizedBox(height: 10.h),
               _buildLanguageOption(
                 langCode: 'ar-JO',
-                name: 'الأردنية',
+                name: 'الاُوردُو',
                 flag: '🇯🇴',
               ),
             ],

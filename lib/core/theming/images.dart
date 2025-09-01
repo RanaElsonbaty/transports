@@ -1,5 +1,5 @@
 class AppImages{
-  static const String splash ='assets/images/splash.png';
+  static const String splash ='assets/images/second_splash.png';
   static const String flag ='assets/images/flag.png';
   static const String maps ='assets/images/maps.png';
   static const String smallBus ='assets/images/small_bus.png';

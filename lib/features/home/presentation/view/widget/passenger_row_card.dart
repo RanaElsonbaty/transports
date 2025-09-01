@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ticker_text/ticker_text.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/images.dart';
 import 'package:transports/core/theming/styles.dart';
@@ -167,12 +168,22 @@ class AddPassengerCard extends StatelessWidget {
                     isBigBus ? 'bus'.tr() : 'minibus'.tr(),
                     style: TextStyles.font16White500Weight,
                   ),
-                 if (context.locale.languageCode == 'en') 
-      Text(
-        '1 to $maxPassengers\npassenger${int.parse(maxPassengers) > 1 ? "s" : ""}',
-        style: TextStyles.font20White700Weight,
-        textAlign: TextAlign.center,
-      )
+                 if (context.locale.languageCode == 'en')
+       SizedBox(
+
+         child: TickerText(
+           speed: 20,
+           primaryCurve: Curves.linear,
+           returnCurve: Curves.easeOut,
+           returnDuration: const Duration(milliseconds: 300),
+           startPauseDuration: const Duration(seconds: 1),
+          child: Text(
+            '1 to $maxPassengers\npassenger${int.parse(maxPassengers) > 1 ? "s" : ""}',
+            style: TextStyles.font20White700Weight,
+            textAlign: TextAlign.center,
+          ),
+               ),
+       )
     else
       Text(
         'passenger_range'.tr(args: [maxPassengers]), // عربي يظل سطر واحد

@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:transports/core/helper_function/snack_bar.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/images.dart';
@@ -12,6 +13,7 @@ import 'package:transports/features/auth/register/presentation/view_model/cubits
 import 'dart:ui' as ui;
 
 import 'package:transports/features/home/presentation/view/widget/language_drop_down.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -54,7 +56,7 @@ textDirection: context.locale.languageCode == 'ar'
             child: Form(
               key: globalKey,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                padding: const EdgeInsets.symmetric(horizontal:12),
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -62,7 +64,7 @@ textDirection: context.locale.languageCode == 'ar'
                       const SizedBox(height: 30),
                       Row(
                         children: [
-                          LanguageDropdown()
+                          LanguageRowSelector()
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -103,7 +105,7 @@ textDirection: context.locale.languageCode == 'ar'
                       ),
                       // Country Picker Row
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.h),
+                        padding: EdgeInsets.symmetric(vertical: 4.h),
                         child: Row(
                           children: [
                             Image.asset(
@@ -144,7 +146,9 @@ textDirection: context.locale.languageCode == 'ar'
                               keyboardType: TextInputType.phone,
                               textAlign: TextAlign.right,
                               decoration: InputDecoration(
-                                hintText: "phone_hint".tr(),
+                                hintText: "05XXXXXXXX",
+                                hintStyle: TextStyle(color: AppColors.darkGreyColor),
+                                //"phone_hint".tr(),
                                 border: InputBorder.none,
                                 enabledBorder: InputBorder.none,
                                 focusedBorder: InputBorder.none,
@@ -199,6 +203,16 @@ textDirection: context.locale.languageCode == 'ar'
                           ),
                         ),
                       ),
+                      const SizedBox(height: 20),
+                      GestureDetector(
+                        onTap: (){
+                          ContactUtils.openWhatsApp('0556742234');
+                        },
+                          child: Row(
+                            children: [
+                              Image.asset('assets/svgs/whatsapp_icon.png',height: 36,width: 36,),
+                            ],
+                          ))
                     ],
                   ),
                 ),
@@ -209,4 +223,16 @@ textDirection: context.locale.languageCode == 'ar'
       ),
     );
   }
+}
+class ContactUtils {
+  /// Open WhatsApp with phone number
+  static Future<void> openWhatsApp(String phoneNumber) async {
+    final Uri whatsappUrl = Uri.parse("https://wa.me/+966$phoneNumber");
+    if (await canLaunchUrl(whatsappUrl)) {
+      await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'لا يمكن فتح واتساب';
+    }
+  }
+
 }

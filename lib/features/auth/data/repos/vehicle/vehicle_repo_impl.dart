@@ -10,33 +10,67 @@ import 'package:transports/features/auth/data/repos/vehicle/vehicle_repo.dart';
 class VehicleRepoImpl extends VehicleRepo {
   ApiService apiService;
   SharedPrefs sharedPrefs;
+
   VehicleRepoImpl(this.apiService, this.sharedPrefs);
+
   @override
-  Future<Either<Failure, VehicleInfoModel>> addVehicleInfo(
-      {required String ownerName,
-      required String ownerNationalId,
-      required String plateNumber,
-      required String vehicleModel,
-      required String manufacturingYear,
-      required String logo,
-      required String stamp}) async {
+  Future<Either<Failure, VehicleInfoModel>> addVehicleInfo({
+    required String ownerName,
+    required String ownerNationalId,
+    required String plateNumber,
+    required String vehicleModel,
+    required String manufacturingYear,
+    String? logo,
+    String? stamp,
+    String? companyPhone,
+    String? companyTaxNumber,
+    String? companyAddress,
+  }) async {
     try {
       final token = await sharedPrefs.getToken();
-      final formData = FormData.fromMap({
+
+      /// Build form data dynamically
+      final Map<String, dynamic> formDataMap = {
         "owner_name": ownerName,
         "owner_national_id": ownerNationalId,
         "plate_number": plateNumber,
         "vehicle_model": vehicleModel,
         "manufacturing_year": manufacturingYear,
-        "stamp_photo":
-            await MultipartFile.fromFile(stamp, filename: "stamp.jpg"),
-        "logo_photo": await MultipartFile.fromFile(logo, filename: "logo.jpg"),
-      });
+      };
+
+      /// Add optional fields if provided
+      if (stamp != null && stamp.isNotEmpty) {
+        formDataMap["stamp_photo"] =
+        await MultipartFile.fromFile(stamp, filename: "stamp.jpg");
+      }
+
+      if (logo != null && logo.isNotEmpty) {
+        formDataMap["logo_photo"] =
+        await MultipartFile.fromFile(logo, filename: "logo.jpg");
+      }
+
+      if (companyPhone != null && companyPhone.isNotEmpty) {
+        formDataMap["company_phone"] = companyPhone;
+      }
+
+      if (companyTaxNumber != null && companyTaxNumber.isNotEmpty) {
+        formDataMap["company_tax_number"] = companyTaxNumber;
+      }
+
+      if (companyAddress != null && companyAddress.isNotEmpty) {
+        formDataMap["company_address"] = companyAddress;
+      }
+
+      /// Convert map to FormData
+      final formData = FormData.fromMap(formDataMap);
+
+      /// Make API request
       final response = await apiService.post(
-          headers: {"Authorization": "Bearer $token"},
-          isFormData: true,
-          EndPoints.addVehicleInfo,
-          data: formData);
+        headers: {"Authorization": "Bearer $token"},
+        isFormData: true,
+        EndPoints.addVehicleInfo,
+        data: formData,
+      );
 
       final result = VehicleInfoModel.fromJson(response);
       return right(result);
