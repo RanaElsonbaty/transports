@@ -332,14 +332,45 @@ List<Map<String, String>> currentBigBusPassengers = [];
                         isPassengerText: true,
                         title: "رفع صورة لاستخراج البيانات",
                         onTap: () async {
-                          final pickedFile = await ImagePicker().pickImage(
-                            source: ImageSource.gallery,
+                          final ImageSource? source = await showModalBottomSheet<ImageSource>(
+                            context: context,
+                            builder: (context) {
+                              return SafeArea(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ListTile(
+                                      leading: const Icon(Icons.camera_alt),
+                                      title: const Text('التقاط صورة بالكاميرا'),
+                                      onTap: () => Navigator.pop(context, ImageSource.camera),
+                                    ),
+                                    ListTile(
+                                      leading: const Icon(Icons.photo_library),
+                                      title: const Text('اختيار صورة من المعرض'),
+                                      onTap: () => Navigator.pop(context, ImageSource.gallery),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           );
-                          if (pickedFile != null) {
-                            final selectedImage = File(pickedFile.path);
-                            context
-                                .read<ExtractImageCubit>()
-                                .extractImageData(selectedImage);
+
+                          // لو المستخدم أغلق الـ BottomSheet بدون اختيار أي شيء
+                          if (source == null) return;
+
+                          try {
+                            final pickedFile = await ImagePicker().pickImage(source: source);
+                            if (pickedFile != null) {
+                              final selectedImage = File(pickedFile.path);
+                              context.read<ExtractImageCubit>().extractImageData(selectedImage);
+                            }
+                          } catch (e) {
+                            debugPrint("Image selection error: $e");
+                            showAppSnackBar(
+                              context: context,
+                              message: "تعذر الوصول إلى ${source == ImageSource.camera ? "الكاميرا" : "المعرض"}",
+                              backgroundColor: AppColors.red,
+                            );
                           }
                         },
                       ),
@@ -348,7 +379,7 @@ List<Map<String, String>> currentBigBusPassengers = [];
                       /// Name Field
                       CustomTextFormField(
                         controller: nameController,
-                        hint: 'Enter Name',
+                        hint: 'fullName'.tr(),
                         validator: (value) => Validators.validateName(value!),
                       ),
                       const SizedBox(height: 16),
@@ -365,7 +396,7 @@ List<Map<String, String>> currentBigBusPassengers = [];
                       /// National ID Field
                       CustomTextFormField(
                         controller: nationalIdController,
-                        hint: 'National ID',
+                        hint: 'national_id'.tr(),
                         validator: (value) => Validators.validateNationalId(value),
                       ),
                       const SizedBox(height: 16),
@@ -373,7 +404,7 @@ List<Map<String, String>> currentBigBusPassengers = [];
                       /// Nationality Field
                       CustomTextFormField(
                         controller: nationalityController,
-                        hint: 'Nationality',
+                        hint: 'nationality'.tr(),
                         validator: (value) =>
                             Validators.validateNationality(value!),
                       ),
@@ -453,14 +484,14 @@ List<Map<String, String>> currentBigBusPassengers = [];
             children: [
               BlocBuilder<SeatsCubit, SeatsState>(
                 builder: (context, state) {
-                  String miniMax = "";
-                  String bigMax = "";
+                  String miniMax = "12";
+                  String bigMax = "50";
 
                   if (state is SeatsSuccess) {
                     final seatsData = state.seatsSuccess;
-                    miniMax = (seatsData.length <= 13 ? seatsData.length : "")
+                    miniMax = (seatsData.length <= 13 ? seatsData.length : "12")
                         .toString();
-                    bigMax = (seatsData.length > 13 ? seatsData.length : "")
+                    bigMax = (seatsData.length > 13 ? seatsData.length : "50")
                         .toString();
                   }
 

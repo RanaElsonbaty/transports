@@ -168,28 +168,26 @@ class AddPassengerCard extends StatelessWidget {
                     isBigBus ? 'bus'.tr() : 'minibus'.tr(),
                     style: TextStyles.font16White500Weight,
                   ),
-                 if (context.locale.languageCode == 'en')
-       SizedBox(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 3),
+                    child: TickerText(
+                      speed: 20,
+                      primaryCurve: Curves.linear,
+                      returnCurve: Curves.easeOut,
+                      returnDuration: const Duration(milliseconds: 400),
+                      startPauseDuration: const Duration(seconds: 1),
+                      child: Text(
+                        context.locale.languageCode == 'en'
+                            ? '1 to $maxPassengers passenger${int.parse(maxPassengers) > 1 ? "s" : ""}'
+                            : 'passenger_range'.tr(args: [maxPassengers]),
+                        style: TextStyles.font20White700Weight,
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  )
 
-         child: TickerText(
-           speed: 20,
-           primaryCurve: Curves.linear,
-           returnCurve: Curves.easeOut,
-           returnDuration: const Duration(milliseconds: 300),
-           startPauseDuration: const Duration(seconds: 1),
-          child: Text(
-            '1 to $maxPassengers\npassenger${int.parse(maxPassengers) > 1 ? "s" : ""}',
-            style: TextStyles.font20White700Weight,
-            textAlign: TextAlign.center,
-          ),
-               ),
-       )
-    else
-      Text(
-        'passenger_range'.tr(args: [maxPassengers]), // عربي يظل سطر واحد
-        style: TextStyles.font20White700Weight,
-        textAlign: TextAlign.center,
-      ),
                 ],
               ),
             ),

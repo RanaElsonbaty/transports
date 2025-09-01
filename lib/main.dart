@@ -25,7 +25,8 @@ void main() async {
           // startLocale: const Locale('ar'),
           fallbackLocale: const Locale('en'),
 
-          child: TransportsApp(appRoutes: AppRoutes(), initialRoute: (token != null && token.isNotEmpty) ? Routes.home : Routes.splash,
+          child: TransportsApp(appRoutes: AppRoutes(), initialRoute:Routes.splash
+          // (token != null && token.isNotEmpty) ? Routes.home : Routes.splash,
 )));
 
 }

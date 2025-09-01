@@ -52,14 +52,49 @@ class _AttachmentsViewState extends State<AttachmentsView> {
   }
 
   Future<void> _pickAndExtract(BuildContext context) async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile == null) return;
+    final ImageSource? source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title:  Text('camera'.tr()),
+                onTap: () => Navigator.pop(context, ImageSource.camera),
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title:  Text('gallery'.tr()),
+                onTap: () => Navigator.pop(context, ImageSource.gallery),
+              ),
+            ],
+          ),
+        );
+      },
+    );
 
-    setState(() => isLoadingImage = true);
-    selectedImage = File(pickedFile.path);
+    if (source == null) return;
 
-    context.read<ExtractImageCubit>().extractImageData(selectedImage!);
+    try {
+      final pickedFile = await _picker.pickImage(source: source);
+      if (pickedFile == null) return;
+
+      setState(() => isLoadingImage = true);
+      selectedImage = File(pickedFile.path);
+
+      context.read<ExtractImageCubit>().extractImageData(selectedImage!);
+    } catch (e) {
+      debugPrint("Image selection error: $e");
+      showAppSnackBar(
+        context: context,
+        message: "تعذر الوصول إلى ${source == ImageSource.camera ? "الكاميرا" : "المعرض"}",
+        backgroundColor: AppColors.red,
+      );
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {

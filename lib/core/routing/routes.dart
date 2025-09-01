@@ -21,6 +21,7 @@ import 'package:transports/features/home/presentation/view_model/reserve_cubit/c
 import 'package:transports/features/home/presentation/view_model/seats_cubit/seats_cubit.dart';
 import 'package:transports/features/splash/presentation/view/second_splash_view.dart';
 import 'package:transports/features/splash/presentation/view/splash_view.dart';
+import 'package:transports/features/splash/presentation/view/third_splash_view.dart';
 
 class AppRoutes {
   Route generateRoute(RouteSettings routeSettings) {
@@ -29,6 +30,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => SplashView());
       case Routes.secondSplash:
         return MaterialPageRoute(builder: (_) => SecondSplashView());
+      case Routes.thirdSplash:
+        return MaterialPageRoute(builder: (_) => ThirdSplashView());
       case Routes.register:
         return MaterialPageRoute(
             builder: (_) => BlocProvider(

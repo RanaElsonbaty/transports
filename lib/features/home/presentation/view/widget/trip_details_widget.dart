@@ -58,7 +58,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                           child: CircularProgressIndicator(),
                         );
                       } else if (state is DistanceSuccess) {
-                        final km = state.distanceModel.data?.distance?.kilometers ?? 0;
+                        final km = state.distanceModel.data?.distanceKm ?? 0;
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text.rich(
@@ -69,7 +69,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black, // اللون الافتراضي
+                                    color: Colors.black,
                                   ),
                                 ),
                                 TextSpan(
@@ -91,8 +91,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                               ],
                             ),
                           ),
-                        )
-                        ;
+                        );
                       } else if (state is DistanceFailure) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -107,39 +106,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                   ),
 
                   /// Route Line
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Text("from".tr()),
-                          const SizedBox(width: 10),
-                          ...List.generate(
-                            7,
-                                (index) => Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: Container(
-                                width: 20,
-                                height: 2,
-                                color: tripStarted
-                                    ? AppColors.primaryStateColor
-                                    : AppColors.greyColor,
-                              ),
-                            ),
-                          ),
-                          Icon(
-                            Icons.arrow_right,
-                            color: tripStarted
-                                ? AppColors.primaryStateColor
-                                : AppColors.greyColor,
-                            size: 40,
-                          ),
-                          const SizedBox(width: 10),
-                          Text("to".tr()),
-                        ],
-                      ),
-                    ],
-                  ),
+                  TripArrowAnimation(tripStarted: tripStarted,),
 
                   /// Dropdowns for cities
                   Row(
@@ -470,31 +437,21 @@ class _TripArrowAnimationState extends State<TripArrowAnimation>
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text("from"),
+        Text("from".tr()),
         const SizedBox(width: 10),
         ...List.generate(
-          7,
-              (index) => Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: Container(
-              width: 20,
-              height: 2,
-              color: widget.tripStarted
-                  ? Colors.blue
-                  : Colors.grey,
-            ),
-          ),
-        ),
-        SlideTransition(
-          position: _offsetAnimation,
-          child: Icon(
-            Icons.arrow_right,
-            color: widget.tripStarted ? Colors.blue : Colors.grey,
-            size: 40,
-          ),
+          6,
+              (index) =>  SlideTransition(
+                position: _offsetAnimation,
+                child: Icon(
+                  Icons.arrow_right,
+                  color: widget.tripStarted ? AppColors.primaryColor : Colors.grey,
+                  size: 36,
+                ),
+              ),
         ),
         const SizedBox(width: 10),
-        Text("to"),
+        Text("to".tr()),
       ],
     );
   }

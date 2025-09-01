@@ -14,10 +14,19 @@ class _SecondSplashViewState extends State<SecondSplashView> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ThirdSplashView()));
+      Navigator.of(context).pushReplacement(PageRouteBuilder(
+        pageBuilder: (_, __, ___) => const ThirdSplashView(),
+        transitionDuration: const Duration(milliseconds: 800),
+        transitionsBuilder: (_, animation, __, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+      ));
     });
-
   }
+
 
   @override
   Widget build(BuildContext context) {

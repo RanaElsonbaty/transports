@@ -57,14 +57,49 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
   }
 
   Future<void> _pickAndExtract(BuildContext context) async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile == null) return;
+    final ImageSource? source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('التقاط صورة بالكاميرا'),
+                onTap: () => Navigator.pop(context, ImageSource.camera),
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('اختيار صورة من المعرض'),
+                onTap: () => Navigator.pop(context, ImageSource.gallery),
+              ),
+            ],
+          ),
+        );
+      },
+    );
 
-    setState(() => isLoadingImage = true);
-    extractionImage = File(pickedFile.path);
+    if (source == null) return;
 
-    context.read<ExtractImageCubit>().extractImageData(extractionImage!);
+    try {
+      final pickedFile = await _picker.pickImage(source: source);
+      if (pickedFile == null) return;
+
+      setState(() => isLoadingImage = true);
+      extractionImage = File(pickedFile.path);
+
+      context.read<ExtractImageCubit>().extractImageData(extractionImage!);
+    } catch (e) {
+      debugPrint("Image selection error: $e");
+      showAppSnackBar(
+        context: context,
+        message: "تعذر الوصول إلى ${source == ImageSource.camera ? "الكاميرا" : "المعرض"}",
+        backgroundColor: AppColors.red,
+      );
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
