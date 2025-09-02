@@ -205,14 +205,20 @@ textDirection: context.locale.languageCode == 'ar'
                       ),
                       const SizedBox(height: 20),
                       GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           ContactUtils.openWhatsApp('0556742234');
                         },
-                          child: Row(
-                            children: [
-                              Image.asset('assets/svgs/whatsapp_icon.png',height: 36,width: 36,),
-                            ],
-                          ))
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              'assets/svgs/whatsapp_icon.png',
+                              height: 36,
+                              width: 36,
+                            ),
+                          ],
+                        ),
+                      )
+
                     ],
                   ),
                 ),
@@ -227,12 +233,18 @@ textDirection: context.locale.languageCode == 'ar'
 class ContactUtils {
   /// Open WhatsApp with phone number
   static Future<void> openWhatsApp(String phoneNumber) async {
-    final Uri whatsappUrl = Uri.parse("https://wa.me/+966$phoneNumber");
-    if (await canLaunchUrl(whatsappUrl)) {
-      await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+    // إزالة أي مسافات أو + من الرقم
+    String cleanNumber = phoneNumber.replaceAll(RegExp(r'\D'), '');
+    // إنشاء الرابط الصحيح
+    final Uri whatsappUri = Uri.parse("https://wa.me/966$cleanNumber");
+
+    if (await canLaunchUrl(whatsappUri)) {
+      await launchUrl(
+        whatsappUri,
+        mode: LaunchMode.externalApplication,
+      );
     } else {
       throw 'لا يمكن فتح واتساب';
     }
   }
-
 }

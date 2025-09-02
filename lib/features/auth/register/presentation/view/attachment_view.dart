@@ -125,10 +125,10 @@ class _AttachmentsViewState extends State<AttachmentsView> {
                 final ExtractedData? data = state.model.data!.extractedData;
                 if (data != null) {
                   setState(() {
-                    nameController.text = data.fullNameAr ?? '';
+                    nameController.text = data.fullName ?? '';
                     nationalIdController.text = data.nationalId ?? '';
                     nationalityController.text =
-                        data.nationalityAr ?? '';
+                        data.nationality ?? '';
                     drivingLicenseNumberController.text =
                         data.drivingLicenseNumber ?? '';
                     drivingLicenseExpiryController.text =
@@ -236,14 +236,19 @@ class _AttachmentsViewState extends State<AttachmentsView> {
                       ),
                       SizedBox(height: 20.h),
                       GestureDetector(
-                          onTap: (){
-                            ContactUtils.openWhatsApp('0556742234');
-                          },
-                          child: Row(
-                            children: [
-                              Image.asset('assets/svgs/whatsapp_icon.png',height: 36,width: 36,),
-                            ],
-                          ))
+                        onTap: () {
+                          ContactUtils.openWhatsApp('0556742234');
+                        },
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              'assets/svgs/whatsapp_icon.png',
+                              height: 36,
+                              width: 36,
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),

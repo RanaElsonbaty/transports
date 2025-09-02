@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -33,8 +34,9 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   final List<String> reservedSeats = ["C2", "D4", "E4", "G4"];
   bool miniBusSelected = false;
-  List<Map<String, String>> currentMiniBusPassengers = [];
-List<Map<String, String>> currentBigBusPassengers = [];
+  List<Map<String, dynamic>> currentMiniBusPassengers = [];
+List<Map<String, dynamic>> currentBigBusPassengers = [];
+  File? passengerImage;
 
   bool isBigBusSelected = false;
   bool showDetails = false;
@@ -42,6 +44,11 @@ List<Map<String, String>> currentBigBusPassengers = [];
     setState(() {
       showDetails = !showDetails;
     });
+  }
+  String? convertImageToBase64(File? imageFile) {
+    if (imageFile == null) return null;
+    final bytes = imageFile.readAsBytesSync();
+    return base64Encode(bytes);
   }
 
   void _onBusCardTapped(bool isBigBus) {
@@ -296,9 +303,9 @@ List<Map<String, String>> currentBigBusPassengers = [];
                     final extracted = state.model.data?.extractedData;
                     if (extracted != null) {
                       setState(() {
-                        nameController.text = extracted.fullNameAr ?? '';
+                        nameController.text = extracted.fullName ?? '';
                         nationalIdController.text = extracted.nationalId ?? '';
-                        nationalityController.text = extracted.nationalityAr ?? '';
+                        nationalityController.text = extracted.nationality ?? '';
                       });
                     }
                     showAppSnackBar(
@@ -362,6 +369,13 @@ List<Map<String, String>> currentBigBusPassengers = [];
                             final pickedFile = await ImagePicker().pickImage(source: source);
                             if (pickedFile != null) {
                               final selectedImage = File(pickedFile.path);
+
+                              // حفظ الصورة في المتغير
+                              setState(() {
+                                passengerImage = selectedImage;
+                              });
+
+                              // استدعاء Cubit لمعالجة الصورة
                               context.read<ExtractImageCubit>().extractImageData(selectedImage);
                             }
                           } catch (e) {
@@ -374,6 +388,7 @@ List<Map<String, String>> currentBigBusPassengers = [];
                           }
                         },
                       ),
+
                       const SizedBox(height: 16),
 
                       /// Name Field
@@ -427,6 +442,7 @@ List<Map<String, String>> currentBigBusPassengers = [];
                               "seat_number": seatIdController.text,
                               "national_id": nationalIdController.text,
                               "nationality": nationalityController.text,
+                              "image":  convertImageToBase64(passengerImage),
                             };
 
                             // Update or Add passenger to the correct bus data

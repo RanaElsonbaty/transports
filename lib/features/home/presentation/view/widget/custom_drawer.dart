@@ -8,6 +8,8 @@ import 'package:transports/core/helper_function/snack_bar.dart';
 import 'package:transports/core/routing/app_routing.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/icons.dart';
+import 'package:transports/core/theming/images.dart';
+import 'package:transports/features/auth/register/presentation/view/register_view.dart';
 import 'package:transports/features/home/presentation/view/widget/custom_dialoge.dart';
 import 'package:transports/features/home/presentation/view_model/logout_cubit/log_out_cubit.dart';
 
@@ -123,6 +125,22 @@ if(state  is LogOutSuccess){
                                   context.read<LogOutCubit>().logOut();
                                 },
                               ));
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.call,size: 20,),
+                    title: Text("تواصل معنا عبر الواتساب",
+                        textAlign: TextAlign.right,
+                        style: TextStyles.font16DarkGrey400Weight),
+                    trailing: IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.arrow_forward_ios,
+                          color: AppColors.arrowColor,
+                          size: 16,
+                        )),
+                    onTap: () {
+                      ContactUtils.openWhatsApp('0556742234');
                     },
                   ),
                 ],

@@ -281,14 +281,19 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                       ),
                       SizedBox(height: 20.h),
                       GestureDetector(
-                          onTap: (){
-                            ContactUtils.openWhatsApp('0556742234');
-                          },
-                          child: Row(
-                            children: [
-                              Image.asset('assets/svgs/whatsapp_icon.png',height: 36,width: 36,),
-                            ],
-                          ))
+                        onTap: () {
+                          ContactUtils.openWhatsApp('0556742234');
+                        },
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              'assets/svgs/whatsapp_icon.png',
+                              height: 36,
+                              width: 36,
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),
