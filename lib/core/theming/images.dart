@@ -10,4 +10,6 @@ class AppImages{
   static const String logo ='assets/images/logo.png';
   static const String avatar ='assets/images/Avatar.png';
   static const String tigerLogo  ="assets/images/tiger_logo.jpeg";
+  static const String realBigBus  ="assets/images/bus-removebg-preview.png";
+  static const String realSmallBus  ="assets/images/mini_bus-removebg-preview.png";
 }

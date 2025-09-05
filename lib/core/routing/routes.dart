@@ -65,6 +65,8 @@ class AppRoutes {
                     BlocProvider(
                         create: (context) => getIt.get<ReserveSeatCubit>()),
                     BlocProvider(
+                        create: (context) => getIt.get<ProfileCubit>()..getProfileInfo()),
+                    BlocProvider(
                         create: (context) => ExtractImageCubit()),
                     BlocProvider(
                         create: (context) => DistanceCubit()),

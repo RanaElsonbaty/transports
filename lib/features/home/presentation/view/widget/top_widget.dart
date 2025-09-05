@@ -2,24 +2,34 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:transports/core/helper_function/extension.dart';
 import 'package:transports/core/routing/app_routing.dart';
 import 'package:transports/core/theming/icons.dart';
 import 'package:transports/core/theming/images.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/features/home/presentation/view/widget/passenger_row_card.dart';
+import 'package:transports/features/home/presentation/view_model/profile_cubit/profile_cubit.dart';
 
 class TopWidget extends StatelessWidget {
-  const TopWidget({super.key, required this.onMiniBusTap, required this.onBigBusTap, required this.miniBusMaxPassengers, required this.bigBusMaxPassengers});
- final VoidCallback onMiniBusTap;
+  const TopWidget({
+    super.key,
+    required this.onMiniBusTap,
+    required this.onBigBusTap,
+    required this.miniBusMaxPassengers,
+    required this.bigBusMaxPassengers,
+  });
+
+  final VoidCallback onMiniBusTap;
   final VoidCallback onBigBusTap;
-    final String miniBusMaxPassengers;
+  final String miniBusMaxPassengers;
   final String bigBusMaxPassengers;
+
   @override
   Widget build(BuildContext context) {
-    return  Stack(
+    return Stack(
       children: [
-        Image.asset(AppImages.maps,),
+        Image.asset(AppImages.maps),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 85.h),
           child: Row(
@@ -29,17 +39,25 @@ class TopWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-              'hello'.tr(),
+                    'hello'.tr(),
                     style: TextStyles.font12Black500Weight,
                   ),
-                  InkWell(
-                    onTap: (){
-                     context.pushNamed(Routes.profile);
+                  Builder(
+                    builder: (context) {
+                      final state = context.watch<ProfileCubit>().state;
+
+                      if (state is ProfileSuccess) {
+                        final profile = state.profile.data?.user;
+                        return Text(
+                          profile?.name ?? "",
+                          style: TextStyles.font14Black700Weight,
+                        );
+                      }
+                      return Text(
+                        "",
+                        style: TextStyles.font14Black700Weight,
+                      );
                     },
-                    child: Text(
-                      'name'.tr(),
-                      style: TextStyles.font14Black700Weight,
-                    ),
                   ),
                 ],
               ),
@@ -61,32 +79,32 @@ class TopWidget extends StatelessWidget {
               //   child: Stack(
               //     clipBehavior: Clip.none,
               //     children: [
-              //       // Center(
-              //       //   child: SvgPicture.asset(
-              //       //     AppIcons.notification,
-              //       //     width: 20.w,
-              //       //     height: 20.h,
-              //       //   ),
-              //       // ),
-              //       // Positioned(
-              //       //   top: -8,
-              //       //   right: -6,
-              //       //   child: Container(
-              //       //     padding: const EdgeInsets.all(4),
-              //       //     decoration: const BoxDecoration(
-              //       //       color: Colors.red,
-              //       //       shape: BoxShape.circle,
-              //       //     ),
-              //       //     child: Text(
-              //       //       '12',
-              //       //       style: TextStyles.font8White500Weight,
-              //       //     ),
-              //       //   ),
-              //       // ),
+              //       Center(
+              //         child: SvgPicture.asset(
+              //           AppIcons.notification,
+              //           width: 20.w,
+              //           height: 20.h,
+              //         ),
+              //       ),
+              //       Positioned(
+              //         top: -8,
+              //         right: -6,
+              //         child: Container(
+              //           padding: const EdgeInsets.all(4),
+              //           decoration: const BoxDecoration(
+              //             color: Colors.red,
+              //             shape: BoxShape.circle,
+              //           ),
+              //           child: Text(
+              //             '12',
+              //             style: TextStyles.font8White500Weight,
+              //           ),
+              //         ),
+              //       ),
               //     ],
               //   ),
               // ),
-              SizedBox(width: 12.w),
+              // SizedBox(width: 12.w),
               Builder(
                 builder: (context) => GestureDetector(
                   onTap: () => Scaffold.of(context).openDrawer(),
@@ -121,8 +139,12 @@ class TopWidget extends StatelessWidget {
           left: 0,
           right: 0,
           bottom: 0,
-
-          child:AddPassengerCardsRow(onMiniBusTap: onMiniBusTap, onBigBusTap:onBigBusTap, miniBusData: miniBusMaxPassengers, bigBusData: bigBusMaxPassengers ,),
+          child: AddPassengerCardsRow(
+            onMiniBusTap: onMiniBusTap,
+            onBigBusTap: onBigBusTap,
+            miniBusData: miniBusMaxPassengers,
+            bigBusData: bigBusMaxPassengers,
+          ),
         ),
       ],
     );

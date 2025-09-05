@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -31,12 +32,12 @@ class CameraBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    title??"اضافة بيانات ركاب",
+                    title??"add_passenger_data".tr(),
                     // isPassengerText==true?'إضافة بيانات ركاب':'إضافة بيانات السائق',
                     style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    isPassengerText==true? "يإمكنك إضافة بيانات الراكب\n الخاصه بك عن طريق الكاميرا":'بإمكانك إضافة بيانات السائق \n الخاصة بك عن طريق الكاميرا',
+                    isPassengerText==true? "add_passenger_data_via_camera".tr():'add_driver_data_via_camera'.tr(),
                     style: TextStyle(color: Colors.white, fontSize: 12),
                   ),
                 ],

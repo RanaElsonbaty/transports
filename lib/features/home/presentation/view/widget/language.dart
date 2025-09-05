@@ -214,79 +214,44 @@ class _ChangeLanguageViewState extends State<ChangeLanguageView> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 40.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Center(
-                    child: Text(
-                      context.tr(LocaleKeys.language),
-                      style: TextStyles.font20Black700Weight,
-                    ),
-                  ),
-                  
-                  Positioned(
-                    left: context.locale.languageCode == 'ar' ? 0 : null,
-                    right :context.locale.languageCode != 'ar' ? 0 : null,
-                    child: GestureDetector(
-                      onTap: () {
-                        context.pop();
-                      },
-                      child: Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 3,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Transform(
-                            alignment: Alignment.center,
-  transform: Matrix4.rotationY(
-    context.locale.languageCode == 'en' ? 3.1416 : 0),
-                          child: BackButtonWidget()),
-                      ),
-                    ),
-                  ),
-                ],
+    return Scaffold(
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 40.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            BackButtonWidget(),
+            SizedBox(height: 30.h),
+            Center(
+              child: Text(
+                context.tr(LocaleKeys.language),
+                style: TextStyles.font20Black700Weight,
               ),
-              SizedBox(height: 30.h),
-              Text(
-                context.tr(LocaleKeys.changeLanguage),
-                style: TextStyles.font18MainBlack500Weight,
-              ),
-              SizedBox(height: 20.h),
-              _buildLanguageOption(
-                langCode: 'ar',
-                name: 'العربية',
-                flag: '🇸🇦',
-              ),
-              SizedBox(height: 10.h),
-              _buildLanguageOption(
-                langCode: 'en',
-                name: 'English (UK)',
-                flag: '🇺🇸',
-              ),
-              SizedBox(height: 10.h),
-              _buildLanguageOption(
-                langCode: 'ar-JO',
-                name: 'اُردُو',
-                flag: '🇵🇰',
-              ),
-            ],
-          ),
+            ),
+            SizedBox(height: 30.h),
+            Text(
+              context.tr(LocaleKeys.changeLanguage),
+              style: TextStyles.font18MainBlack500Weight,
+            ),
+            SizedBox(height: 20.h),
+            _buildLanguageOption(
+              langCode: 'ar',
+              name: 'العربية',
+              flag: '🇸🇦',
+            ),
+            SizedBox(height: 10.h),
+            _buildLanguageOption(
+              langCode: 'en',
+              name: 'English (UK)',
+              flag: '🇺🇸',
+            ),
+            SizedBox(height: 10.h),
+            _buildLanguageOption(
+              langCode: 'ar-JO',
+              name: 'اُردُو',
+              flag: '🇵🇰',
+            ),
+          ],
         ),
       ),
     );

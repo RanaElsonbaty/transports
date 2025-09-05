@@ -40,7 +40,8 @@ class _RegisterViewState extends State<RegisterView> {
  if (state is SendingOtpSuccess) {
             showAppSnackBar(
               backgroundColor: AppColors.primaryDarkGradientColor,
-                context: context, message: state.otpModel.data!.otp!);
+                context: context, message: state.otpModel.data!.otp!,
+                duration: const Duration(minutes: 5),);
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>OtpView(phoneNumber: phoneController.text,)));
           } else if (state is SendingOtpFailure) {
             showAppSnackBar(context: context, message: state.errorMessage,backgroundColor: AppColors.red);
@@ -215,6 +216,8 @@ textDirection: context.locale.languageCode == 'ar'
                               height: 36,
                               width: 36,
                             ),
+                            SizedBox(width: 5.w,),
+                            Text('Support'.tr(),style:TextStyles.font16Black700Weight,)
                           ],
                         ),
                       )

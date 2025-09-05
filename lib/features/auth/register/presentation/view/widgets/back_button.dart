@@ -20,26 +20,32 @@ class BackButtonWidget extends StatelessWidget {
         },
         child: Container(
           height: 32.h,
-          width: 32.w,
+          width: 180.w,
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
             color: AppColors.dividerColor,
+            borderRadius: BorderRadius.circular(5),
             boxShadow: [
               BoxShadow(
                 color: AppColors.blackColor.withOpacity(0.1),
                 blurRadius: 4,
-                offset: const Offset(0, 3),
+                offset: const Offset(0, 8),
               ),
             ],
           ),
           child: Center(
-            child: Icon(
-            context.locale.languageCode == "ar"
-                  ? Icons.arrow_forward  
-      : Icons.arrow_back,  
-            size: 18,
-            color: Colors.black,
-          ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Icon(
+                context.locale.languageCode == "ar"
+                      ? Icons.arrow_back
+                      : Icons.arrow_back,
+                size: 18,
+                color: Colors.black,
+                          ),
+                Text('back_to_previous_page'.tr())
+              ],
+            ),
           ),
         ),
       ),

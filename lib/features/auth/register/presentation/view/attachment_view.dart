@@ -16,6 +16,7 @@ import 'package:transports/features/auth/register/presentation/view/register_vie
 import 'package:transports/features/auth/register/presentation/view/widgets/back_button.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/camera_banner.dart';
 import 'package:transports/features/auth/register/presentation/view_model/cubits/driver_info/driver_info_cubit.dart';
+import 'package:transports/features/home/presentation/view/widget/language_drop_down.dart';
 import 'package:transports/features/home/presentation/view/widget/start_your_trip.dart';
 import 'package:transports/features/home/presentation/view_model/pick_data/extract_image_cubit.dart';
 import 'package:transports/features/home/data/models/extract_image_model.dart';
@@ -160,17 +161,49 @@ class _AttachmentsViewState extends State<AttachmentsView> {
                 key: globalKey,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0, vertical: 40),
+                      horizontal: 12, vertical: 40),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Row(
+                        children: [
+                          LanguageRowSelector()
+                        ],
+                      ),
+                      const SizedBox(height: 16),
                       BackButtonWidget(),
                       const SizedBox(height: 16),
                       CameraBanner(
-                        title: "إضافة بيانات السائق",
+                        title: "add_driver_data".tr(),
                         onTap: () => _pickAndExtract(context),
                       ),
-                      if (selectedImage != null)
+                      if (isLoadingImage &&
+                          nameController.text.isEmpty &&
+                          nationalIdController.text.isEmpty &&
+                          nationalityController.text.isEmpty)
+                         Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                              SizedBox(width: 12),
+                              Text(
+                                "extract_data_from_image".tr(),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      else if (selectedImage != null)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           child: ClipRRect(
@@ -182,12 +215,9 @@ class _AttachmentsViewState extends State<AttachmentsView> {
                               fit: BoxFit.cover,
                             ),
                           ),
-                        )
-                      else if (isLoadingImage)
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          child: Center(child: CircularProgressIndicator()),
                         ),
+
+
                       const SizedBox(height: 30),
                       Row(
                         children: [
@@ -197,8 +227,8 @@ class _AttachmentsViewState extends State<AttachmentsView> {
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(width: 10),
-                          const Text(
-                            '(بيانات السائق)',
+                           Text(
+                            'driver_data'.tr(),
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
@@ -246,6 +276,8 @@ class _AttachmentsViewState extends State<AttachmentsView> {
                               height: 36,
                               width: 36,
                             ),
+                            SizedBox(width: 5.w,),
+                            Text('Support'.tr(),style:TextStyles.font16Black700Weight,)
                           ],
                         ),
                       )

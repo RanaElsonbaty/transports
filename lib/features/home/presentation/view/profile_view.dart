@@ -25,20 +25,16 @@ class ProfileView extends StatelessWidget {
     padding: const EdgeInsets.all(16.0),
     child: Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: Row(
-            children: [
-               BackButtonWidget(),
-              SizedBox(width: 80.w),
-              Text(
-                "profile".tr(),
-                style: TextStyles.font20Black700Weight,
-              )
-            ],
-          ),
+        Align(
+          alignment:context.locale.languageCode == "ar"? Alignment.topRight:Alignment.topLeft,
+            child: BackButtonWidget()),
+        SizedBox(height: 20.w),
+        Text(
+          "profile".tr(),
+          style: TextStyles.font20Black700Weight,
         ),
-      //  CachedNetworkImage(imageUrl:state.profile.data?.user?.avatarUrl??"", height: 85, width: 85,
+        const SizedBox(height: 20),
+        //  CachedNetworkImage(imageUrl:state.profile.data?.user?.avatarUrl??"", height: 85, width: 85,
       // placeholder: (context,url)=>CircularProgressIndicator(),
       //  errorWidget: (context,url,error)=>Icon(Icons.error, color: Colors.red),
       //   ),
@@ -46,7 +42,7 @@ class ProfileView extends StatelessWidget {
         const SizedBox(height: 12),
         _buildListTile(
           title: 'phone'.tr(),
-          subtitle: profile?.phone??"No PhoneNummber",
+          subtitle: profile?.phone??"No PhoneNumber",
           icon: Icons.phone,
         ),
         const Divider(),

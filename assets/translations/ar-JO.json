@@ -6,7 +6,7 @@
   "previous trips": "پچھلے سفر",
   "bus": "بس",
   "minibus": "منی بس",
-  "passenger": "{count} مسافروں تک",
+  "passenger": "1 سے {count} مسافر",
   "name": "ابو نواف المصری",
 
   "tripdetails": "سفر کی تفصیلات",
@@ -68,7 +68,7 @@
   "wait_for_admin_approval": "براہ کرم انتظامیہ کی منظوری کے لیے ایک منٹ انتظار کریں\nسفر شروع کرنے سے پہلے",
   "trip_started_success": "سفر کامیابی کے ساتھ شروع ہو گیا ✅",
   "trip_creation_error": "غلطی: ",
-  "passenger_range": "1 سے {} مسافر تک",
+  "passenger_range": "1 سے {count} مسافر",
   "current_passengers": "موجودہ مسافروں کی تعداد:",
   "reserved": "محفوظ شدہ",
   "available": "دستیاب",
@@ -79,7 +79,21 @@
   "copy": "کاپی",
   "share_link": "لنک شیئر کریں",
   "camera": "کیمرہ سے تصویر لیں",
-  "gallery": "گیلری سے تصویر منتخب کریں"
+  "gallery": "گیلری سے تصویر منتخب کریں",
+  "back_to_previous_page": "پچھلے صفحے پر واپس جائیں",
+  "driver_data": "(ڈرائیور کا ڈیٹا)",
+  "add_passenger_data": "مسافر کا ڈیٹا شامل کریں",
+  "add_driver_data": "ڈرائیور کا ڈیٹا شامل کریں",
+  "add_vehicle_data": "گاڑی کا ڈیٹا شامل کریں",
+  "attachments_if_any": "منسلکات اگر ہوں",
+  "company_number": "کمپنی یا ادارے کا موبائل نمبر",
+  "company_tax_number": "کمپنی یا ادارے کا ٹیکس نمبر",
+  "company_address": "کمپنی یا ادارے کا پتہ",
+  "upload_image": "ڈیٹا نکالنے کے لیے تصویر اپ لوڈ کریں",
+  "Support": "مدد",
+  "extract_data_from_image": "تصویر سے ڈیٹا نکالا جا رہا ہے...",
+  "add_passenger_data_via_camera": "آپ کیمرے کے ذریعے\nاپنا مسافر ڈیٹا شامل کر سکتے ہیں",
+  "add_driver_data_via_camera": "آپ کیمرے کے ذریعے\nاپنا ڈرائیور ڈیٹا شامل کر سکتے ہیں"
 
 
 }

@@ -67,7 +67,7 @@
 
 "trip_started_success": "Trip started successfully ✅",
   "trip_creation_error": "Error: ",
-"passenger_range": "From 1 to {} ",
+"passenger_range": "1 to {} ",
   "current_passengers": "Current passengers:",
   "reserved": "Reserved",
   "available": "Available",
@@ -78,7 +78,23 @@
   "copy": "Copy",
   "share_link": "Share Link",
   "camera": "Take a photo with camera",
-  "gallery": "Choose a photo from gallery"
+  "gallery": "Choose a photo from gallery",
+  "back_to_previous_page": "Return to previous page",
+  "driver_data": "(Driver data)",
+  "add_passenger_data": "Add passenger data",
+  "add_driver_data": "Add driver data",
+  "add_vehicle_data": "Add vehicle data",
+  "attachments_if_any": "Attachments, if any",
+  "company_number": "Company or institution mobile number",
+  "company_tax_number": "Company or institution tax number",
+  "company_address": "Company or institution address",
+  "upload_image": "Upload an image to extract data",
+  "Support": "Support",
+  "extract_data_from_image": "Extracting data from image...",
+  "add_passenger_data_via_camera": "You can add your passenger data\nvia camera.",
+  "add_driver_data_via_camera": "You can add your driver data\nvia camera."
+
+
 
 
 

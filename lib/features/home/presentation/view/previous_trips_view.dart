@@ -3,7 +3,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:transports/core/theming/colors.dart';
+import 'package:transports/core/theming/images.dart';
 import 'package:transports/features/home/data/models/previous_trips.dart';
 import 'package:transports/features/home/presentation/view/widget/custom_shimmer_body.dart';
 import 'package:transports/features/home/presentation/view/widget/previous_empty_trip.dart';
@@ -99,87 +101,33 @@ class PreviousTripItem extends StatelessWidget {
                    },
                  ),
              IconButton(
-               icon: const Icon(Icons.ios_share_outlined, color: AppColors.primaryColor),
+               icon: Image.asset('assets/svgs/whatsapp_icon.png',height: 22,width: 22,),
                onPressed: () async {
                  final tripUrl = "https://my-app-livid-ten-94.vercel.app/trips/${trips.id}";
                  final whatsappUrl = Uri.parse("https://wa.me/?text=$tripUrl");
-
-                 showDialog(
-                   context: context,
-                   builder: (context) {
-                     return AlertDialog(
-                       shape: RoundedRectangleBorder(
-                         borderRadius: BorderRadius.circular(15),
-                       ),
-                       title: Text(
-                         "share_link".tr(),
-                         style: const TextStyle(
-                           fontSize: 18,
-                           fontWeight: FontWeight.bold,
-                         ),
-                         textAlign: TextAlign.center,
-                       ),
-                       content: Column(
-                         mainAxisSize: MainAxisSize.min,
-                         children: [
-                           Row(
-                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                             children: [
-                               _shareOption(
-                                 icon: Icons.call,
-                                 color: Colors.green,
-                                 label: "whatsapp".tr(),
-                                 onTap: () async {
-                                   Navigator.pop(context);
-                                   try {
-                                     if (await canLaunchUrl(whatsappUrl)) {
-                                       await launchUrl(
-                                         whatsappUrl,
-                                         mode: LaunchMode.externalApplication,
-                                       );
-                                     } else {
-                                       ScaffoldMessenger.of(context).showSnackBar(
-                                         const SnackBar(
-                                           content: Text("لا يمكن فتح واتساب."),
-                                         ),
-                                       );
-                                     }
-                                   } catch (e) {
-                                     debugPrint("Error launching WhatsApp: $e");
-                                     ScaffoldMessenger.of(context).showSnackBar(
-                                       SnackBar(
-                                         content: Text("فشل في المشاركة عبر واتساب: $e"),
-                                       ),
-                                     );
-                                   }
-                                 },
-                               ),
-                               _shareOption(
-                                 icon: Icons.copy,
-                                 color: Colors.blue,
-                                 label: "copy".tr(),
-                                 onTap: () async {
-                                   Navigator.pop(context);
-                                   await Clipboard.setData(ClipboardData(text: tripUrl));
-                                   ScaffoldMessenger.of(context).showSnackBar(
-                                     const SnackBar(
-                                       content: Text("تم نسخ الرابط إلى الحافظة"),
-                                     ),
-                                   );
-                                 },
-                               ),
-                             ],
-                           ),
-                         ],
+                 try {
+                   if (await canLaunchUrl(whatsappUrl)) {
+                     await launchUrl(
+                       whatsappUrl,
+                       mode: LaunchMode.externalApplication,
+                     );
+                   } else {
+                     ScaffoldMessenger.of(context).showSnackBar(
+                       const SnackBar(
+                         content: Text("لا يمكن فتح واتساب."),
                        ),
                      );
-                   },
-                 );
+                   }
+                 } catch (e) {
+                   debugPrint("Error launching WhatsApp: $e");
+                   ScaffoldMessenger.of(context).showSnackBar(
+                     SnackBar(
+                       content: Text("فشل في المشاركة عبر واتساب: $e"),
+                     ),
+                   );
+                 }
                },
              )
-
-
-
            ],
          ),
 //           Row(
@@ -279,33 +227,5 @@ class PreviousTripItem extends StatelessWidget {
 
 
 }
-  Widget _shareOption({
-    required IconData icon,
-    required Color color,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return Column(
-      children: [
-        InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(50),
-          child: Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 30),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 14),
-        ),
-      ],
-    );
-  }
+
 }

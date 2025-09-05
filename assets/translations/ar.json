@@ -4,9 +4,9 @@
   "hello": "يسعد صباحك",
   "deleteAccount":"حذف الحساب",
   "previous trips":"الرحلات السابقة",
-  "bus":"باص",
-  "minibus":"مينى باص",
-  "passenger":"من 1 لـ {count} راكب",
+  "bus":"حــافلة",
+  "minibus":"بــاص",
+  "passenger":"1 لـ {count} راكب",
   "name":"ابو نواف المصرى",
 
   "tripdetails":"تفاصيل الرحلة",
@@ -68,7 +68,7 @@
       "wait_for_admin_approval": "الرجاء الإنتظار لحين الموافقة من الإدارة\nعلى بداية الرحلة",
         "trip_started_success": "تم بدء الرحلة بنجاح ✅",
   "trip_creation_error": "خطأ: ",
-"passenger_range": "من 1 إلى {} راكب",
+"passenger_range": "1 إلى {} راكب",
   "current_passengers": "عدد الركاب الآن:",
   "reserved": "محجوز",
   "available": "متاح",
@@ -79,7 +79,21 @@
      "copy": "نسخ",
      "share_link": "مشاركة الرابط",
      "camera": "التقاط صورة بالكاميرا",
-     "gallery": "اختيار صورة من المعرض"
+     "gallery": "اختيار صورة من المعرض",
+     "back_to_previous_page": "الرجوع للصفحة السابقة",
+     "driver_data": "(بيانات السائق)",
+     "add_passenger_data": "إضافة بيانات ركاب",
+     "add_driver_data": "إضافة بيانات السائق",
+     "add_vehicle_data": "إضافة بيانات السيارة",
+     "attachments_if_any": "المرفقات إن وُجدت",
+     "company_number": "رقم جوال الشركة أو المؤسسة",
+     "company_tax_number": "الرقم الضريبي للشركة أو المؤسسة",
+     "company_address": "عنوان الشركة أو المؤسسة",
+     "upload_image": "رفع صورة لاستخراج البيانات",
+     "Support": "الدعم",
+     "extract_data_from_image": "جاري استخراج البيانات من الصورة...",
+     "add_passenger_data_via_camera": "يإمكنك إضافة بيانات الراكب\nالخاصة بك عن طريق الكاميرا",
+     "add_driver_data_via_camera": "بإمكانك إضافة بيانات السائق\nالخاصة بك عن طريق الكاميرا"
 
 
 

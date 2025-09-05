@@ -13,6 +13,8 @@ import 'package:transports/features/auth/register/presentation/view_model/cubits
 import 'package:transports/features/auth/register/presentation/view_model/cubits/verify_otp/verifying_otp_cubit.dart';
 import 'dart:ui' as ui;
 
+import 'package:transports/features/home/presentation/view/widget/language_drop_down.dart';
+
 class OtpView extends StatefulWidget {
   const OtpView({super.key, required this.phoneNumber});
   final String phoneNumber;
@@ -77,10 +79,16 @@ textDirection: context.locale.languageCode == 'ar'
             },
             builder: (context, state) {
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    const SizedBox(height: 30),
+                    Row(
+                      children: [
+                        LanguageRowSelector()
+                      ],
+                    ),
                     const SizedBox(height: 100),
 
                     // Title
@@ -112,8 +120,8 @@ textDirection: context.locale.languageCode == 'ar'
                         numberOfFields: 6,
                         borderColor: AppColors.greyColor,
                         focusedBorderColor: AppColors.blackColor,
-                        fieldWidth: 50,
-                        
+                        fieldWidth: 45,
+
                         borderRadius: BorderRadius.circular(8),
                         showFieldAsBox: true,
                         onSubmit: (code) {
@@ -200,7 +208,7 @@ final String phoneNumber;
 
           }else if(state is ResendOtpFailure){
                     showAppSnackBar(context: context, message: state.errorMessage,backgroundColor: AppColors.red);
-    
+
           }
         },
         builder: (context, state) {
@@ -211,7 +219,7 @@ final String phoneNumber;
             },
             child: Text.rich(
               TextSpan(
-  text: "resend_otp".tr() , 
+  text: "resend_otp".tr() ,
 style: TextStyles.font16Black700Weight,
                 children: [
                   TextSpan(

@@ -17,6 +17,7 @@ import 'package:transports/features/auth/register/presentation/view/widgets/back
 import 'package:transports/features/auth/register/presentation/view/widgets/camera_banner.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/upload_image.dart';
 import 'package:transports/features/auth/register/presentation/view_model/cubits/vehicle_info/vehicle_info_cubit.dart';
+import 'package:transports/features/home/presentation/view/widget/language_drop_down.dart';
 import 'package:transports/features/home/presentation/view/widget/start_your_trip.dart';
 import 'package:transports/features/home/presentation/view_model/pick_data/extract_image_cubit.dart';
 import 'package:transports/features/home/data/models/extract_image_model.dart';
@@ -66,12 +67,12 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
             children: [
               ListTile(
                 leading: const Icon(Icons.camera_alt),
-                title: const Text('التقاط صورة بالكاميرا'),
+                title: Text('camera'.tr()),
                 onTap: () => Navigator.pop(context, ImageSource.camera),
               ),
               ListTile(
                 leading: const Icon(Icons.photo_library),
-                title: const Text('اختيار صورة من المعرض'),
+                title: Text('gallery'.tr()),
                 onTap: () => Navigator.pop(context, ImageSource.gallery),
               ),
             ],
@@ -170,17 +171,52 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                 key: globalKey,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0, vertical: 40),
+                      horizontal: 12, vertical: 40),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Row(
+                        children: [
+                          LanguageRowSelector()
+                        ],
+                      ),
+                      const SizedBox(height: 16),
                       BackButtonWidget(),
                       const SizedBox(height: 16),
                       CameraBanner(
-                        title: "إضافة بيانات السيارة",
+                        title: "add_vehicle_data".tr(),
                         onTap: () => _pickAndExtract(context),
                       ),
-                      if (extractionImage != null)
+
+                      if (isLoadingImage &&
+                          ownerNameController.text.isEmpty &&
+                          ownerIdController.text.isEmpty &&
+                          plateNumberController.text.isEmpty &&
+                          vehicleModelController.text.isEmpty &&
+                          manufacturingYearController.text.isEmpty)
+                         Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                              SizedBox(width: 12),
+                              Text(
+                                "extract_data_from_image".tr(),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      else if (extractionImage != null)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           child: ClipRRect(
@@ -192,11 +228,6 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                               fit: BoxFit.cover,
                             ),
                           ),
-                        )
-                      else if (isLoadingImage)
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          child: Center(child: CircularProgressIndicator()),
                         ),
                       const SizedBox(height: 30),
                       Text(
@@ -218,6 +249,12 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                           manufacturingYearController,
                               (value) =>
                               Validators.validateManufacturingYear(value!)),
+                      Text(
+                        'attachments_if_any'.tr(),
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 20.h),
                       UploadPhotosView(
                         onImagesSelected: (File? stamp, File? logo) {
                           setState(() {
@@ -227,15 +264,9 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                         },
                       ),
                       SizedBox(height: 20.h),
-                      Text(
-                        'المرفقات إن وُجدت',
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 20.h),
-                      buildInput('رقم الشركة'.tr(), companyPhoneController,null),
-                      buildInput('الرقم الضريبي للشركة'.tr(), companyTaxNumberController,null),
-                      buildInput('عنوان الشركة'.tr(), companyAddressController,null),
+                      buildInput('company_number'.tr(), companyPhoneController,null),
+                      buildInput('company_tax_number'.tr(), companyTaxNumberController,null),
+                      buildInput('company_address'.tr(), companyAddressController,null),
                       SizedBox(height: 20.h),
                       BlocBuilder<VehicleInfoCubit, VehicleInfoState>(
                         builder: (context, state) {
@@ -291,6 +322,8 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                               height: 36,
                               width: 36,
                             ),
+                            SizedBox(width: 5.w,),
+                            Text('Support'.tr(),style:TextStyles.font16Black700Weight,)
                           ],
                         ),
                       )

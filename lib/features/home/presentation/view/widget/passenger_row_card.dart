@@ -154,11 +154,11 @@ class AddPassengerCard extends StatelessWidget {
                 ? Positioned(
                     bottom: 0,
                     left: 0,
-                    child: Image.asset(AppImages.bigBus, width: 80.w, height: 80.h))
+                    child: Image.asset(AppImages.realBigBus, width: 80.w, height: 80.h))
                 : Positioned(
                     top: 0,
                     right: 0,
-                    child: Image.asset(AppImages.smallBus, width: 40.w, height: 40.h)),
+                    child: Image.asset(AppImages.realSmallBus, width: 70.w, height: 70.h)),
             Center(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,

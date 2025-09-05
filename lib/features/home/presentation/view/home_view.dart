@@ -18,6 +18,7 @@ import 'package:transports/features/auth/register/presentation/view/widgets/came
 import 'package:transports/features/home/data/models/seats_model.dart';
 import 'package:transports/features/home/presentation/view/bus_seat_selection_view.dart';
 import 'package:transports/features/home/presentation/view/widget/custom_drawer.dart';
+import 'package:transports/features/home/presentation/view/widget/custom_text_form_field_passenger.dart';
 import 'package:transports/features/home/presentation/view/widget/empty_widgets.dart';
 import 'package:transports/features/home/presentation/view/widget/top_widget.dart';
 import 'package:transports/features/home/presentation/view/widget/trip_details_widget.dart';
@@ -337,7 +338,7 @@ List<Map<String, dynamic>> currentBigBusPassengers = [];
                       /// Upload ID Image
                       CameraBanner(
                         isPassengerText: true,
-                        title: "رفع صورة لاستخراج البيانات",
+                        title: "upload_image".tr(),
                         onTap: () async {
                           final ImageSource? source = await showModalBottomSheet<ImageSource>(
                             context: context,
@@ -348,12 +349,12 @@ List<Map<String, dynamic>> currentBigBusPassengers = [];
                                   children: [
                                     ListTile(
                                       leading: const Icon(Icons.camera_alt),
-                                      title: const Text('التقاط صورة بالكاميرا'),
+                                      title: Text('camera'.tr()),
                                       onTap: () => Navigator.pop(context, ImageSource.camera),
                                     ),
                                     ListTile(
                                       leading: const Icon(Icons.photo_library),
-                                      title: const Text('اختيار صورة من المعرض'),
+                                      title: Text('gallery'.tr()),
                                       onTap: () => Navigator.pop(context, ImageSource.gallery),
                                     ),
                                   ],
@@ -388,7 +389,34 @@ List<Map<String, dynamic>> currentBigBusPassengers = [];
                           }
                         },
                       ),
-
+                      BlocBuilder<ExtractImageCubit, ExtractImageState>(
+                        builder: (context, state) {
+                          if (state is ExtractImageLoading) {
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 12.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const SizedBox(
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    "extract_data_from_image".tr(),
+                                    style: TextStyle(
+                                      color: AppColors.primaryColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
                       const SizedBox(height: 16),
 
                       /// Name Field
@@ -752,16 +780,8 @@ else ...[
     );
   }).toList(),
 ],
-
-
   ],
-)
-,
-                        
-
-                   
-
-
+     ),
                             Padding(
                               padding: EdgeInsets.only(right: 20.w, top: 20.h),
                               child: Align(
@@ -826,42 +846,6 @@ else ...[
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class CustomTextFormField extends StatelessWidget {
-  const CustomTextFormField({
-    super.key,
-    required this.controller,
-    required this.hint,
-    this.validator,
-    this.keyboardType = TextInputType.text,
-    this.enabled,
-  });
-  final TextEditingController controller;
-  final String hint;
-  final String? Function(String?)? validator;
-  final TextInputType? keyboardType;
-  final bool? enabled;
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      enabled: enabled,
-      validator: validator,
-      controller: controller,
-      keyboardType: keyboardType,
-      textAlign: TextAlign.left,
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: TextStyle(
-            fontSize: 16, color: AppColors.lightBlackColor.withOpacity(.5)),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-        enabledBorder:
-            OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-        focusedBorder:
-            OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
   }
