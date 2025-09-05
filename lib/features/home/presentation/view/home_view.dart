@@ -38,6 +38,7 @@ class _HomeViewState extends State<HomeView> {
   List<Map<String, dynamic>> currentMiniBusPassengers = [];
 List<Map<String, dynamic>> currentBigBusPassengers = [];
   File? passengerImage;
+  List<Map<String, dynamic>> currentDrivers = [];
 
   bool isBigBusSelected = false;
   bool showDetails = false;
@@ -74,6 +75,9 @@ List<Map<String, dynamic>> currentBigBusPassengers = [];
   final GlobalKey<FormState> globalKey = GlobalKey();
   List<Map<String, dynamic>> miniBusPassengersData = [];
   List<Map<String, dynamic>> bigBusPassengersData = [];
+  final TextEditingController driverNameController = TextEditingController();
+  final TextEditingController driverPhoneController = TextEditingController();
+  final TextEditingController driverNationalIdController = TextEditingController();
 
   void toggleSeat(String seat, {required bool isMiniBus}) {
     if (reservedSeats.contains(seat)) return;
@@ -102,138 +106,11 @@ List<Map<String, dynamic>> currentBigBusPassengers = [];
     nameController.dispose();
     nationalIdController.dispose();
     nationalityController.dispose();
+
+    driverNameController.dispose();
+    driverPhoneController.dispose();
+    driverNationalIdController.dispose();
   }
-//   void _openSeatBottomSheet(String seatNumber, String seatId,String tripId) {
-//   final existingPassengerIndex =
-//       passengersData.indexWhere((p) => p['seat_number'] == seatNumber);
-
-//   if (existingPassengerIndex != -1) {
-//     final existingData = passengersData[existingPassengerIndex];
-//     nameController.text = existingData['name'];
-//     phoneController.text = existingData['phone'];
-//     seatIdController.text = existingData['seat_number'];
-//     nationalIdController.text = existingData['national_id'];
-//     nationalityController.text = existingData['nationality'];
-//   } else {
-//     nameController.clear();
-//     phoneController.clear();
-//     seatIdController.text = seatNumber;
-//     nationalIdController.clear();
-//     nationalityController.clear();
-//   }
-
-//   showModalBottomSheet(
-//     context: context,
-//     shape: const RoundedRectangleBorder(
-//       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-//     ),
-//     isScrollControlled: true,
-//     builder: (context) {
-//       return Padding(
-//         padding: EdgeInsets.only(
-//           bottom: MediaQuery.of(context).viewInsets.bottom,
-//           left: 20,
-//           right: 20,
-//           top: 20,
-//         ),
-//         child: SingleChildScrollView(
-//           child: Form(
-//             key: globalKey,
-//             child: Column(
-//               mainAxisSize: MainAxisSize.min,
-//               children: [
-//                 Text('Selected Seat $seatNumber'),
-//                 const SizedBox(height: 16),
-//                 CustomTextFormField(
-//                   controller: nameController,
-//                   hint: 'Enter Name',
-//                   validator: (value) => Validators.validateName(value!),
-//                 ),
-//                 const SizedBox(height: 16),
-//                 CustomTextFormField(
-//                   controller: phoneController,
-//                   hint: 'Enter Phone',
-//                   keyboardType: TextInputType.phone,
-//                   validator: (value) => Validators.validatePhoneNumber(value!),
-//                 ),
-//                 const SizedBox(height: 16),
-//                 CustomTextFormField(
-//                   controller: seatIdController,
-//                   hint: 'Seat Number',
-//                   enabled: false,
-//                   validator: (value) => Validators.validateSeatId(value!),
-//                 ),
-//                 const SizedBox(height: 16),
-//                 CustomTextFormField(
-//                   controller: nationalIdController,
-//                   hint: 'National ID',
-//                   validator: (value) => Validators.validateNationalId(value),
-//                 ),
-//                 const SizedBox(height: 16),
-//                 CustomTextFormField(
-//                   controller: nationalityController,
-//                   hint: 'Nationality',
-//                   validator: (value) => Validators.validateNationality(value!),
-//                 ),
-//                 const SizedBox(height: 16),
-//                 ElevatedButton(
-//                   style: ElevatedButton.styleFrom(
-//                     foregroundColor: AppColors.whiteColor,
-//                     minimumSize: const Size(double.infinity, 40),
-//                     backgroundColor: AppColors.primaryColor,
-//                     shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.circular(10),
-//                     ),
-//                   ),
-//                   onPressed: () {
-//                     if (globalKey.currentState!.validate()) {
-//                       final passenger = {
-//                         "name": nameController.text,
-//                         "phone": phoneController.text,
-//                         "seat_number": seatIdController.text,
-//                         "national_id": nationalIdController.text,
-//                         "nationality": nationalityController.text,
-//                       };
-
-//                       if (existingPassengerIndex != -1) {
-//                         passengersData[existingPassengerIndex] = passenger;
-//                       } else {
-//                         passengersData.add(passenger);
-//                       }
-
-//                       // استدعاء API الحجز
-//                       context
-//                           .read<ReserveSeatCubit>()
-//                           .reserveSeats(tripId, seatId);
-
-//                       // استماع لنجاح الحجز
-//                       context.read<ReserveSeatCubit>().stream.listen((state) {
-//                         if (state is ReserveSeatSucces) {
-//                           setState(() {
-//                             // تحديث حالة المقعد في الواجهة
-//                             final seatObj = context.read<SeatsCubit>().state is SeatsSuccess
-//                                 ? (context.read<SeatsCubit>().state as ReserveSeatSucces).reservingData.firstWhere((s) => s.seatId == seatId, orElse: () => null)
-//                                 : null;
-//                             if (seatObj != null) {
-//                               seatObj.status = "reserved";
-//                             }
-//                           });
-//                         }
-//                       });
-
-//                       Navigator.pop(context);
-//                     }
-//                   },
-//                   child: const Text('Confirm'),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       );
-//     },
-//   );
-// }
   Set<String> occupiedMiniBusSeats = {};
   Set<String> occupiedBigBusSeats = {};
 
@@ -247,16 +124,16 @@ List<Map<String, dynamic>> currentBigBusPassengers = [];
   Color seatColor(bool isMiniBus, String seatNumber, String status) {
     if (isMiniBus) {
       if (occupiedMiniBusSeats.contains(seatNumber))
-        return Colors.black; 
+        return Colors.black;
       if (selectedMiniBusSeats.contains(seatNumber))
-        return AppColors.primarySeatColor; 
+        return AppColors.primarySeatColor;
     } else {
       if (occupiedBigBusSeats.contains(seatNumber)) return Colors.black;
       if (selectedBusSeats.contains(seatNumber))
         return AppColors.primarySeatColor;
     }
 
-    if (status != "available") return AppColors.primarySeatColor;
+    if (status != "available") return AppColors.whiteColor;
 
     return AppColors.primarySeatColor.withOpacity(0.1);
   }
@@ -389,6 +266,7 @@ List<Map<String, dynamic>> currentBigBusPassengers = [];
                           }
                         },
                       ),
+                      /// Loading Row when extracting
                       BlocBuilder<ExtractImageCubit, ExtractImageState>(
                         builder: (context, state) {
                           if (state is ExtractImageLoading) {
@@ -404,7 +282,7 @@ List<Map<String, dynamic>> currentBigBusPassengers = [];
                                   ),
                                   const SizedBox(width: 10),
                                   Text(
-                                    "extract_data_from_image".tr(),
+                                    "يتم استخراج البيانات من الصورة ...",
                                     style: TextStyle(
                                       color: AppColors.primaryColor,
                                       fontWeight: FontWeight.w500,
@@ -417,6 +295,7 @@ List<Map<String, dynamic>> currentBigBusPassengers = [];
                           return const SizedBox.shrink();
                         },
                       ),
+
                       const SizedBox(height: 16),
 
                       /// Name Field
@@ -497,6 +376,87 @@ List<Map<String, dynamic>> currentBigBusPassengers = [];
                     ],
                   ),
                 ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+  void _openDriverBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      isScrollControlled: true,
+      builder: (ctx) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: 20,
+            right: 20,
+            top: 20,
+          ),
+          child: SingleChildScrollView(
+            child: Form(
+              key: globalKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  /// Name Field
+                  CustomTextFormField(
+                    controller: driverNameController,
+                    hint: 'fullName'.tr(),
+                    validator: (value) => Validators.validateName(value!),
+                  ),
+                  const SizedBox(height: 16),
+                  /// Phone Field
+                  CustomTextFormField(
+                    controller: driverPhoneController,
+                    hint: 'phone'.tr(),
+                    validator: (value) => Validators.validateNationality(value!),
+                  ),
+                  const SizedBox(height: 16),
+
+                  /// National ID Field
+                  CustomTextFormField(
+                    controller: driverNationalIdController,
+                    hint: 'national_id'.tr(),
+                    validator: (value) => Validators.validateNationalId(value),
+                  ),
+                  const SizedBox(height: 16),
+
+                  /// Confirm Button
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: AppColors.whiteColor,
+                      minimumSize: const Size(double.infinity, 40),
+                      backgroundColor: AppColors.primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () {
+                      if (globalKey.currentState!.validate()) {
+                        final driver = {
+                          "driver_name": driverNameController.text,
+                          "driver_phone":driverPhoneController.text,
+                          "driver_nationality": '',
+                          "driver_national_id": driverNationalIdController.text,
+                          "driver_photo":""
+                        };
+
+                        // هنا بقى تقدر تضيفه لقائمة السواقين أو تبعته للسيرفر
+                        currentDrivers.add(driver);
+
+                        setState(() {});
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: const Text('Confirm'),
+                  ),
+                ],
               ),
             ),
           ),
@@ -622,7 +582,7 @@ List<Map<String, dynamic>> currentBigBusPassengers = [];
                  const SizedBox(height: 40), 
                 // //  Row( mainAxisAlignment: MainAxisAlignment.end, children: [ SvgPicture.asset(AppIcons.busSeat), 
                 //  SizedBox(width: 95.w,), ], ),
-Column(
+ Column(
   crossAxisAlignment: CrossAxisAlignment.center,
   children: [
     /// أيقونة الكرسي فوق لو باص عادي
@@ -651,16 +611,15 @@ if (miniBusSelected) ...[
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
               child: GestureDetector(
-                onTap: () {
-                  if (seat.status != "available" ||
-                      isOccupied(seat.seatNumber.toString(), isMiniBus: true)) {
-                    return;
-                  }
-                  toggleSeat(seat.seatNumber.toString(), isMiniBus: true);
-                  if (selectedMiniBusSeats.contains(seat.seatNumber.toString())) {
+                  onTap: () {
+                    // لو الكرسي جاي من السيرفر محجوز -> متخليش يفتح
+                    if (seat.status != "available") {
+                      return;
+                    }
+
+                    // هنا بقى سواء جديد أو متعدل هيفتح
                     _openSeatBottomSheet(seat.seatNumber.toString());
-                  }
-                },
+                  },
                 child: SeatBox(
                   label: seat.seatNumber.toString(),
                   isReserved: seat.status != "available",
@@ -688,16 +647,15 @@ if (miniBusSelected) ...[
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                 child: GestureDetector(
-                  onTap: () {
-                    if (seat.status != "available" ||
-                        isOccupied(seat.seatNumber.toString(), isMiniBus: true)) {
-                      return;
-                    }
-                    toggleSeat(seat.seatNumber.toString(), isMiniBus: true);
-                    if (selectedMiniBusSeats.contains(seat.seatNumber.toString())) {
+                    onTap: () {
+                      // لو الكرسي جاي من السيرفر محجوز -> متخليش يفتح
+                      if (seat.status != "available") {
+                        return;
+                      }
+
+                      // هنا بقى سواء جديد أو متعدل هيفتح
                       _openSeatBottomSheet(seat.seatNumber.toString());
-                    }
-                  },
+                    },
                   child: SeatBox(
                     label: seat.seatNumber.toString(),
                     isReserved: seat.status != "available",
@@ -737,12 +695,15 @@ else ...[
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: GestureDetector(
-                onTap: () {
-                  toggleSeat(seat.seatNumber.toString(), isMiniBus: false);
-                  if (selectedBusSeats.contains(seat.seatNumber.toString())) {
+                  onTap: () {
+                    // ❌ لو الكرسي مش متاح (محجوز من السيرفر) مايفتحش
+                    if (seat.status != "available") {
+                      return;
+                    }
+
+                    // ✅ هنا بقى سواء جديد أو متعدل هيفتح الـ BottomSheet
                     _openSeatBottomSheet(seat.seatNumber.toString());
-                  }
-                },
+                  },
                 child: SeatBox(
                   label: seat.seatNumber.toString(),
                   isReserved: seat.status != "available",
@@ -753,7 +714,7 @@ else ...[
             );
           }).toList(),
 
-          const SizedBox(width: 50), 
+          const SizedBox(width: 50),
 
           ...fixedRow.skip(2).take(2).map((seat) {
             if (seat == null) return const SizedBox(width: 40, height: 40);
@@ -761,10 +722,13 @@ else ...[
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: GestureDetector(
                 onTap: () {
-                  toggleSeat(seat.seatNumber.toString(), isMiniBus: false);
-                  if (selectedBusSeats.contains(seat.seatNumber.toString())) {
-                    _openSeatBottomSheet(seat.seatNumber.toString());
+                  // ❌ لو الكرسي مش متاح (محجوز من السيرفر) مايفتحش
+                  if (seat.status != "available") {
+                    return;
                   }
+
+                  // ✅ هنا بقى سواء جديد أو متعدل هيفتح الـ BottomSheet
+                  _openSeatBottomSheet(seat.seatNumber.toString());
                 },
                 child: SeatBox(
                   label: seat.seatNumber.toString(),
@@ -780,8 +744,28 @@ else ...[
     );
   }).toList(),
 ],
+
+
   ],
-     ),
+),
+                            GestureDetector(
+                              onTap: () {
+                                _openDriverBottomSheet();
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(2),
+                                margin: const EdgeInsets.symmetric(vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Text(
+                                  'add_driver'.tr(),
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            )
+                            ,
                             Padding(
                               padding: EdgeInsets.only(right: 20.w, top: 20.h),
                               child: Align(
@@ -829,6 +813,7 @@ else ...[
                                           passengersData: miniBusSelected
                                               ? miniBusPassengersData
                                               : bigBusPassengersData,
+                                          driversData: currentDrivers,
                                         ),
                                       ],
                                     )
@@ -850,3 +835,4 @@ else ...[
     );
   }
 }
+

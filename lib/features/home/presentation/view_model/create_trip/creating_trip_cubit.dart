@@ -7,14 +7,28 @@ part 'creating_trip_state.dart';
 
 class CreatingTripCubit extends Cubit<CreatingTripState> {
   CreatingTripCubit(this.createTripRepo) : super(CreatingTripInitial());
-  CreateTripRepo createTripRepo;
-  Future<void>createTrip({required String departureLocation,
+  final CreateTripRepo createTripRepo;
+
+  Future<void> createTrip({
+    required String departureLocation,
     required String destinationLocation,
     required int maxPassengers,
-    required List<Map<String, dynamic>> passengers,})async{
-      emit(CreatingTripLoading());
-final trip=  await createTripRepo.createTrip(departureLocation: departureLocation, destinationLocation: destinationLocation, maxPassengers: maxPassengers, passengers: passengers);
+    required List<Map<String, dynamic>> passengers,
+    List<Map<String, dynamic>>? drivers,
+  }) async {
+    emit(CreatingTripLoading());
 
-  trip.fold((fail)=>emit(CreatingTripFailure(errorMessage: fail.errorMessage)), (data)=>emit(CreatingTripSuccess(data)));   
+    final trip = await createTripRepo.createTrip(
+      departureLocation: departureLocation,
+      destinationLocation: destinationLocation,
+      maxPassengers: maxPassengers,
+      passengers: passengers,
+      drivers: drivers,
+    );
+
+    trip.fold(
+          (fail) => emit(CreatingTripFailure(errorMessage: fail.errorMessage)),
+          (data) => emit(CreatingTripSuccess(data)),
+    );
   }
 }
