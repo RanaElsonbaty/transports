@@ -22,7 +22,6 @@ class CustomTextFormField extends StatelessWidget {
       validator: validator,
       controller: controller,
       keyboardType: keyboardType,
-      textAlign: TextAlign.left,
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(

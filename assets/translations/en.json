@@ -90,6 +90,8 @@
   "company_address": "Company or institution address",
   "upload_image": "Upload an image to extract data",
   "Support": "Support",
+  "update": "Update",
+  "Edit_trip_data": "Edit trip data",
   "add_driver": "Add an additional driver, if available.",
   "extract_data_from_image": "Extracting data from image...",
   "add_passenger_data_via_camera": "You can add your passenger data\nvia camera.",

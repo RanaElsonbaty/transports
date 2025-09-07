@@ -15,7 +15,7 @@ import 'package:transports/features/home/presentation/view_model/city_cubit/city
 import 'package:transports/features/home/presentation/view_model/distance/distance_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/logout_cubit/log_out_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/pick_data/extract_image_cubit.dart';
-import 'package:transports/features/home/presentation/view_model/previouse_trip/previous_trips_cubit.dart';
+import 'package:transports/features/home/presentation/view_model/previous_trip/previous_trips_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/profile_cubit/profile_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/reserve_cubit/cubit/reserve_seat_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/seats_cubit/seats_cubit.dart';

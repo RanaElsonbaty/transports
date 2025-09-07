@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:transports/core/helper_function/extension.dart';
-import 'package:transports/core/routing/app_routing.dart';
 import 'package:transports/core/theming/icons.dart';
 import 'package:transports/core/theming/images.dart';
 import 'package:transports/core/theming/styles.dart';
@@ -62,49 +60,6 @@ class TopWidget extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              // Container(
-              //   width: 32.w,
-              //   height: 32.h,
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.circular(8),
-              //     boxShadow: [
-              //       BoxShadow(
-              //         color: Colors.black.withOpacity(0.1),
-              //         blurRadius: 4,
-              //         offset: const Offset(0, 2),
-              //       ),
-              //     ],
-              //   ),
-              //   child: Stack(
-              //     clipBehavior: Clip.none,
-              //     children: [
-              //       Center(
-              //         child: SvgPicture.asset(
-              //           AppIcons.notification,
-              //           width: 20.w,
-              //           height: 20.h,
-              //         ),
-              //       ),
-              //       Positioned(
-              //         top: -8,
-              //         right: -6,
-              //         child: Container(
-              //           padding: const EdgeInsets.all(4),
-              //           decoration: const BoxDecoration(
-              //             color: Colors.red,
-              //             shape: BoxShape.circle,
-              //           ),
-              //           child: Text(
-              //             '12',
-              //             style: TextStyles.font8White500Weight,
-              //           ),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // SizedBox(width: 12.w),
               Builder(
                 builder: (context) => GestureDetector(
                   onTap: () => Scaffold.of(context).openDrawer(),
@@ -138,7 +93,7 @@ class TopWidget extends StatelessWidget {
         Positioned(
           left: 0,
           right: 0,
-          bottom: 0,
+          bottom: 20,
           child: AddPassengerCardsRow(
             onMiniBusTap: onMiniBusTap,
             onBigBusTap: onBigBusTap,

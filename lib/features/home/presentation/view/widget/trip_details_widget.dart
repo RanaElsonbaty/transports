@@ -10,10 +10,10 @@ import 'package:transports/features/home/presentation/view_model/create_trip/cre
 import 'package:transports/features/home/presentation/view_model/distance/distance_cubit.dart';
 
 class TripDetailsWidget extends StatefulWidget {
-  const TripDetailsWidget({super.key, required this.passengersData, required this.driversData});
+  const TripDetailsWidget({super.key, required this.passengersData, required this.driversData, required this.maxPassengers});
   final List<Map<String, dynamic>> passengersData;
   final List<Map<String, dynamic>> driversData;
-
+  final int maxPassengers;
   @override
   State<TripDetailsWidget> createState() => _TripDetailsWidgetState();
 }
@@ -24,7 +24,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
   int? fromCityId;
   int? toCityId;
   bool tripStarted = false;
-  int maxPassengers = 50;
+  // int maxPassengers = 50;
 
   @override
   Widget build(BuildContext context) {
@@ -157,6 +157,9 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                                     fromCityId = cityId;
                                   });
                                   if (fromCityId != null && toCityId != null) {
+                                   setState(() {
+                                     tripStarted=true;
+                                   });
                                     context.read<DistanceCubit>().calculateDistance(
                                       fromCityId: fromCityId!,
                                       toCityId: toCityId!,
@@ -226,6 +229,9 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                                     toCityId = cityId;
                                   });
                                   if (fromCityId != null && toCityId != null) {
+                                    setState(() {
+                                      tripStarted = true;
+                                    });
                                     context.read<DistanceCubit>().calculateDistance(
                                       fromCityId: fromCityId!,
                                       toCityId: toCityId!,
@@ -280,9 +286,6 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                   if (fromCityId != null &&
                       toCityId != null &&
                       widget.passengersData.isNotEmpty) {
-                    setState(() {
-                      tripStarted = true; // هنا يبدأ التغيير
-                    });
                     showModalBottomSheet(
                       context: context,
                       isDismissible: false,
@@ -328,7 +331,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                     context.read<CreatingTripCubit>().createTrip(
                       departureLocation: toCity.toString(),
                       destinationLocation: fromCity.toString(),
-                      maxPassengers: maxPassengers,
+                      maxPassengers: widget.maxPassengers,
                       passengers: widget.passengersData,
                       drivers: widget.driversData,
                     );
@@ -438,19 +441,34 @@ class _TripArrowAnimationState extends State<TripArrowAnimation>
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text("from".tr()),
         const SizedBox(width: 10),
-        ...List.generate(
-          6,
-              (index) =>  SlideTransition(
-                position: _offsetAnimation,
-                child: Icon(
-                  Icons.arrow_right,
-                  color: widget.tripStarted ? AppColors.primaryColor : Colors.grey,
-                  size: 36,
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              height: 2,
+              width: 200,
+              color: widget.tripStarted ? AppColors.primaryColor : Colors.grey
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                6,
+                    (index) => SlideTransition(
+                  position: _offsetAnimation,
+                  child: Icon(
+                    Icons.arrow_right,
+                    color: widget.tripStarted ? AppColors.primaryColor : Colors.grey,
+                    size: 36,
+                  ),
                 ),
               ),
+            ),
+          ],
         ),
         const SizedBox(width: 10),
         Text("to".tr()),

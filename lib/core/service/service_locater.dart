@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-
 import 'package:get_it/get_it.dart';
 import 'package:transports/core/service/service_impl.dart.dart';
 import 'package:transports/core/storage/shared_prefs.dart';
@@ -29,7 +28,7 @@ import 'package:transports/features/home/data/repos/seats/seats_repo_impl.dart';
 import 'package:transports/features/home/presentation/view_model/city_cubit/city_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/create_trip/creating_trip_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/logout_cubit/log_out_cubit.dart';
-import 'package:transports/features/home/presentation/view_model/previouse_trip/previous_trips_cubit.dart';
+import 'package:transports/features/home/presentation/view_model/previous_trip/previous_trips_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/profile_cubit/profile_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/seats_cubit/seats_cubit.dart';
 import 'api_service.dart';
