@@ -21,6 +21,8 @@ import 'package:transports/features/home/presentation/view/widget/language_drop_
 import 'package:transports/features/home/presentation/view/widget/start_your_trip.dart';
 import 'package:transports/features/home/presentation/view_model/pick_data/extract_image_cubit.dart';
 import 'package:transports/features/home/data/models/extract_image_model.dart';
+import 'package:transports/features/settings/presentation/view/settings.dart';
+import 'package:transports/features/settings/presentation/view_model/settings_cubit.dart';
 
 class VehicleInfoView extends StatefulWidget {
   const VehicleInfoView({super.key});
@@ -32,14 +34,14 @@ class VehicleInfoView extends StatefulWidget {
 class _VehicleInfoViewState extends State<VehicleInfoView> {
   final GlobalKey<FormState> globalKey = GlobalKey();
   final TextEditingController ownerNameController = TextEditingController();
+  final TextEditingController capacityController = TextEditingController();
   final TextEditingController ownerIdController = TextEditingController();
   final TextEditingController plateNumberController = TextEditingController();
   final TextEditingController vehicleModelController = TextEditingController();
   final TextEditingController companyPhoneController = TextEditingController();
   final TextEditingController companyTaxNumberController = TextEditingController();
   final TextEditingController companyAddressController = TextEditingController();
-  final TextEditingController manufacturingYearController =
-  TextEditingController();
+  final TextEditingController manufacturingYearController = TextEditingController();
 
   final ImagePicker _picker = ImagePicker();
   File? extractionImage;
@@ -50,6 +52,7 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
   @override
   void dispose() {
     ownerNameController.dispose();
+    capacityController.dispose();
     ownerIdController.dispose();
     plateNumberController.dispose();
     vehicleModelController.dispose();
@@ -142,8 +145,8 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                     ownerIdController.text = data.nationalId ?? '';
                     plateNumberController.text = data.plateNumber ?? '';
                     vehicleModelController.text = data.vehicleModel ?? '';
-                    manufacturingYearController.text =
-                        data.manufacturingYear ?? '';
+                    capacityController.text = data.capacity.toString() ?? '';
+                    manufacturingYearController.text = data.manufacturingYear.toString() ?? '';
                   });
                 }
 
@@ -193,6 +196,7 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                           ownerIdController.text.isEmpty &&
                           plateNumberController.text.isEmpty &&
                           vehicleModelController.text.isEmpty &&
+                          capacityController.text.isEmpty &&
                           manufacturingYearController.text.isEmpty)
                          Padding(
                           padding: EdgeInsets.symmetric(vertical: 12),
@@ -244,6 +248,8 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                               (value) => Validators.validatePlateNumber(value!)),
                       buildInput('vehicle_model'.tr(), vehicleModelController,
                               (value) => Validators.validateVehicleModel(value!)),
+                      buildInput('capacity'.tr(), capacityController,
+                              (value) => Validators.validateCapacity(value!)),
                       buildInput(
                           'manufacturing_year'.tr(),
                           manufacturingYearController,
@@ -291,6 +297,7 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                                   ownerNationalId: ownerIdController.text,
                                   plateNumber: plateNumberController.text,
                                   vehicleModel: vehicleModelController.text,
+                                  capacity: int.parse(capacityController.text),
                                   manufacturingYear: manufacturingYearController.text,
                                   logo: boardImage?.path, // optional
                                   stamp: stampImage?.path, // optional
@@ -311,21 +318,9 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                         },
                       ),
                       SizedBox(height: 20.h),
-                      GestureDetector(
-                        onTap: () {
-                          ContactUtils.openWhatsApp('0556742234');
-                        },
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              'assets/svgs/whatsapp_icon.png',
-                              height: 36,
-                              width: 36,
-                            ),
-                            SizedBox(width: 5.w,),
-                            Text('Support'.tr(),style:TextStyles.font16Black700Weight,)
-                          ],
-                        ),
+                      BlocProvider(
+                        create: (_) => SettingsCubit()..getSettings(),
+                        child: const ContactSupportWidget(),
                       )
                     ],
                   ),

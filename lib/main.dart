@@ -16,8 +16,10 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   final prefs = getIt.get<SharedPrefs>();
   final String? token = await prefs.getToken();
+  final driverProfile = await prefs.getDriverProfile();
+
   runApp(
-    
+
       EasyLocalization(
 
           supportedLocales: const [Locale('ar'), Locale('en'),    Locale('ar', 'JO'), ],

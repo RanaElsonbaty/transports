@@ -3,6 +3,7 @@ import 'package:transports/core/constant/constant.dart';
 import 'package:transports/core/constant/end_point.dart';
 import 'package:transports/core/failure/failure.dart';
 import 'package:transports/core/service/api_service.dart';
+import 'package:transports/core/service/service_locater.dart';
 import 'package:transports/core/storage/shared_prefs.dart';
 import 'package:transports/features/auth/data/models/otp/resend_otp_model.dart';
 import 'package:transports/features/auth/data/models/otp/send_otp_model.dart';
@@ -16,10 +17,11 @@ final SharedPrefs sharedPrefService;
   Future<Either<Failure, SendingOtpModel>> sendOtp({required String phoneNumber})async {
  try {
   final response = await apiService.post(EndPoints.sendOtp, data: {
-     "phone":phoneNumber,
-      "country_code":Constant.countryCode,
-  });
-  
+     "phone":phoneNumber
+
+  },
+  );
+
   final otp=  SendingOtpModel.fromJson(response);
 print('OTP Code: ${otp.data!.otp}');
   return right(otp);
@@ -29,34 +31,52 @@ return left(ServerFailure(e.errorMessage));
 return left(ServerFailure(e.toString()));
 }
   }
-  
-  @override
-  Future<Either<Failure, VerifyingOtpModel>> verifyOtp({required String phoneNumber, required String otpCode})async {
-  
+
+@override
+Future<Either<Failure, VerifyingOtpModel>> verifyOtp({
+  required String phoneNumber,
+  required String otpCode,
+}) async {
   try {
-  final response=await apiService.post(EndPoints.verifyOtp, data: {
-   "phone":phoneNumber,
-  "country_code":Constant.countryCode,
-    "otp_code":otpCode
-  });
-   final result= VerifyingOtpModel.fromJson(response);
-  final token= await sharedPrefService.saveToken(result.data!.token!);
-print("tokenSaved");
-  return right(result);
-} on Failure catch (e) {
-  return left(ServerFailure(e.errorMessage));
-}catch(e){
-  return left(ServerFailure(e.toString()));
-}
+    final response = await apiService.post(EndPoints.verifyOtp, data: {
+      "phone": phoneNumber,
+      // "country_code": Constant.countryCode,
+      "otp_code": otpCode
+    });
+
+    final result = VerifyingOtpModel.fromJson(response);
+
+    // حفظ الـ token
+    if (result.data?.token != null) {
+      await sharedPrefService.saveToken(result.data!.token!);
+      print("Token saved");
+    }
+
+    // حفظ الـ DriverProfile لو موجود في الداتا الجديدة
+    final DriverProfile? profile = result.data?.user?.driverProfile;
+    if (profile != null) {
+      await sharedPrefService.saveDriverProfile(profile);
+      print("Driver profile saved: ${profile.toJson()}");
+    } else {
+      await sharedPrefService.removeDriverProfile();
+      print("Driver profile cleared");
+    }
+
+    return right(result);
+  } on Failure catch (e) {
+    return left(ServerFailure(e.errorMessage));
+  } catch (e) {
+    return left(ServerFailure(e.toString()));
   }
-  
-  @override
+}
+
+@override
   Future<Either<Failure, ResendOtpModel>> resendOtp({required String phoneNumber}) async{
 
   try {
   final response=await apiService.post(EndPoints.resendOtp, data: {
    "phone":phoneNumber,
-  "country_code":Constant.countryCode,
+  // "country_code":Constant.countryCode,
   });
    final result= ResendOtpModel.fromJson(response);
   return right(result);

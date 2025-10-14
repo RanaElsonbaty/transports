@@ -13,6 +13,8 @@ import 'package:transports/features/auth/register/presentation/view_model/cubits
 import 'dart:ui' as ui;
 
 import 'package:transports/features/home/presentation/view/widget/language_drop_down.dart';
+import 'package:transports/features/settings/presentation/view/settings.dart';
+import 'package:transports/features/settings/presentation/view_model/settings_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RegisterView extends StatefulWidget {
@@ -204,24 +206,11 @@ textDirection: context.locale.languageCode == 'ar'
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      GestureDetector(
-                        onTap: () {
-                          ContactUtils.openWhatsApp('0556742234');
-                        },
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              'assets/svgs/whatsapp_icon.png',
-                              height: 36,
-                              width: 36,
-                            ),
-                            SizedBox(width: 5.w,),
-                            Text('Support'.tr(),style:TextStyles.font16Black700Weight,)
-                          ],
-                        ),
-                      )
-
+                      // const SizedBox(height: 20),
+                      // BlocProvider(
+                      //   create: (_) => SettingsCubit()..getSettings(),
+                      //   child: const ContactSupportWidget(),
+                      // )
                     ],
                   ),
                 ),
@@ -239,7 +228,10 @@ class ContactUtils {
     // إزالة أي مسافات أو + من الرقم
     String cleanNumber = phoneNumber.replaceAll(RegExp(r'\D'), '');
     // إنشاء الرابط الصحيح
-    final Uri whatsappUri = Uri.parse("https://wa.me/966$cleanNumber");
+    if (!cleanNumber.startsWith('966')) {
+      cleanNumber = '966$cleanNumber';
+    }
+    final Uri whatsappUri = Uri.parse("https://wa.me/$cleanNumber");
 
     if (await canLaunchUrl(whatsappUri)) {
       await launchUrl(

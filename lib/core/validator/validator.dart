@@ -33,6 +33,12 @@ class Validators {
     }
     return null;
   }
+  static String? validateCapacity(String value) {
+    if (value.isEmpty) {
+      return 'Capacity cannot be empty';
+    }
+    return null;
+  }
 
   static String? validateDrivingLicenseExpiry(String value) {
     if (value.isEmpty) {

@@ -143,7 +143,7 @@ class SeatBox extends StatelessWidget {
   final String label;
   final bool isReserved;
   final bool isSelected;
-    final Color? color; 
+    final Color? color;
 
   const SeatBox({
     super.key,
@@ -161,10 +161,11 @@ class SeatBox extends StatelessWidget {
                 ? AppColors.primarySeatColor
                 : AppColors.primarySeatColor.withOpacity(.1));
 
-    final textStyle = TextStyles.font14SeatBlack500Weight.copyWith(
-      color: isReserved || isSelected
+    final textStyle =
+    TextStyles.font14SeatBlack500Weight.copyWith(
+      color: boxColor==AppColors.blackColor
           ? Colors.white
-          : Colors.black, 
+          : Colors.black,
     );
 
     return Container(

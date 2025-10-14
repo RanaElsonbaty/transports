@@ -20,6 +20,8 @@ import 'package:transports/features/home/presentation/view/widget/language_drop_
 import 'package:transports/features/home/presentation/view/widget/start_your_trip.dart';
 import 'package:transports/features/home/presentation/view_model/pick_data/extract_image_cubit.dart';
 import 'package:transports/features/home/data/models/extract_image_model.dart';
+import 'package:transports/features/settings/presentation/view/settings.dart';
+import 'package:transports/features/settings/presentation/view_model/settings_cubit.dart';
 
 class AttachmentsView extends StatefulWidget {
   const AttachmentsView({super.key});
@@ -41,6 +43,41 @@ class _AttachmentsViewState extends State<AttachmentsView> {
   File? selectedImage;
   final ImagePicker _picker = ImagePicker();
   bool isLoadingImage = false;
+  File? profilePhoto;
+
+  Future<void> _pickProfilePhoto(BuildContext context) async {
+    final ImageSource? source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: Text('camera'.tr()),
+                onTap: () => Navigator.pop(context, ImageSource.camera),
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: Text('gallery'.tr()),
+                onTap: () => Navigator.pop(context, ImageSource.gallery),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (source == null) return;
+
+    final pickedFile = await _picker.pickImage(source: source);
+    if (pickedFile != null) {
+      setState(() {
+        profilePhoto = File(pickedFile.path);
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -130,10 +167,6 @@ class _AttachmentsViewState extends State<AttachmentsView> {
                     nationalIdController.text = data.nationalId ?? '';
                     nationalityController.text =
                         data.nationality ?? '';
-                    drivingLicenseNumberController.text =
-                        data.drivingLicenseNumber ?? '';
-                    drivingLicenseExpiryController.text =
-                        data.drivingLicenseExpiry ?? '';
                   });
                 }
 
@@ -172,6 +205,51 @@ class _AttachmentsViewState extends State<AttachmentsView> {
                       ),
                       const SizedBox(height: 16),
                       BackButtonWidget(),
+                      const SizedBox(height: 16),
+                      /// Circle Avatar for profile photo
+                      Center(
+                        child: GestureDetector(
+                          onTap: () => _pickProfilePhoto(context),
+                          child: Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundColor: AppColors.greyColor.withOpacity(0.3),
+                                backgroundImage: profilePhoto != null
+                                    ? FileImage(profilePhoto!)
+                                    : null,
+                                child: profilePhoto == null
+                                    ? const Icon(
+                                  Icons.camera_alt,
+                                  size: 40,
+                                  color: Colors.black54,
+                                )
+                                    : null,
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryColor,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.all(6),
+                                  child: const Icon(
+                                    Icons.camera_alt,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 16),
                       CameraBanner(
                         title: "add_driver_data".tr(),
@@ -258,6 +336,7 @@ class _AttachmentsViewState extends State<AttachmentsView> {
                                   nationalIdController.text,
                                   nationality:
                                   nationalityController.text,
+                                  avatar: profilePhoto
                                 );
                               }
                             },
@@ -265,21 +344,9 @@ class _AttachmentsViewState extends State<AttachmentsView> {
                         },
                       ),
                       SizedBox(height: 20.h),
-                      GestureDetector(
-                        onTap: () {
-                          ContactUtils.openWhatsApp('0556742234');
-                        },
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              'assets/svgs/whatsapp_icon.png',
-                              height: 36,
-                              width: 36,
-                            ),
-                            SizedBox(width: 5.w,),
-                            Text('Support'.tr(),style:TextStyles.font16Black700Weight,)
-                          ],
-                        ),
+                      BlocProvider(
+                        create: (_) => SettingsCubit()..getSettings(),
+                        child: const ContactSupportWidget(),
                       )
                     ],
                   ),

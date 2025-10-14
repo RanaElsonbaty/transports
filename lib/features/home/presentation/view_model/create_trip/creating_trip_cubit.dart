@@ -8,11 +8,14 @@ part 'creating_trip_state.dart';
 class CreatingTripCubit extends Cubit<CreatingTripState> {
   CreatingTripCubit(this.createTripRepo) : super(CreatingTripInitial());
   final CreateTripRepo createTripRepo;
-
+  void reset() {
+    emit(CreatingTripInitial());
+  }
   Future<void> createTrip({
     required String departureLocation,
     required String destinationLocation,
     required int maxPassengers,
+    required double distanceKm,
     required List<Map<String, dynamic>> passengers,
     List<Map<String, dynamic>>? drivers,
   }) async {
@@ -22,6 +25,7 @@ class CreatingTripCubit extends Cubit<CreatingTripState> {
       departureLocation: departureLocation,
       destinationLocation: destinationLocation,
       maxPassengers: maxPassengers,
+      distanceKm: distanceKm,
       passengers: passengers,
       drivers: drivers,
     );

@@ -18,6 +18,7 @@ class CreateTripRepoImpl extends CreateTripRepo {
     required String departureLocation,
     required String destinationLocation,
     required int maxPassengers,
+    required double distanceKm,
     required List<Map<String, dynamic>> passengers,
     List<Map<String, dynamic>>? drivers, // optional
   }) async {
@@ -29,6 +30,7 @@ class CreateTripRepoImpl extends CreateTripRepo {
         "destination_location": destinationLocation,
         "max_passengers": maxPassengers,
         "passengers": passengers,
+        "distance_km": distanceKm,
         "trip_drivers": drivers ?? [],
       };
 

@@ -10,7 +10,9 @@ import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/icons.dart';
 import 'package:transports/features/auth/register/presentation/view/register_view.dart';
 import 'package:transports/features/home/presentation/view/widget/custom_dialoge.dart';
+import 'package:transports/features/home/presentation/view/widget/language_drop_down.dart';
 import 'package:transports/features/home/presentation/view_model/logout_cubit/log_out_cubit.dart';
+import 'package:transports/features/home/presentation/view_model/profile_cubit/profile_cubit.dart';
 import '../../../../../core/theming/styles.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -26,7 +28,7 @@ if(state  is LogOutSuccess){
    showAppSnackBar(context: context, message:state. logOutSuccess) ;
   Navigator.of(context).pushNamedAndRemoveUntil(
                   Routes.splash, (route) => false);
-            
+
 }else if(state is LogOutFailure){
     return showAppSnackBar(context: context, message:state.errorMessage) ;
 
@@ -35,8 +37,30 @@ if(state  is LogOutSuccess){
             builder: (context, state) {
               return Column(
                 children: [
-                  SizedBox(
-                    height: 200.h,
+                  LanguageRowSelector(),
+                  Builder(
+                    builder: (context) {
+                      final state = context.watch<ProfileCubit>().state;
+
+                      if (state is ProfileSuccess) {
+                        final profile = state.profile.data?.user;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 30),
+                          child: Row(
+                            children: [
+                              Text(
+                                profile?.name ?? "",
+                                style: TextStyles.font14Black700Weight,
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      return Text(
+                        "",
+                        style: TextStyles.font14Black700Weight,
+                      );
+                    },
                   ),
                   ListTile(
                     leading: SvgPicture.asset(
@@ -47,39 +71,13 @@ if(state  is LogOutSuccess){
                     title: Text('profile'.tr(),
                         textAlign: TextAlign.right,
                         style: TextStyles.font16DarkGrey400Weight),
-                    trailing: IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.arrow_forward_ios,
-                          color: AppColors.arrowColor,
-                          size: 16,
-                        )),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      color: AppColors.arrowColor,
+                      size: 16,
+                    ),
                     onTap: () {
                       context.pushNamed(Routes.myProfile);
-                    },
-                  ),
-                  ListTile(
-                    leading: SvgPicture.asset(AppIcons.language),
-                    title: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'language'.tr(),
-                            style: TextStyles.font16DarkGrey400Weight,
-                          ),
-                         
-                         
-                        ],
-                      ),
-                      textAlign: TextAlign.right,
-                    ),
-                    trailing: IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.arrow_forward_ios,
-                          color: AppColors.arrowColor, size: 16),
-                    ),
-                    onTap: () {
-                      context.pushNamed(Routes.changeLanguage);
                     },
                   ),
                   ListTile(
@@ -87,31 +85,54 @@ if(state  is LogOutSuccess){
                     title: Text('previous trips'.tr(),
                         textAlign: TextAlign.right,
                         style: TextStyles.font16DarkGrey400Weight),
-                    trailing: IconButton(
-                        onPressed: () {
-                        },
-                        icon: Icon(
-                          Icons.arrow_forward_ios,
-                          color: AppColors.arrowColor,
-                          size: 16,
-                        )),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      color: AppColors.arrowColor,
+                      size: 16,
+                    ),
                     onTap: () {
-                                                context.pushNamed(Routes.previousTrip);
+                      context.pushNamed(Routes.previousTrip);
 
                     },
                   ),
                   ListTile(
-                    leading: SvgPicture.asset(AppIcons.closeCircle),
-                    title: Text('deleteAccount'.tr(),
+                    leading: Icon(Icons.payment_outlined),
+                    title: Text('payment'.tr(),
                         textAlign: TextAlign.right,
                         style: TextStyles.font16DarkGrey400Weight),
-                    trailing: IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.arrow_forward_ios,
-                          color: AppColors.arrowColor,
-                          size: 16,
-                        )),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      color: AppColors.arrowColor,
+                      size: 16,
+                    ),
+                    onTap: () {
+
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.directions_bus),
+                    title: Text('add_new_vehicle'.tr(),
+                        textAlign: TextAlign.right,
+                        style: TextStyles.font16DarkGrey400Weight),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      color: AppColors.arrowColor,
+                      size: 16,
+                    ),
+                    onTap: () {
+                      context.pushNamed(Routes.vehicleInfo);
+                    },
+                  ),
+                  ListTile(
+                    leading: SvgPicture.asset(AppIcons.closeCircle),
+                    title: Text('logout'.tr(),
+                        textAlign: TextAlign.right,
+                        style: TextStyles.font16DarkGrey400Weight),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      color: AppColors.arrowColor,
+                      size: 16,
+                    ),
                     onTap: () {
                       showDialog(
                           context: context,
@@ -126,17 +147,19 @@ if(state  is LogOutSuccess){
                     },
                   ),
                   ListTile(
-                    leading: Icon(Icons.call,size: 20,),
-                    title: Text("Support".tr(),
+                    leading: Image.asset(
+                      'assets/svgs/whatsapp_icon.png',
+                      height: 24,
+                      width: 24,
+                    ),
+                    title: Text("support".tr(),
                         textAlign: TextAlign.right,
                         style: TextStyles.font16DarkGrey400Weight),
-                    trailing: IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.arrow_forward_ios,
-                          color: AppColors.arrowColor,
-                          size: 16,
-                        )),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      color: AppColors.arrowColor,
+                      size: 16,
+                    ),
                     onTap: () {
                       ContactUtils.openWhatsApp('0556742234');
                     },
@@ -147,6 +170,6 @@ if(state  is LogOutSuccess){
           ),
         ),
       );
-    
+
   }
 }

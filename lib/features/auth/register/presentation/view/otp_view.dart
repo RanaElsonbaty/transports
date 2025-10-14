@@ -7,6 +7,7 @@ import 'package:transports/core/helper_function/extension.dart';
 import 'package:transports/core/helper_function/snack_bar.dart';
 import 'package:transports/core/routing/app_routing.dart';
 import 'package:transports/core/service/service_locater.dart';
+import 'package:transports/core/storage/shared_prefs.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/features/auth/register/presentation/view_model/cubits/resend_otp/resend_otp_cubit.dart';
@@ -24,7 +25,7 @@ class OtpView extends StatefulWidget {
 }
 
 class _OtpViewState extends State<OtpView> {
-  int remainingSeconds = 120;
+  int remainingSeconds = 15;
   late Timer _timer;
   String otpCode = '';
 
@@ -63,20 +64,30 @@ textDirection: context.locale.languageCode == 'ar'
         child: BlocProvider(
           create: (context) => getIt.get<VerifyingOtpCubit>(),
           child: BlocConsumer<VerifyingOtpCubit, VerifyingOtpState>(
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is VerifyingOtpSuccess) {
                 showAppSnackBar(
-                    backgroundColor: AppColors.primaryDarkGradientColor,
-                    context: context,
-                    message: state.verifyingOtpModel.message ?? "no message");
-                context.pushNamed(Routes.attachmentInfo);
+                  backgroundColor: AppColors.primaryDarkGradientColor,
+                  context: context,
+                  message: state.verifyingOtpModel.message ?? "no message",
+                );
+               // context.pushNamed(Routes.attachmentInfo);
+                // تحقق من وجود driverProfile في الكاش
+                final profile = await getIt.get<SharedPrefs>().getDriverProfile();
+                if (profile != null) {
+                  context.pushNamed(Routes.home);
+                } else {
+                  context.pushNamed(Routes.attachmentInfo);
+                }
               } else if (state is VerifyingOtpFailure) {
                 showAppSnackBar(
-                    context: context,
-                    message: state.errorMessage,
-                    backgroundColor: AppColors.red);
+                  context: context,
+                  message: state.errorMessage,
+                  backgroundColor: AppColors.red,
+                );
               }
             },
+
             builder: (context, state) {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -136,8 +147,7 @@ textDirection: context.locale.languageCode == 'ar'
                     const SizedBox(height: 24),
 
                     // Timer Text
-                    CustomResendOtpTextButton(
-                        remainingSeconds: remainingSeconds, phoneNumber: widget.phoneNumber,),
+                    CustomResendOtpTextButton(phoneNumber: widget.phoneNumber,),
 
                     const SizedBox(height: 40),
 
@@ -189,48 +199,120 @@ state is VerifyingOtpLoading?Center(child: CircularProgressIndicator(),):
   }
 }
 
-class CustomResendOtpTextButton extends StatelessWidget {
+class CustomResendOtpTextButton extends StatefulWidget {
   const CustomResendOtpTextButton({
     super.key,
-    required this.remainingSeconds, required this.phoneNumber,
+    required this.phoneNumber,
   });
 
-  final int remainingSeconds;
-final String phoneNumber;
+  final String phoneNumber;
+
+  @override
+  State<CustomResendOtpTextButton> createState() => _CustomResendOtpTextButtonState();
+}
+
+class _CustomResendOtpTextButtonState extends State<CustomResendOtpTextButton> {
+  int remainingSeconds = 15;
+  Timer? _timer;
+  String? newOtpCode;
+
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
+
+  void startTimer() {
+    _timer?.cancel();
+    remainingSeconds = 15;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingSeconds == 0) {
+        timer.cancel();
+      } else {
+        setState(() {
+          remainingSeconds--;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getIt.get<ResendOtpCubit>(),
       child: BlocConsumer<ResendOtpCubit, ResendOtpState>(
         listener: (context, state) {
-          if(state is ResendOtpSuccess){
-            showAppSnackBar(context: context, message: state.resendOtpModel.message??"",backgroundColor: AppColors.primaryColor);
+          if (state is ResendOtpSuccess) {
+            setState(() {
+              newOtpCode = state.resendOtpModel.data?.otp ?? "";
+            });
 
-          }else if(state is ResendOtpFailure){
-                    showAppSnackBar(context: context, message: state.errorMessage,backgroundColor: AppColors.red);
+            // اعمل Reset للتايمر بعد نجاح الإرسال
+            startTimer();
 
+            showAppSnackBar(
+              context: context,
+              message: state.resendOtpModel.message ?? "",
+              backgroundColor: AppColors.primaryColor,
+            );
+          } else if (state is ResendOtpFailure) {
+            showAppSnackBar(
+              context: context,
+              message: state.errorMessage,
+              backgroundColor: AppColors.red,
+            );
           }
         },
         builder: (context, state) {
-          return InkWell(
-            onTap: () {
-            context.read<ResendOtpCubit>().resendOtp(phoneNumber: phoneNumber);
-
-            },
-            child: Text.rich(
-              TextSpan(
-  text: "resend_otp".tr() ,
-style: TextStyles.font16Black700Weight,
-                children: [
+          return Column(
+            children: [
+              InkWell(
+                onTap: () {
+                  if (remainingSeconds > 0) {
+                    showAppSnackBar(
+                      context: context,
+                      message:
+                      "اعد المحاولة بعد ${remainingSeconds} ثانية",
+                      backgroundColor: AppColors.red,
+                    );
+                  } else {
+                    context.read<ResendOtpCubit>().resendOtp(
+                      phoneNumber: widget.phoneNumber,
+                    );
+                  }
+                },
+                child: Text.rich(
                   TextSpan(
-                    text:
+                    text: "resend_otp".tr(),
+                    style: TextStyles.font16Black700Weight,
+                    children: [
+                      TextSpan(
+                        text:
                         ' ${(remainingSeconds ~/ 60).toString().padLeft(2, '0')}:${(remainingSeconds % 60).toString().padLeft(2, '0')}',
-                    style: TextStyles.font16Black400Weight
-                        .copyWith(color: AppColors.blackColor.withOpacity(.7)),
+                        style: TextStyles.font16Black400Weight.copyWith(
+                          color: AppColors.blackColor.withOpacity(.7),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              if (newOtpCode != null && newOtpCode!.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                Text(
+                  "الكود الجديد: $newOtpCode",
+                  style: TextStyles.font16Black700Weight.copyWith(
+                    color: AppColors.primaryColor,
+                  ),
+                ),
+              ]
+            ],
           );
         },
       ),

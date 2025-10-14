@@ -134,6 +134,7 @@
 // }
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:transports/core/service/service_locater.dart';
 import 'package:transports/core/storage/shared_prefs.dart';
 import 'package:transports/core/theming/colors.dart';
@@ -198,7 +199,7 @@ class _LanguageRowSelectorState extends State<LanguageRowSelector> {
             onChanged: (_) => _changeLanguage(langCode),
             activeColor: AppColors.primaryColor,
           ),
-          Text(flag, style: const TextStyle(fontSize: 16)),
+          Text(flag, style: TextStyle(fontSize: 13.sp)),
           Text(name, style: TextStyles.font14Black400Weight),
 
         ],
@@ -208,18 +209,12 @@ class _LanguageRowSelectorState extends State<LanguageRowSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Row(
-        children: [
-          _buildLanguageItem('ar', '🇸🇦', 'العربية'),
-          const SizedBox(width: 2),
-          _buildLanguageItem('ar-JO', '🇵🇰', 'اُردُو'),
-          const SizedBox(width: 2),
-          _buildLanguageItem('en', '🇺🇸', 'English'),
-        ],
-      ),
+    return Row(
+      children: [
+        _buildLanguageItem('ar', '🇸🇦', 'العربية'),
+        _buildLanguageItem('ar-JO', '🇵🇰', 'اُردُو'),
+        _buildLanguageItem('en', '🇺🇸', 'English'),
+      ],
     );
   }
 }

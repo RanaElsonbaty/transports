@@ -1,9 +1,11 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:transports/core/constant/end_point.dart';
 import 'package:transports/core/failure/failure.dart';
 import 'package:transports/core/service/api_service.dart';
 import 'package:transports/core/storage/shared_prefs.dart';
-import 'package:transports/features/home/data/models/profile_view.dart';
+import 'package:transports/features/home/data/models/profile_model.dart';
 import 'package:transports/features/home/data/repos/profile/profile_repo.dart';
 class ProfileRepoImpl extends ProfileRepo{
   ApiService apiService;
@@ -18,6 +20,7 @@ class ProfileRepoImpl extends ProfileRepo{
     "Authorization":"Bearer $token"
   });
   final data =ProfileModel.fromJson(response);
+  log("Profile data: ${data.toJson()}");
   return right(data);
 } on Failure catch (e) {
 return left(ServerFailure(e.errorMessage));

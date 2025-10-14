@@ -19,6 +19,7 @@ class VehicleRepoImpl extends VehicleRepo {
     required String ownerNationalId,
     required String plateNumber,
     required String vehicleModel,
+    required int capacity,
     required String manufacturingYear,
     String? logo,
     String? stamp,
@@ -35,6 +36,7 @@ class VehicleRepoImpl extends VehicleRepo {
         "owner_national_id": ownerNationalId,
         "plate_number": plateNumber,
         "vehicle_model": vehicleModel,
+        "capacity": capacity,
         "manufacturing_year": manufacturingYear,
       };
 

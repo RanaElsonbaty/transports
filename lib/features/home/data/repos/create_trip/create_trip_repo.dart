@@ -7,6 +7,7 @@ abstract class CreateTripRepo {
     required String departureLocation,
     required String destinationLocation,
     required int maxPassengers,
+    required double distanceKm,
     required List<Map<String, dynamic>> passengers,
     List<Map<String, dynamic>>? drivers,
   });

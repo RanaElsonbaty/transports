@@ -1,7 +1,7 @@
 {
   "language": "اللغة",
   "changeLanguage": "تغيير اللغة",
-  "hello": "يسعد صباحك",
+  "hello": "مرحبًا",
   "deleteAccount":"حذف الحساب",
   "previous trips":"الرحلات السابقة",
   "bus":"حــافلة",
@@ -12,7 +12,7 @@
   "tripdetails":"تفاصيل الرحلة",
   "to":"إلى ",
   "from":"من",
-    "startTrip":"ابدا الرحلة الان",
+    "startTrip":"ابدأ الرحلة الان",
  "profile": "الملف الشخصي",
   "fullName": "الاسم بالكامل",
   "fullNameHint": "مثال : احمد مصطفي بودى",
@@ -90,13 +90,20 @@
      "company_tax_number": "الرقم الضريبي للشركة أو المؤسسة",
      "company_address": "عنوان الشركة أو المؤسسة",
      "upload_image": "رفع صورة لاستخراج البيانات",
-     "Support": "الدعم",
+     "support": "الدعم",
      "Edit_trip_data": "تعديل بيانات الرحلة",
      "add_driver": "إضافة سائق إضافي إن وُجد",
      "update": "تعديل",
+     "payment": "الدفع",
+     "new_trip": "رحلة جديدة",
      "extract_data_from_image": "جاري استخراج البيانات من الصورة...",
      "add_passenger_data_via_camera": "يإمكنك إضافة بيانات الراكب\nالخاصة بك عن طريق الكاميرا",
-     "add_driver_data_via_camera": "بإمكانك إضافة بيانات السائق\nالخاصة بك عن طريق الكاميرا"
+     "add_driver_data_via_camera": "بإمكانك إضافة بيانات السائق\nالخاصة بك عن طريق الكاميرا",
+     "logout": "تسجيل الخروج",
+     "delete": "حذف",
+     "add": "إضافة",
+     "add_new_vehicle": "إضافة سيارة جديدة",
+     "capacity": "الحمولة"
 
 
 

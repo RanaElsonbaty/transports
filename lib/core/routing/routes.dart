@@ -81,8 +81,6 @@ class AppRoutes {
                 ));
       case Routes.success:
         return MaterialPageRoute(builder: (_) => SuccessView());
-      case Routes.profile:
-        return MaterialPageRoute(builder: (_) => ProfileView());
       case Routes.myProfile:
         return MaterialPageRoute(
             builder: (_) => BlocProvider(

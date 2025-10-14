@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:transports/core/theming/icons.dart';
 import 'package:transports/core/theming/images.dart';
 import 'package:transports/core/theming/styles.dart';
+import 'package:transports/features/home/presentation/view/widget/language_drop_down.dart';
 import 'package:transports/features/home/presentation/view/widget/passenger_row_card.dart';
 import 'package:transports/features/home/presentation/view_model/profile_cubit/profile_cubit.dart';
 
@@ -29,7 +30,16 @@ class TopWidget extends StatelessWidget {
       children: [
         Image.asset(AppImages.maps),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 85.h),
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            children: [
+              LanguageRowSelector()
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 65.h),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [

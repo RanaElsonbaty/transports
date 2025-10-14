@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:transports/features/auth/data/models/driver_info_model.dart';
@@ -12,12 +13,14 @@ class DriverInfoCubit extends Cubit<DriverInfoState> {
     required String name,
     required String nationalId,
     required String nationality,
+    File? avatar,
   }) async {
     emit(DriverInfoLoading());
     final result = await driverInfoRepo.addDriverInfo(
       name: name,
       nationalId: nationalId,
       nationality: nationality,
+      avatar: avatar
     );
     result.fold(
       (fail) => emit(DriverInfoFailure(errorMessage: fail.errorMessage)),

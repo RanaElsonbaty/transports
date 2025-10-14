@@ -1,7 +1,7 @@
 {
   "language": "Language",
   "changeLanguage": "Change Language",
-  "hello":"good morning",
+  "hello":"Hello",
   "deleteAccount":"Delete Account",
   "previous trips":"Previous Trips",
 "bus":"Bus",
@@ -89,13 +89,21 @@
   "company_tax_number": "Company or institution tax number",
   "company_address": "Company or institution address",
   "upload_image": "Upload an image to extract data",
-  "Support": "Support",
+  "support": "Support",
   "update": "Update",
+  "payment": "Payment",
+  "new_trip": "New Trip",
   "Edit_trip_data": "Edit trip data",
   "add_driver": "Add an additional driver, if available.",
   "extract_data_from_image": "Extracting data from image...",
   "add_passenger_data_via_camera": "You can add your passenger data\nvia camera.",
-  "add_driver_data_via_camera": "You can add your driver data\nvia camera."
+  "add_driver_data_via_camera": "You can add your driver data\nvia camera.",
+  "logout": "Logout",
+  "delete": "Delete",
+  "add": "Add",
+  "add_new_vehicle": "Add New Vehicle",
+  "capacity": "Capacity"
+
 
 
 

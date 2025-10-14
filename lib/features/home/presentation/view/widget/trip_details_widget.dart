@@ -8,24 +8,23 @@ import 'package:transports/features/home/presentation/view/widget/start_your_tri
 import 'package:transports/features/home/presentation/view_model/city_cubit/city_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/create_trip/creating_trip_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/distance/distance_cubit.dart';
-
 class TripDetailsWidget extends StatefulWidget {
-  const TripDetailsWidget({super.key, required this.passengersData, required this.driversData, required this.maxPassengers});
+  const TripDetailsWidget({super.key, required this.passengersData, required this.driversData, required this.maxPassengers, this.onNewTrip});
   final List<Map<String, dynamic>> passengersData;
   final List<Map<String, dynamic>> driversData;
   final int maxPassengers;
+  final VoidCallback? onNewTrip;
   @override
   State<TripDetailsWidget> createState() => _TripDetailsWidgetState();
 }
-
 class _TripDetailsWidgetState extends State<TripDetailsWidget> {
   String? fromCity;
   String? toCity;
   int? fromCityId;
   int? toCityId;
   bool tripStarted = false;
+  double? distanceKm;
   // int maxPassengers = 50;
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -49,7 +48,6 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                     ],
                   ),
                   const SizedBox(height: 8),
-
                   /// Distance Display
                   BlocBuilder<DistanceCubit, DistanceState>(
                     builder: (context, state) {
@@ -59,7 +57,8 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                           child: CircularProgressIndicator(),
                         );
                       } else if (state is DistanceSuccess) {
-                        final km = state.distanceModel.data?.distanceKm ?? 0;
+                        // final km = state.distanceModel.data?.distanceKm ?? 0;
+                        distanceKm = state.distanceModel.data?.distanceKm ?? 0;
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text.rich(
@@ -74,7 +73,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                                   ),
                                 ),
                                 TextSpan(
-                                  text: '${km.toInt()}',
+                                  text: '${distanceKm!.toInt()}',
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -105,10 +104,8 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                       return const SizedBox.shrink();
                     },
                   ),
-
                   /// Route Line
                   TripArrowAnimation(tripStarted: tripStarted,),
-
                   /// Dropdowns for cities
                   Row(
                     children: [
@@ -120,7 +117,6 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                             final cities = (state is CitySuccess)
                                 ? state.cities
                                 : [];
-
                             final cityNames = cities
                                 .map((e) => context.locale.languageCode == 'ar'
                                 ? e.nameAr
@@ -128,11 +124,9 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                                 .whereType<String>()
                                 .toSet()
                                 .toList();
-
                             final dropdownItems = cityNames.isEmpty
                                 ? ["⚠ لا توجد مدن تحقق من الاتصال"]
                                 : cityNames;
-
                             return DropdownButton<String>(
                               isExpanded: true,
                               value: dropdownItems.contains(fromCity) ? fromCity : null,
@@ -157,9 +151,9 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                                     fromCityId = cityId;
                                   });
                                   if (fromCityId != null && toCityId != null) {
-                                   setState(() {
-                                     tripStarted=true;
-                                   });
+                                    setState(() {
+                                      tripStarted=true;
+                                    });
                                     context.read<DistanceCubit>().calculateDistance(
                                       fromCityId: fromCityId!,
                                       toCityId: toCityId!,
@@ -183,7 +177,6 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                         ),
                       ),
                       const SizedBox(width: 16),
-
                       /// To City Dropdown
                       Expanded(
                         child: BlocBuilder<CityCubit, CityState>(
@@ -192,7 +185,6 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                             final cities = (state is CitySuccess)
                                 ? state.cities
                                 : [];
-
                             final cityNames = cities
                                 .map((e) => context.locale.languageCode == 'ar'
                                 ? e.nameAr
@@ -200,11 +192,9 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                                 .whereType<String>()
                                 .toSet()
                                 .toList();
-
                             final dropdownItems = cityNames.isEmpty
                                 ? ["⚠ لا توجد مدن تحقق من الاتصال"]
                                 : cityNames;
-
                             return DropdownButton<String>(
                               isExpanded: true,
                               value: dropdownItems.contains(toCity) ? toCity : null,
@@ -261,8 +251,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
             ),
           ),
         ),
-        const SizedBox(height: 200),
-
+        const SizedBox(height: 180),
         /// Start Trip Button
         BlocConsumer<CreatingTripCubit, CreatingTripState>(
           listener: (context, state) {
@@ -279,7 +268,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
           },
           builder: (context, state) {
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: CustomPrimaryButton(
                 text: 'startTrip'.tr(),
                 onPressed: () {
@@ -332,6 +321,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                       departureLocation: toCity.toString(),
                       destinationLocation: fromCity.toString(),
                       maxPassengers: widget.maxPassengers,
+                      distanceKm: distanceKm ?? 0,
                       passengers: widget.passengersData,
                       drivers: widget.driversData,
                     );
@@ -345,10 +335,36 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
             );
           },
         ),
+        const SizedBox(height: 20),
+        ///start New Trip Button
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: CustomPrimaryButton(
+            text: 'new_trip'.tr(),
+            onPressed: () {
+              setState(() {
+                fromCity = null;
+                toCity = null;
+                fromCityId = null;
+                toCityId = null;
+                tripStarted = false;
+              });
+              widget.passengersData.clear();
+              widget.driversData.clear();
+              // reset cubits
+              context.read<DistanceCubit>().reset();
+              context.read<CreatingTripCubit>().reset();
+              // Reset parent states
+              widget.onNewTrip?.call();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('تم بدء رحلة جديدة')),
+              );
+            },
+          ),
+        ),
       ],
     );
   }
-
   void _showErrorDialog(BuildContext context, String message) {
     showGeneralDialog(
       context: context,
@@ -390,21 +406,16 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
     );
   }
 }
-
 class TripArrowAnimation extends StatefulWidget {
   final bool tripStarted;
-
   const TripArrowAnimation({super.key, required this.tripStarted});
-
   @override
   State<TripArrowAnimation> createState() => _TripArrowAnimationState();
 }
-
 class _TripArrowAnimationState extends State<TripArrowAnimation>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _offsetAnimation;
-
   @override
   void initState() {
     super.initState();
@@ -412,7 +423,6 @@ class _TripArrowAnimationState extends State<TripArrowAnimation>
       duration: const Duration(seconds: 1),
       vsync: this,
     )..repeat(reverse: true); // تكرار الحركة ذهابًا وإيابًا
-
     _offsetAnimation = Tween<Offset>(
       begin: Offset.zero,
       end: const Offset(-0.3, 0), // تحريك السهم لليسار
@@ -420,7 +430,6 @@ class _TripArrowAnimationState extends State<TripArrowAnimation>
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
   }
-
   @override
   void didUpdateWidget(covariant TripArrowAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -431,13 +440,11 @@ class _TripArrowAnimationState extends State<TripArrowAnimation>
       _controller.reset();
     }
   }
-
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -449,11 +456,10 @@ class _TripArrowAnimationState extends State<TripArrowAnimation>
           alignment: Alignment.center,
           children: [
             Container(
-              height: 2,
-              width: 200,
-              color: widget.tripStarted ? AppColors.primaryColor : Colors.grey
+                height: 2,
+                width: 200,
+                color: widget.tripStarted ? AppColors.primaryColor : Colors.grey
             ),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(

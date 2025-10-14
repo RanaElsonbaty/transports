@@ -32,6 +32,12 @@ class ExtractImageCubit extends Cubit<ExtractImageState> {
         return;
       }
 
+      // ✅ حساب حجم الصورة
+      final sizeInBytes = await imageFile.length();
+      final sizeInKB = sizeInBytes / 1024;
+      final sizeInMB = sizeInKB / 1024;
+      log("📷 Image Size: ${sizeInBytes} bytes | ${sizeInKB.toStringAsFixed(2)} KB | ${sizeInMB.toStringAsFixed(2)} MB");
+
       final formData = FormData.fromMap({
         'image': await MultipartFile.fromFile(
           imageFile.path,
@@ -61,7 +67,7 @@ class ExtractImageCubit extends Cubit<ExtractImageState> {
         emit(ExtractImageFailure(
             "انتهت صلاحية التوكن. يرجى تسجيل الدخول مجددًا."));
       } else if (response.statusCode == 422) {
-        emit(ExtractImageFailure("صيغة البيانات غير صحيحة. تحقق من الصورة."));
+        emit(ExtractImageFailure(response.data['message']));
       } else {
         emit(ExtractImageFailure("خطأ بالخادم: ${response.statusCode}"));
       }

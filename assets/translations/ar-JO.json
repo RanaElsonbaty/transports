@@ -1,7 +1,7 @@
 {
   "language": "زبان",
   "changeLanguage": "زبان تبدیل کریں",
-  "hello": "صبح بخیر",
+  "hello": "خوش آمديد",
   "deleteAccount": "اکاؤنٹ حذف کریں",
   "previous trips": "پچھلے سفر",
   "bus": "بس",
@@ -90,13 +90,21 @@
   "company_tax_number": "کمپنی یا ادارے کا ٹیکس نمبر",
   "company_address": "کمپنی یا ادارے کا پتہ",
   "upload_image": "ڈیٹا نکالنے کے لیے تصویر اپ لوڈ کریں",
-  "Support": "مدد",
+  "support": "مدد",
   "update": "تبدیل",
+  "payment": "ادائیگی",
+  "new_trip": "نیا سفر",
   "Edit_trip_data": "سفر کی تفصیلات میں ترمیم",
   "add_driver": "اضافی ڈرائیور شامل کریں اگر موجود ہو",
   "extract_data_from_image": "تصویر سے ڈیٹا نکالا جا رہا ہے...",
   "add_passenger_data_via_camera": "آپ کیمرے کے ذریعے\nاپنا مسافر ڈیٹا شامل کر سکتے ہیں",
-  "add_driver_data_via_camera": "آپ کیمرے کے ذریعے\nاپنا ڈرائیور ڈیٹا شامل کر سکتے ہیں"
+  "add_driver_data_via_camera": "آپ کیمرے کے ذریعے\nاپنا ڈرائیور ڈیٹا شامل کر سکتے ہیں",
+  "logout": "لاگ آؤٹ",
+  "delete": "مٹائیں",
+  "add": "شامل کریں",
+  "add_new_vehicle": "نئی گاڑی شامل کریں",
+  "capacity": "گنجائش"
+
 
 
 }

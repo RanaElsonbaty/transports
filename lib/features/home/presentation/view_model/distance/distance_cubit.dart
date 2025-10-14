@@ -10,7 +10,9 @@ class DistanceCubit extends Cubit<DistanceState> {
   DistanceCubit() : super(DistanceInitial());
 
   final Dio _dio = Dio();
-
+  void reset() {
+    emit(DistanceInitial());
+  }
   Future<void> calculateDistance({
     required int fromCityId,
     required int toCityId,

@@ -1,3 +1,3 @@
 class Constant {
-  static const countryCode='+965';
+  static const countryCode='+966';
 }
