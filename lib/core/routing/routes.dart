@@ -19,6 +19,8 @@ import 'package:transports/features/home/presentation/view_model/previous_trip/p
 import 'package:transports/features/home/presentation/view_model/profile_cubit/profile_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/reserve_cubit/cubit/reserve_seat_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/seats_cubit/seats_cubit.dart';
+import 'package:transports/features/profile/presentation/view/widget/update_driver_view.dart';
+import 'package:transports/features/profile/presentation/view/widget/update_vehicle_view.dart';
 import 'package:transports/features/splash/presentation/view/second_splash_view.dart';
 import 'package:transports/features/splash/presentation/view/splash_view.dart';
 import 'package:transports/features/splash/presentation/view/third_splash_view.dart';
@@ -45,7 +47,10 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => BlocProvider(
             create: (context) => ExtractImageCubit(),
             child: AttachmentsView()));
-
+      case Routes.updateDriver:
+        return MaterialPageRoute(builder: (_) => BlocProvider(
+            create: (context) => ExtractImageCubit(),
+            child: UpdateDriverView()));
       case Routes.vehicleInfo:
         return MaterialPageRoute(builder: (_) => BlocProvider(
             create: (context) => ExtractImageCubit(),

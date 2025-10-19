@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:transports/core/constant/end_point.dart';
@@ -26,6 +28,7 @@ class VehicleRepoImpl extends VehicleRepo {
     String? companyPhone,
     String? companyTaxNumber,
     String? companyAddress,
+    File? drivingLicensePhoto,
   }) async {
     try {
       final token = await sharedPrefs.getToken();
@@ -38,6 +41,11 @@ class VehicleRepoImpl extends VehicleRepo {
         "vehicle_model": vehicleModel,
         "capacity": capacity,
         "manufacturing_year": manufacturingYear,
+        if (drivingLicensePhoto != null)
+          "driving_license_photo": await MultipartFile.fromFile(
+            drivingLicensePhoto.path,
+            filename: drivingLicensePhoto.path.split('/').last,
+          ),
       };
 
       /// Add optional fields if provided

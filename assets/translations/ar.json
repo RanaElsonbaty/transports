@@ -47,6 +47,7 @@
 "home_page":"الصفحة الرئيسية",
   "vehicle_info": "بيانات السيارة",
   "owner_name": "اسم المالك",
+  "driver_name": "اسم السائق",
   "owner_national_id": "رقم هوية المالك",
   "car_plate_number": "رقم لوحة السيارة",
   "vehicle_model": "طراز السيارة",
@@ -82,6 +83,7 @@
      "gallery": "اختيار صورة من المعرض",
      "back_to_previous_page": "الرجوع للصفحة السابقة",
      "driver_data": "(بيانات السائق)",
+     "driver_info": "بيانات السائق",
      "add_passenger_data": "إضافة بيانات ركاب",
      "add_driver_data": "إضافة بيانات السائق",
      "add_vehicle_data": "إضافة بيانات السيارة",
@@ -103,7 +105,8 @@
      "delete": "حذف",
      "add": "إضافة",
      "add_new_vehicle": "إضافة سيارة جديدة",
-     "capacity": "الحمولة"
+     "capacity": "الحمولة",
+     "vehicle_type":"نوع السيارة"
 
 
 

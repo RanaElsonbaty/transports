@@ -12,5 +12,6 @@ class Routes {
   static const String myProfile  = 'myProfile';
  static const String changeLanguage   ="ChangeLanguageView";
   static const String previousTrip  = 'previousTrip';
+  static const String updateDriver  = 'updateDriver';
 
 }

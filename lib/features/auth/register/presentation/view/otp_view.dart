@@ -71,13 +71,21 @@ textDirection: context.locale.languageCode == 'ar'
                   context: context,
                   message: state.verifyingOtpModel.message ?? "no message",
                 );
-               // context.pushNamed(Routes.attachmentInfo);
+
                 // تحقق من وجود driverProfile في الكاش
-                final profile = await getIt.get<SharedPrefs>().getDriverProfile();
-                if (profile != null) {
-                  context.pushNamed(Routes.home);
-                } else {
+                final sharedPrefs = getIt.get<SharedPrefs>();
+                final profile = await sharedPrefs.getDriverProfile();
+                final vehicle = await sharedPrefs.getVehicle();
+
+                if (profile == null) {
+                  // لو مفيش بروفايل يروح على شاشة البيانات
                   context.pushNamed(Routes.attachmentInfo);
+                } else if (vehicle == null || vehicle == 0) {
+                  // لو البروفايل موجود لكن المركبة = 0 يروح على شاشة المركبة
+                  context.pushNamed(Routes.vehicleInfo);
+                } else {
+                  // لو كل حاجة تمام يروح على الهوم
+                  context.pushNamed(Routes.home);
                 }
               } else if (state is VerifyingOtpFailure) {
                 showAppSnackBar(

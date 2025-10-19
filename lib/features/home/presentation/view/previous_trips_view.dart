@@ -87,7 +87,7 @@ class PreviousTripItem extends StatelessWidget {
       child: ListTile(
         // leading: const Icon(Icons.directions_bus, color: AppColors.primaryColor),
         title: Text(
-      "${trips.departureLocation} ← ${trips.destinationLocation}",
+      "${trips.destinationLocation} ← ${trips.departureLocation}",
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Column(

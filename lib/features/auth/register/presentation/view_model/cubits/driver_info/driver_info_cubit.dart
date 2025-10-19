@@ -14,13 +14,15 @@ class DriverInfoCubit extends Cubit<DriverInfoState> {
     required String nationalId,
     required String nationality,
     File? avatar,
+    File? nationalIdPhoto,
   }) async {
     emit(DriverInfoLoading());
     final result = await driverInfoRepo.addDriverInfo(
       name: name,
       nationalId: nationalId,
       nationality: nationality,
-      avatar: avatar
+      avatar: avatar,
+      nationalIdPhoto: nationalIdPhoto
     );
     result.fold(
       (fail) => emit(DriverInfoFailure(errorMessage: fail.errorMessage)),

@@ -362,6 +362,8 @@ class Trip {
     int? totalPassengers;
     List<Seats>? seats;
     List<Passengers>? passengers;
+    SecondParty? secondParty;
+
 
     Trip({this.driverId, this.departureLocation, this.destinationLocation, this.departureTime, this.maxPassengers, this.notes, this.routeCoordinates, this.status, this.updatedAt, this.createdAt, this.id, this.totalPassengers, this.seats, this.passengers});
 
@@ -380,29 +382,27 @@ class Trip {
         totalPassengers = json["total_passengers"];
         seats = json["seats"] == null ? null : (json["seats"] as List).map((e) => Seats.fromJson(e)).toList();
         passengers = json["passengers"] == null ? null : (json["passengers"] as List).map((e) => Passengers.fromJson(e)).toList();
+        secondParty = json["second_party"] == null ? null : SecondParty.fromJson(json["second_party"]);
     }
 
     Map<String, dynamic> toJson() {
-        final Map<String, dynamic> _data = <String, dynamic>{};
-        _data["driver_id"] = driverId;
-        _data["departure_location"] = departureLocation;
-        _data["destination_location"] = destinationLocation;
-        _data["departure_time"] = departureTime;
-        _data["max_passengers"] = maxPassengers;
-        _data["notes"] = notes;
-        _data["route_coordinates"] = routeCoordinates;
-        _data["status"] = status;
-        _data["updated_at"] = updatedAt;
-        _data["created_at"] = createdAt;
-        _data["id"] = id;
-        _data["total_passengers"] = totalPassengers;
-        if(seats != null) {
-            _data["seats"] = seats?.map((e) => e.toJson()).toList();
-        }
-        if(passengers != null) {
-            _data["passengers"] = passengers?.map((e) => e.toJson()).toList();
-        }
-        return _data;
+        final Map<String, dynamic> data = <String, dynamic>{};
+        data["driver_id"] = driverId;
+        data["departure_location"] = departureLocation;
+        data["destination_location"] = destinationLocation;
+        data["departure_time"] = departureTime;
+        data["max_passengers"] = maxPassengers;
+        data["notes"] = notes;
+        data["route_coordinates"] = routeCoordinates;
+        data["status"] = status;
+        data["updated_at"] = updatedAt;
+        data["created_at"] = createdAt;
+        data["id"] = id;
+        data["total_passengers"] = totalPassengers;
+        if (seats != null) data["seats"] = seats?.map((e) => e.toJson()).toList();
+        if (passengers != null) data["passengers"] = passengers?.map((e) => e.toJson()).toList();
+        if (secondParty != null) data["second_party"] = secondParty?.toJson();
+        return data;
     }
 }
 
@@ -540,5 +540,58 @@ class Seats {
         _data["updated_at"] = updatedAt;
         _data["deleted_at"] = deletedAt;
         return _data;
+    }
+}
+class SecondParty {
+    int? id;
+    String? name;
+    String? phone;
+    String? nationalId;
+    String? address;
+    String? nationality;
+    String? photo;
+    int? tripId;
+    String? createdAt;
+    String? updatedAt;
+
+    SecondParty({
+        this.id,
+        this.name,
+        this.phone,
+        this.nationalId,
+        this.address,
+        this.nationality,
+        this.photo,
+        this.tripId,
+        this.createdAt,
+        this.updatedAt,
+    });
+
+    SecondParty.fromJson(Map<String, dynamic> json) {
+        id = json["id"];
+        name = json["name"];
+        phone = json["phone"];
+        nationalId = json["national_id"];
+        address = json["address"];
+        nationality = json["nationality"];
+        photo = json["photo"];
+        tripId = json["trip_id"];
+        createdAt = json["created_at"];
+        updatedAt = json["updated_at"];
+    }
+
+    Map<String, dynamic> toJson() {
+        final Map<String, dynamic> data = <String, dynamic>{};
+        data["id"] = id;
+        data["name"] = name;
+        data["phone"] = phone;
+        data["national_id"] = nationalId;
+        data["address"] = address;
+        data["nationality"] = nationality;
+        data["photo"] = photo;
+        data["trip_id"] = tripId;
+        data["created_at"] = createdAt;
+        data["updated_at"] = updatedAt;
+        return data;
     }
 }

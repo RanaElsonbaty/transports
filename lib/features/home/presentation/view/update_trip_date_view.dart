@@ -823,99 +823,6 @@ class _UpdateTripDataViewState extends State<UpdateTripDataView> {
                         },
                         child: Row(
                           children: [
-                            /// From City Dropdown
-                            Expanded(
-                              child: BlocBuilder<CityCubit, CityState>(
-                                builder: (context, state) {
-                                  if (state is CityLoading) {
-                                    return Shimmer.fromColors(
-                                      baseColor: Colors.grey.shade300,
-                                      highlightColor: Colors.grey.shade100,
-                                      child: Container(
-                                        height: 48,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey,
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                    );
-                                  }
-
-                                  if (state is CityFailure) {
-                                    return Text(
-                                      "فشل في تحميل المدن",
-                                      style: TextStyles.font12SecondaryBlack500Weight,
-                                    );
-                                  }
-
-                                  if (state is CitySuccess) {
-                                    final cities = state.cities;
-
-                                    if (cities.isEmpty) {
-                                      return Text(
-                                        "لا توجد مدن متاحة",
-                                        style: TextStyles.font12SecondaryBlack500Weight,
-                                      );
-                                    }
-
-                                    final cityNames = cities
-                                        .map((e) => context.locale.languageCode == 'ar'
-                                        ? e.nameAr
-                                        : e.nameEn)
-                                        .whereType<String>()
-                                        .toSet()
-                                        .toList();
-
-                                    return DropdownButton<String>(
-                                      isExpanded: true,
-                                      value: cityNames.contains(fromCity) ? fromCity : null,
-                                      hint: Text(
-                                        'from'.tr(),
-                                        style: TextStyles.font12SecondaryBlack500Weight,
-                                      ),
-                                      onChanged: (value) {
-                                        if (value != null) {
-                                          final cityId = cities.firstWhere(
-                                                (city) => (context.locale.languageCode == 'ar'
-                                                ? city.nameAr
-                                                : city.nameEn) ==
-                                                value,
-                                          ).id;
-
-                                          setState(() {
-                                            fromCity = value;
-                                            fromCityId = cityId;
-                                          });
-
-                                          if (fromCityId != null && toCityId != null) {
-                                            context.read<DistanceCubit>().calculateDistance(
-                                              fromCityId: fromCityId!,
-                                              toCityId: toCityId!,
-                                            );
-
-                                            context.read<UpdateTripCubit>().updateTrip(
-                                              tripId: widget.tripId,
-                                              departureLocation: fromCity!,
-                                              destinationLocation: toCity!,
-                                            );
-                                          }
-                                        }
-                                      },
-                                      items: cityNames.map((city) {
-                                        return DropdownMenuItem<String>(
-                                          value: city,
-                                          child: Text(city),
-                                        );
-                                      }).toList(),
-                                    );
-                                  }
-
-                                  return const SizedBox.shrink();
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-
                             /// To City Dropdown
                             Expanded(
                               child: BlocBuilder<CityCubit, CityState>(
@@ -991,6 +898,7 @@ class _UpdateTripDataViewState extends State<UpdateTripDataView> {
                                               tripId: widget.tripId,
                                               departureLocation: fromCity!,
                                               destinationLocation: toCity!,
+                                              distanceKm: widget.trips.distanceKm!
                                             );
                                           }
                                         }
@@ -1007,8 +915,99 @@ class _UpdateTripDataViewState extends State<UpdateTripDataView> {
                                 },
                               ),
                             ),
+                            const SizedBox(width: 16),
+                            /// From City Dropdown
+                            Expanded(
+                              child: BlocBuilder<CityCubit, CityState>(
+                                builder: (context, state) {
+                                  if (state is CityLoading) {
+                                    return Shimmer.fromColors(
+                                      baseColor: Colors.grey.shade300,
+                                      highlightColor: Colors.grey.shade100,
+                                      child: Container(
+                                        height: 48,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey,
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                    );
+                                  }
 
+                                  if (state is CityFailure) {
+                                    return Text(
+                                      "فشل في تحميل المدن",
+                                      style: TextStyles.font12SecondaryBlack500Weight,
+                                    );
+                                  }
 
+                                  if (state is CitySuccess) {
+                                    final cities = state.cities;
+
+                                    if (cities.isEmpty) {
+                                      return Text(
+                                        "لا توجد مدن متاحة",
+                                        style: TextStyles.font12SecondaryBlack500Weight,
+                                      );
+                                    }
+
+                                    final cityNames = cities
+                                        .map((e) => context.locale.languageCode == 'ar'
+                                        ? e.nameAr
+                                        : e.nameEn)
+                                        .whereType<String>()
+                                        .toSet()
+                                        .toList();
+
+                                    return DropdownButton<String>(
+                                      isExpanded: true,
+                                      value: cityNames.contains(fromCity) ? fromCity : null,
+                                      hint: Text(
+                                        'from'.tr(),
+                                        style: TextStyles.font12SecondaryBlack500Weight,
+                                      ),
+                                      onChanged: (value) {
+                                        if (value != null) {
+                                          final cityId = cities.firstWhere(
+                                                (city) => (context.locale.languageCode == 'ar'
+                                                ? city.nameAr
+                                                : city.nameEn) ==
+                                                value,
+                                          ).id;
+
+                                          setState(() {
+                                            fromCity = value;
+                                            fromCityId = cityId;
+                                          });
+
+                                          if (fromCityId != null && toCityId != null) {
+                                            context.read<DistanceCubit>().calculateDistance(
+                                              fromCityId: fromCityId!,
+                                              toCityId: toCityId!,
+                                            );
+
+                                            context.read<UpdateTripCubit>().updateTrip(
+                                              tripId: widget.tripId,
+                                              departureLocation: fromCity!,
+                                              destinationLocation: toCity!,
+                                              distanceKm: widget.trips.distanceKm!
+                                            );
+                                          }
+                                        }
+                                      },
+                                      items: cityNames.map((city) {
+                                        return DropdownMenuItem<String>(
+                                          value: city,
+                                          child: Text(city),
+                                        );
+                                      }).toList(),
+                                    );
+                                  }
+
+                                  return const SizedBox.shrink();
+                                },
+                              ),
+                            ),
                           ],
                         ),
                       )

@@ -21,6 +21,7 @@ class CreateTripRepoImpl extends CreateTripRepo {
     required double distanceKm,
     required List<Map<String, dynamic>> passengers,
     List<Map<String, dynamic>>? drivers, // optional
+    List<Map<String, dynamic>>? secondParty, // optional
   }) async {
     final token = await sharedPrefs.getToken();
 
@@ -32,6 +33,7 @@ class CreateTripRepoImpl extends CreateTripRepo {
         "passengers": passengers,
         "distance_km": distanceKm,
         "trip_drivers": drivers ?? [],
+        "second_party": secondParty ?? [],
       };
 
       final response = await apiService.post(

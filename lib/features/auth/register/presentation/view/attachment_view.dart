@@ -336,7 +336,8 @@ class _AttachmentsViewState extends State<AttachmentsView> {
                                   nationalIdController.text,
                                   nationality:
                                   nationalityController.text,
-                                  avatar: profilePhoto
+                                  avatar: profilePhoto,
+                                  nationalIdPhoto: selectedImage
                                 );
                               }
                             },

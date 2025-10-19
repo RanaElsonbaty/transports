@@ -47,6 +47,7 @@
   "home_page": "ہوم پیج",
   "vehicle_info": "گاڑی کی معلومات",
   "owner_name": "مالک کا نام",
+  "driver_name": "ڈرائیور کا نام",
   "owner_national_id": "مالک کا قومی شناختی نمبر",
   "car_plate_number": "کار کی پلیٹ نمبر",
   "vehicle_model": "گاڑی کا ماڈل",
@@ -82,6 +83,7 @@
   "gallery": "گیلری سے تصویر منتخب کریں",
   "back_to_previous_page": "پچھلے صفحے پر واپس جائیں",
   "driver_data": "(ڈرائیور کا ڈیٹا)",
+  "driver_info": "ڈرائیور کا ڈیٹا",
   "add_passenger_data": "مسافر کا ڈیٹا شامل کریں",
   "add_driver_data": "ڈرائیور کا ڈیٹا شامل کریں",
   "add_vehicle_data": "گاڑی کا ڈیٹا شامل کریں",
@@ -103,7 +105,8 @@
   "delete": "مٹائیں",
   "add": "شامل کریں",
   "add_new_vehicle": "نئی گاڑی شامل کریں",
-  "capacity": "گنجائش"
+  "capacity": "گنجائش",
+  "vehicle_type":"گاڑی کی قسم"
 
 
 

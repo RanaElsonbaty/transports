@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:transports/core/helper_function/extension.dart';
 import 'package:transports/core/helper_function/snack_bar.dart';
@@ -37,6 +36,7 @@ if(state  is LogOutSuccess){
             builder: (context, state) {
               return Column(
                 children: [
+                  SizedBox(height: 20,),
                   LanguageRowSelector(),
                   Builder(
                     builder: (context) {

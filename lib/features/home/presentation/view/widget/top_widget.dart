@@ -30,7 +30,7 @@ class TopWidget extends StatelessWidget {
       children: [
         Image.asset(AppImages.maps),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 8),
           child: Row(
             children: [
               LanguageRowSelector()

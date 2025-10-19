@@ -36,6 +36,7 @@ class _HomeViewState extends State<HomeView> {
   List<Map<String, dynamic>> currentBigBusPassengers = [];
   File? passengerImage;
   List<Map<String, dynamic>> currentDrivers = [];
+  List<Map<String, dynamic>> secondPartyList = [];
   bool isBigBusSelected = false;
   bool showDetails = false;
   void toggleDetails() {
@@ -71,6 +72,12 @@ class _HomeViewState extends State<HomeView> {
   final TextEditingController driverNameController = TextEditingController();
   final TextEditingController driverPhoneController = TextEditingController();
   final TextEditingController driverNationalIdController = TextEditingController();
+  final secondPartyNameController = TextEditingController();
+  final secondPartyPhoneController = TextEditingController();
+  final secondPartyNationalityController = TextEditingController();
+  final secondPartyAddressController = TextEditingController();
+  final secondPartyNationalIdController = TextEditingController();
+
   void toggleSeat(String seat, {required bool isMiniBus}) {
     if (reservedSeats.contains(seat)) return;
     setState(() {
@@ -100,6 +107,11 @@ class _HomeViewState extends State<HomeView> {
     driverNameController.dispose();
     driverPhoneController.dispose();
     driverNationalIdController.dispose();
+    secondPartyNameController.dispose();
+    secondPartyPhoneController.dispose();
+    secondPartyNationalityController.dispose();
+    secondPartyAddressController.dispose();
+    secondPartyNationalIdController.dispose();
   }
   Set<String> occupiedMiniBusSeats = {};
   Set<String> occupiedBigBusSeats = {};
@@ -547,6 +559,133 @@ class _HomeViewState extends State<HomeView> {
       },
     );
   }
+  void _openSecondPartyBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      isScrollControlled: true,
+      builder: (ctx) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: 20,
+            right: 20,
+            top: 20,
+          ),
+          child: SingleChildScrollView(
+            child: Form(
+              key: globalKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  /// Name
+                  CustomTextFormField(
+                    controller: secondPartyNameController,
+                    hint: 'fullName'.tr(),
+                    validator: (value) => Validators.validateName(value!),
+                  ),
+                  const SizedBox(height: 16),
+
+                  /// Phone
+                  CustomTextFormField(
+                    controller: secondPartyPhoneController,
+                    hint: 'phone'.tr(),
+                    validator: (value) => value!.isEmpty
+                        ? 'من فضلك أدخل رقم الهاتف'
+                        : null,
+                  ),
+                  const SizedBox(height: 16),
+
+                  /// Nationality
+                  CustomTextFormField(
+                    controller: secondPartyNationalityController,
+                    hint: 'nationality'.tr(),
+                    validator: (value) => Validators.validateNationality(value!),
+                  ),
+                  const SizedBox(height: 16),
+
+                  /// Address
+                  CustomTextFormField(
+                    controller: secondPartyAddressController,
+                    hint: 'address'.tr(),
+                    validator: (value) => value!.isEmpty
+                        ? 'من فضلك أدخل العنوان'
+                        : null,
+                  ),
+                  const SizedBox(height: 16),
+
+                  /// National ID
+                  CustomTextFormField(
+                    controller: secondPartyNationalIdController,
+                    hint: 'national_id'.tr(),
+                    validator: (value) => Validators.validateNationalId(value),
+                  ),
+                  const SizedBox(height: 24),
+
+                  /// Confirm Button
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: AppColors.whiteColor,
+                      minimumSize: const Size(double.infinity, 45),
+                      backgroundColor: AppColors.primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () {
+                      if (globalKey.currentState!.validate()) {
+                        final secondParty = {
+                          "name": secondPartyNameController.text,
+                          "phone": secondPartyPhoneController.text,
+                          "nationality": secondPartyNationalityController.text,
+                          "address": secondPartyAddressController.text,
+                          "national_id": secondPartyNationalIdController.text,
+                        };
+
+                        secondPartyList.add(secondParty);
+                        setState(() {});
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: Text('confirm'.tr()),
+                  ),
+                  const SizedBox(height: 12),
+
+                  /// Delete Button
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: AppColors.whiteColor,
+                      minimumSize: const Size(double.infinity, 40),
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () {
+                      secondPartyNameController.clear();
+                      secondPartyPhoneController.clear();
+                      secondPartyNationalityController.clear();
+                      secondPartyAddressController.clear();
+                      secondPartyNationalIdController.clear();
+
+                      Navigator.pop(context);
+                      showAppSnackBar(
+                        context: context,
+                        message: 'تم حذف بيانات الطرف الثاني بنجاح',
+                      );
+                    },
+                    child: Text('delete'.tr()),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   void _resetAllStates() {
     setState(() {
@@ -555,6 +694,7 @@ class _HomeViewState extends State<HomeView> {
       currentMiniBusPassengers.clear();
       currentBigBusPassengers.clear();
       currentDrivers.clear();
+      secondPartyList.clear();
       occupiedMiniBusSeats.clear();
       occupiedBigBusSeats.clear();
       miniBusPassengersData.clear();
@@ -571,6 +711,11 @@ class _HomeViewState extends State<HomeView> {
       driverNameController.clear();
       driverPhoneController.clear();
       driverNationalIdController.clear();
+      secondPartyNameController.clear();
+      secondPartyPhoneController.clear();
+      secondPartyNationalityController.clear();
+      secondPartyAddressController.clear();
+      secondPartyNationalIdController.clear();
     });
 
   }
@@ -846,6 +991,23 @@ class _HomeViewState extends State<HomeView> {
                                             ),
                                           );
                                         }).toList(),
+                                        GestureDetector(
+                                          onTap: () {
+                                            _openSecondPartyBottomSheet();
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(vertical: 2,horizontal: 22),
+                                            margin: const EdgeInsets.symmetric(vertical: 2),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.primaryColor,
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                            child: Text(
+                                              'إضافة الطرف الثاني',
+                                              style: TextStyle(color: Colors.white),
+                                            ),
+                                          ),
+                                        ),
                                       ],
 
 
@@ -867,8 +1029,7 @@ class _HomeViewState extends State<HomeView> {
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ),
-                                  )
-                                  ,
+                                  ),
                                   Padding(
                                     padding: EdgeInsets.only(right: 20.w, top: 20.h),
                                     child: Align(
@@ -917,6 +1078,7 @@ class _HomeViewState extends State<HomeView> {
                                               ? miniBusPassengersData
                                               : bigBusPassengersData,
                                           driversData: currentDrivers,
+                                          secondPartyData: secondPartyList,
                                           maxPassengers: miniBusSelected?12:50,
                                           onNewTrip: _resetAllStates,
                                         ),

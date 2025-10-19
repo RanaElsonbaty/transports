@@ -20,6 +20,7 @@ class DriverInfoRepoImpl extends DriverInfoRepo {
     required String nationalId,
     required String nationality,
     File? avatar,
+    File? nationalIdPhoto,
   }) async {
     try {
       final token = await sharedPrefs.getToken();
@@ -32,6 +33,11 @@ class DriverInfoRepoImpl extends DriverInfoRepo {
           "avatar": await MultipartFile.fromFile(
             avatar.path,
             filename: avatar.path.split('/').last,
+          ),
+        if (nationalIdPhoto != null)
+          "national_id_photo": await MultipartFile.fromFile(
+            nationalIdPhoto.path,
+            filename: nationalIdPhoto.path.split('/').last,
           ),
       });
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:transports/core/failure/failure.dart';
 import 'package:transports/features/auth/data/models/vehicle_info_model.dart';
@@ -8,5 +10,6 @@ abstract class VehicleRepo {
     String? logo,
     String? companyPhone,
     String? companyTaxNumber,
-    String? companyAddress, });
+    String? companyAddress,
+    File? drivingLicensePhoto});
 }

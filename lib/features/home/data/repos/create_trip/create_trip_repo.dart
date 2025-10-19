@@ -10,5 +10,6 @@ abstract class CreateTripRepo {
     required double distanceKm,
     required List<Map<String, dynamic>> passengers,
     List<Map<String, dynamic>>? drivers,
+    List<Map<String, dynamic>>? secondParty,
   });
 }

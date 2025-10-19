@@ -7,59 +7,43 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:transports/core/helper_function/extension.dart';
 import 'package:transports/core/helper_function/snack_bar.dart';
-import 'package:transports/core/routing/app_routing.dart';
-import 'package:transports/core/service/service_locater.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/core/validator/validator.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/back_button.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/camera_banner.dart';
-import 'package:transports/features/auth/register/presentation/view/widgets/upload_image.dart';
-import 'package:transports/features/auth/register/presentation/view_model/cubits/vehicle_info/vehicle_info_cubit.dart';
 import 'package:transports/features/home/presentation/view/widget/language_drop_down.dart';
 import 'package:transports/features/home/presentation/view/widget/start_your_trip.dart';
 import 'package:transports/features/home/presentation/view_model/pick_data/extract_image_cubit.dart';
 import 'package:transports/features/home/data/models/extract_image_model.dart';
+import 'package:transports/features/profile/presentation/view_model/update_driver_cubit.dart';
+import 'package:transports/features/profile/presentation/view_model/update_driver_state.dart';
 import 'package:transports/features/settings/presentation/view/settings.dart';
 import 'package:transports/features/settings/presentation/view_model/settings_cubit.dart';
 
-class VehicleInfoView extends StatefulWidget {
-  const VehicleInfoView({super.key});
+class UpdateDriverView extends StatefulWidget {
+  const UpdateDriverView({super.key});
 
   @override
-  State<VehicleInfoView> createState() => _VehicleInfoViewState();
+  State<UpdateDriverView> createState() => _UpdateDriverViewState();
 }
 
-class _VehicleInfoViewState extends State<VehicleInfoView> {
+class _UpdateDriverViewState extends State<UpdateDriverView> {
+  final TextEditingController drivingLicenseNumberController =
+  TextEditingController();
+  final TextEditingController drivingLicenseExpiryController =
+  TextEditingController();
+  final TextEditingController nationalityController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController nationalIdController = TextEditingController();
   final GlobalKey<FormState> globalKey = GlobalKey();
-  final TextEditingController ownerNameController = TextEditingController();
-  final TextEditingController capacityController = TextEditingController();
-  final TextEditingController ownerIdController = TextEditingController();
-  final TextEditingController plateNumberController = TextEditingController();
-  final TextEditingController vehicleModelController = TextEditingController();
-  final TextEditingController companyPhoneController = TextEditingController();
-  final TextEditingController companyTaxNumberController = TextEditingController();
-  final TextEditingController companyAddressController = TextEditingController();
-  final TextEditingController manufacturingYearController = TextEditingController();
 
+  File? selectedImage;
   final ImagePicker _picker = ImagePicker();
-  File? extractionImage;
-  File? stampImage;
-  File? boardImage;
   bool isLoadingImage = false;
+  File? profilePhoto;
 
-  @override
-  void dispose() {
-    ownerNameController.dispose();
-    capacityController.dispose();
-    ownerIdController.dispose();
-    plateNumberController.dispose();
-    vehicleModelController.dispose();
-    manufacturingYearController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _pickAndExtract(BuildContext context) async {
+  Future<void> _pickProfilePhoto(BuildContext context) async {
     final ImageSource? source = await showModalBottomSheet<ImageSource>(
       context: context,
       builder: (context) {
@@ -85,14 +69,58 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
 
     if (source == null) return;
 
+    final pickedFile = await _picker.pickImage(source: source);
+    if (pickedFile != null) {
+      setState(() {
+        profilePhoto = File(pickedFile.path);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    nationalityController.dispose();
+    nationalIdController.dispose();
+    drivingLicenseExpiryController.dispose();
+    drivingLicenseNumberController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickAndExtract(BuildContext context) async {
+    final ImageSource? source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title:  Text('camera'.tr()),
+                onTap: () => Navigator.pop(context, ImageSource.camera),
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title:  Text('gallery'.tr()),
+                onTap: () => Navigator.pop(context, ImageSource.gallery),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (source == null) return;
+
     try {
       final pickedFile = await _picker.pickImage(source: source);
       if (pickedFile == null) return;
 
       setState(() => isLoadingImage = true);
-      extractionImage = File(pickedFile.path);
+      selectedImage = File(pickedFile.path);
 
-      context.read<ExtractImageCubit>().extractImageData(extractionImage!);
+      context.read<ExtractImageCubit>().extractImageData(selectedImage!);
     } catch (e) {
       debugPrint("Image selection error: $e");
       showAppSnackBar(
@@ -108,44 +136,35 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => getIt.get<VehicleInfoCubit>()),
+        BlocProvider(create: (_) => UpdateDriverCubit()),
       ],
       child: MultiBlocListener(
         listeners: [
-          // استماع لحالات VehicleInfo
-          BlocListener<VehicleInfoCubit, VehicleInfoState>(
-            listener: (context, state) {
-              if (state is VehicleInfoSuccess) {
-                showAppSnackBar(
-                  backgroundColor: AppColors.primaryDarkGradientColor,
-                  context: context,
-                  message: state.vehicleInfoModel.message ?? "No Message",
-                );
-                context.pushNamed(Routes.success);
-              } else if (state is VehicleInfoFailure) {
-                showAppSnackBar(
-                  context: context,
-                  message: state.errorMessage,
-                  backgroundColor: AppColors.red,
-                );
-              }
-            },
-          ),
-          // استماع لحالات استخراج البيانات
+          BlocListener<UpdateDriverCubit, UpdateDriverState>(
+      listener: (context, state) {
+        if (state is UpdateDriverSuccess) {
+          showAppSnackBar(
+            context: context,
+            message: state.model.message ?? "تم التحديث بنجاح",
+          );
+          context.pop();
+        } else if (state is UpdateDriverFailure) {
+          showAppSnackBar(context: context, message: state.message);
+        }
+      },
+      ),
           BlocListener<ExtractImageCubit, ExtractImageState>(
             listener: (context, state) {
               setState(() => isLoadingImage = state is ExtractImageLoading);
 
               if (state is ExtractImageSuccess) {
-                final ExtractedData? data = state.model.data?.extractedData;
+                final ExtractedData? data = state.model.data!.extractedData;
                 if (data != null) {
                   setState(() {
-                    ownerNameController.text = data.ownerName ?? '';
-                    ownerIdController.text = data.nationalId ?? '';
-                    plateNumberController.text = data.plateNumber ?? '';
-                    vehicleModelController.text = data.vehicleModel ?? '';
-                    capacityController.text = data.capacity.toString() ?? '';
-                    manufacturingYearController.text = data.manufacturingYear.toString() ?? '';
+                    nameController.text = data.fullName ?? '';
+                    nationalIdController.text = data.nationalId ?? '';
+                    nationalityController.text =
+                        data.nationality ?? '';
                   });
                 }
 
@@ -185,19 +204,60 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                       const SizedBox(height: 16),
                       BackButtonWidget(),
                       const SizedBox(height: 16),
+                      /// Circle Avatar for profile photo
+                      Center(
+                        child: GestureDetector(
+                          onTap: () => _pickProfilePhoto(context),
+                          child: Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundColor: AppColors.greyColor.withOpacity(0.3),
+                                backgroundImage: profilePhoto != null
+                                    ? FileImage(profilePhoto!)
+                                    : null,
+                                child: profilePhoto == null
+                                    ? const Icon(
+                                  Icons.camera_alt,
+                                  size: 40,
+                                  color: Colors.black54,
+                                )
+                                    : null,
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryColor,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.all(6),
+                                  child: const Icon(
+                                    Icons.camera_alt,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
                       CameraBanner(
-                        title: "add_vehicle_data".tr(),
+                        title: "add_driver_data".tr(),
                         onTap: () => _pickAndExtract(context),
                       ),
-
                       if (isLoadingImage &&
-                          ownerNameController.text.isEmpty &&
-                          ownerIdController.text.isEmpty &&
-                          plateNumberController.text.isEmpty &&
-                          vehicleModelController.text.isEmpty &&
-                          capacityController.text.isEmpty &&
-                          manufacturingYearController.text.isEmpty)
-                         Padding(
+                          nameController.text.isEmpty &&
+                          nationalIdController.text.isEmpty &&
+                          nationalityController.text.isEmpty)
+                        Padding(
                           padding: EdgeInsets.symmetric(vertical: 12),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -219,89 +279,60 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                             ],
                           ),
                         )
-                      else if (extractionImage != null)
+                      else if (selectedImage != null)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: Image.file(
-                              extractionImage!,
+                              selectedImage!,
                               width: double.infinity,
                               height: 200,
                               fit: BoxFit.cover,
                             ),
                           ),
                         ),
+
+
                       const SizedBox(height: 30),
-                      Text(
-                        'vehicle_info'.tr(),
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                      Row(
+                        children: [
+                          Text(
+                            'attachments'.tr(),
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            'driver_data'.tr(),
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 16),
-                      buildInput('owner_name'.tr(), ownerNameController,
+                      buildInput('nameForm'.tr(), nameController,
                               (value) => Validators.validateName(value!)),
-                      buildInput('owner_national_id'.tr(), ownerIdController,
+                      buildInput('national_id'.tr(), nationalIdController,
                               (value) => Validators.validateNationalId(value!)),
-                      buildInput('car_plate_number'.tr(), plateNumberController,
-                              (value) => Validators.validatePlateNumber(value!)),
-                      buildInput('vehicle_model'.tr(), vehicleModelController,
-                              (value) => Validators.validateVehicleModel(value!)),
-                      buildInput('capacity'.tr(), capacityController,
-                              (value) => Validators.validateCapacity(value!)),
-                      buildInput(
-                          'manufacturing_year'.tr(),
-                          manufacturingYearController,
-                              (value) =>
-                              Validators.validateManufacturingYear(value!)),
-                      Text(
-                        'attachments_if_any'.tr(),
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 20.h),
-                      UploadPhotosView(
-                        onImagesSelected: (File? stamp, File? logo) {
-                          setState(() {
-                            stampImage = stamp;
-                            boardImage = logo;
-                          });
-                        },
-                      ),
-                      SizedBox(height: 20.h),
-                      buildInput('company_number'.tr(), companyPhoneController,null),
-                      buildInput('company_tax_number'.tr(), companyTaxNumberController,null),
-                      buildInput('company_address'.tr(), companyAddressController,null),
-                      SizedBox(height: 20.h),
-                      BlocBuilder<VehicleInfoCubit, VehicleInfoState>(
+                      buildInput('nationality'.tr(), nationalityController,
+                              (value) => Validators.validateNationality(value!)),
+                      SizedBox(height: 60.h),
+                      BlocBuilder<UpdateDriverCubit, UpdateDriverState>(
                         builder: (context, state) {
-                          return state is VehicleInfoLoading
+                          return state is UpdateDriverLoading
                               ? const Center(child: CircularProgressIndicator())
                               : CustomPrimaryButton(
-                            text: 'confirm'.tr(),
+                            text: 'update'.tr(),
                             onPressed: () {
                               if (globalKey.currentState!.validate()) {
-                                context.read<VehicleInfoCubit>().addVehicleInfo(
-                                  ownerName: ownerNameController.text,
-                                  ownerNationalId: ownerIdController.text,
-                                  plateNumber: plateNumberController.text,
-                                  vehicleModel: vehicleModelController.text,
-                                  capacity: int.parse(capacityController.text),
-                                  manufacturingYear: manufacturingYearController.text,
-                                  logo: boardImage?.path, // optional
-                                  stamp: stampImage?.path, // optional
-                                  companyPhone: companyPhoneController.text.isNotEmpty
-                                      ? companyPhoneController.text
-                                      : null,
-                                  companyTaxNumber: companyTaxNumberController.text.isNotEmpty
-                                      ? companyTaxNumberController.text
-                                      : null,
-                                  companyAddress: companyAddressController.text.isNotEmpty
-                                      ? companyAddressController.text
-                                      : null,
-                                  drivingLicensePhoto: extractionImage
+                                context.read<UpdateDriverCubit>().updateDriverProfile(
+                                  driverName: nameController.text,
+                                  nationalId: nationalIdController.text,
+                                  nationality: nationalityController.text,
+                                  avatar: profilePhoto,
+                                  nationalIdPhoto: selectedImage,
                                 );
-
                               }
                             },
                           );
@@ -328,28 +359,23 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
-        controller: controller,
         validator: validator,
+        controller: controller,
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: TextStyles.font14Black700Weight,
           filled: true,
           fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.sp),
-            borderSide: BorderSide(color: AppColors.borderColor),
-          ),
+              borderRadius: BorderRadius.circular(10.sp),
+              borderSide: BorderSide(color: AppColors.borderColor)),
           disabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.sp),
-            borderSide: BorderSide(color: AppColors.greyColor),
-          ),
+              borderRadius: BorderRadius.circular(10.sp),
+              borderSide: BorderSide(color: AppColors.greyColor)),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.sp),
-            borderSide: BorderSide(color: AppColors.greyColor),
-          ),
+              borderRadius: BorderRadius.circular(10.sp),
+              borderSide: BorderSide(color: AppColors.greyColor)),
         ),
       ),
     );

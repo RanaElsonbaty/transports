@@ -61,7 +61,15 @@ Future<Either<Failure, VerifyingOtpModel>> verifyOtp({
       await sharedPrefService.removeDriverProfile();
       print("Driver profile cleared");
     }
-
+    // 🔹 حفظ قيمة الـ vehicle لو موجودة
+    final int? vehicle = result.data?.user?.vehicle;
+    if (vehicle != null) {
+      await sharedPrefService.saveVehicle(vehicle);
+      print("🚗 Vehicle saved: $vehicle");
+    } else {
+      await sharedPrefService.removeVehicle();
+      print("🧹 Vehicle cleared");
+    }
     return right(result);
   } on Failure catch (e) {
     return left(ServerFailure(e.errorMessage));

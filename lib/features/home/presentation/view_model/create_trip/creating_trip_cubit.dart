@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:transports/features/home/data/models/creating_trip.dart';
 import 'package:transports/features/home/data/repos/create_trip/create_trip_repo.dart';
-
 part 'creating_trip_state.dart';
 
 class CreatingTripCubit extends Cubit<CreatingTripState> {
@@ -18,6 +17,7 @@ class CreatingTripCubit extends Cubit<CreatingTripState> {
     required double distanceKm,
     required List<Map<String, dynamic>> passengers,
     List<Map<String, dynamic>>? drivers,
+    List<Map<String, dynamic>>? secondParty,
   }) async {
     emit(CreatingTripLoading());
 
@@ -28,6 +28,7 @@ class CreatingTripCubit extends Cubit<CreatingTripState> {
       distanceKm: distanceKm,
       passengers: passengers,
       drivers: drivers,
+      secondParty: secondParty
     );
 
     trip.fold(

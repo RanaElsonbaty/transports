@@ -9,9 +9,10 @@ import 'package:transports/features/home/presentation/view_model/city_cubit/city
 import 'package:transports/features/home/presentation/view_model/create_trip/creating_trip_cubit.dart';
 import 'package:transports/features/home/presentation/view_model/distance/distance_cubit.dart';
 class TripDetailsWidget extends StatefulWidget {
-  const TripDetailsWidget({super.key, required this.passengersData, required this.driversData, required this.maxPassengers, this.onNewTrip});
+  const TripDetailsWidget({super.key, required this.passengersData, required this.driversData, required this.maxPassengers, this.onNewTrip,required this.secondPartyData});
   final List<Map<String, dynamic>> passengersData;
   final List<Map<String, dynamic>> driversData;
+  final List<Map<String, dynamic>> secondPartyData;
   final int maxPassengers;
   final VoidCallback? onNewTrip;
   @override
@@ -324,6 +325,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
                       distanceKm: distanceKm ?? 0,
                       passengers: widget.passengersData,
                       drivers: widget.driversData,
+                      secondParty: widget.secondPartyData
                     );
                   } else if (widget.passengersData.isEmpty) {
                     _showErrorDialog(context, "select_seat_fill_passenger".tr());
@@ -351,6 +353,7 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
               });
               widget.passengersData.clear();
               widget.driversData.clear();
+              widget.secondPartyData.clear();
               // reset cubits
               context.read<DistanceCubit>().reset();
               context.read<CreatingTripCubit>().reset();

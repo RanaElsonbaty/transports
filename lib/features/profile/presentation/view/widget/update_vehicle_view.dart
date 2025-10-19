@@ -8,29 +8,29 @@ import 'package:image_picker/image_picker.dart';
 import 'package:transports/core/helper_function/extension.dart';
 import 'package:transports/core/helper_function/snack_bar.dart';
 import 'package:transports/core/routing/app_routing.dart';
-import 'package:transports/core/service/service_locater.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/core/validator/validator.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/back_button.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/camera_banner.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/upload_image.dart';
-import 'package:transports/features/auth/register/presentation/view_model/cubits/vehicle_info/vehicle_info_cubit.dart';
 import 'package:transports/features/home/presentation/view/widget/language_drop_down.dart';
 import 'package:transports/features/home/presentation/view/widget/start_your_trip.dart';
 import 'package:transports/features/home/presentation/view_model/pick_data/extract_image_cubit.dart';
 import 'package:transports/features/home/data/models/extract_image_model.dart';
+import 'package:transports/features/profile/presentation/view_model/update_vehicle_cubit.dart';
+import 'package:transports/features/profile/presentation/view_model/update_vehicle_state.dart';
 import 'package:transports/features/settings/presentation/view/settings.dart';
 import 'package:transports/features/settings/presentation/view_model/settings_cubit.dart';
 
-class VehicleInfoView extends StatefulWidget {
-  const VehicleInfoView({super.key});
-
+class UpdateVehicleView extends StatefulWidget {
+  const UpdateVehicleView({super.key, required this.vehicleId});
+  final int vehicleId;
   @override
-  State<VehicleInfoView> createState() => _VehicleInfoViewState();
+  State<UpdateVehicleView> createState() => _UpdateVehicleViewState();
 }
 
-class _VehicleInfoViewState extends State<VehicleInfoView> {
+class _UpdateVehicleViewState extends State<UpdateVehicleView> {
   final GlobalKey<FormState> globalKey = GlobalKey();
   final TextEditingController ownerNameController = TextEditingController();
   final TextEditingController capacityController = TextEditingController();
@@ -108,21 +108,21 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => getIt.get<VehicleInfoCubit>()),
+        BlocProvider(create: (_) => UpdateVehicleCubit()),
       ],
       child: MultiBlocListener(
         listeners: [
           // استماع لحالات VehicleInfo
-          BlocListener<VehicleInfoCubit, VehicleInfoState>(
+          BlocListener<UpdateVehicleCubit, UpdateVehicleState>(
             listener: (context, state) {
-              if (state is VehicleInfoSuccess) {
+              if (state is UpdateVehicleSuccess) {
                 showAppSnackBar(
-                  backgroundColor: AppColors.primaryDarkGradientColor,
                   context: context,
-                  message: state.vehicleInfoModel.message ?? "No Message",
+                  message: state.updateVehicleModel.message ?? 'Vehicle updated successfully',
+                  backgroundColor: AppColors.primaryDarkGradientColor,
                 );
-                context.pushNamed(Routes.success);
-              } else if (state is VehicleInfoFailure) {
+                context.pop();
+              } else if (state is UpdateVehicleFailure) {
                 showAppSnackBar(
                   context: context,
                   message: state.errorMessage,
@@ -197,7 +197,7 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                           vehicleModelController.text.isEmpty &&
                           capacityController.text.isEmpty &&
                           manufacturingYearController.text.isEmpty)
-                         Padding(
+                        Padding(
                           padding: EdgeInsets.symmetric(vertical: 12),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -273,23 +273,24 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                       buildInput('company_tax_number'.tr(), companyTaxNumberController,null),
                       buildInput('company_address'.tr(), companyAddressController,null),
                       SizedBox(height: 20.h),
-                      BlocBuilder<VehicleInfoCubit, VehicleInfoState>(
+                      BlocBuilder<UpdateVehicleCubit, UpdateVehicleState>(
                         builder: (context, state) {
-                          return state is VehicleInfoLoading
+                          return state is UpdateVehicleLoading
                               ? const Center(child: CircularProgressIndicator())
                               : CustomPrimaryButton(
-                            text: 'confirm'.tr(),
+                            text: 'update'.tr(),
                             onPressed: () {
                               if (globalKey.currentState!.validate()) {
-                                context.read<VehicleInfoCubit>().addVehicleInfo(
+                                context.read<UpdateVehicleCubit>().updateVehicle(
+                                  vehicleId: widget.vehicleId,
                                   ownerName: ownerNameController.text,
                                   ownerNationalId: ownerIdController.text,
                                   plateNumber: plateNumberController.text,
                                   vehicleModel: vehicleModelController.text,
                                   capacity: int.parse(capacityController.text),
                                   manufacturingYear: manufacturingYearController.text,
-                                  logo: boardImage?.path, // optional
-                                  stamp: stampImage?.path, // optional
+                                  logo: boardImage,
+                                  stamp: stampImage,
                                   companyPhone: companyPhoneController.text.isNotEmpty
                                       ? companyPhoneController.text
                                       : null,
@@ -299,7 +300,7 @@ class _VehicleInfoViewState extends State<VehicleInfoView> {
                                   companyAddress: companyAddressController.text.isNotEmpty
                                       ? companyAddressController.text
                                       : null,
-                                  drivingLicensePhoto: extractionImage
+                                  drivingLicensePhoto: extractionImage,
                                 );
 
                               }

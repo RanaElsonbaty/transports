@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:transports/features/auth/data/models/vehicle_info_model.dart';
@@ -20,6 +22,7 @@ class VehicleInfoCubit extends Cubit<VehicleInfoState> {
     String? companyPhone,
     String? companyTaxNumber,
     String? companyAddress,
+    File? drivingLicensePhoto,
   }) async {
     emit(VehicleInfoLoading());
 
@@ -35,6 +38,7 @@ class VehicleInfoCubit extends Cubit<VehicleInfoState> {
       companyPhone: companyPhone,
       companyTaxNumber: companyTaxNumber,
       companyAddress: companyAddress,
+      drivingLicensePhoto: drivingLicensePhoto
     );
 
     result.fold(

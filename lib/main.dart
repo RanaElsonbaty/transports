@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:transports/core/routing/app_routing.dart';
@@ -12,6 +14,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupServiceLocator();
   WebViewPlatform.instance = AndroidWebViewPlatform();
+  HttpOverrides.global = MyHttpOverrides();
 
   await EasyLocalization.ensureInitialized();
   final prefs = getIt.get<SharedPrefs>();
@@ -31,4 +34,12 @@ void main() async {
           // (token != null && token.isNotEmpty) ? Routes.home : Routes.splash,
 )));
 
+}
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
 }

@@ -9,5 +9,6 @@ abstract class DriverInfoRepo {
     required String nationalId,
     required String nationality,
     File? avatar,
+    File? nationalIdPhoto,
   });
 }

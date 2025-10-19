@@ -14,6 +14,7 @@ class UpdateTripCubit extends Cubit<UpdateTripState> {
     required int tripId,
     required String departureLocation,
     required String destinationLocation,
+    required double distanceKm,
   }) async {
     emit(UpdateTripLoading());
 
@@ -26,6 +27,7 @@ class UpdateTripCubit extends Cubit<UpdateTripState> {
         data: {
           "departure_location": departureLocation,
           "destination_location": destinationLocation,
+          "distance_km": distanceKm,
         },
         options: Options(
           headers: {

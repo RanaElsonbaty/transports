@@ -46,6 +46,7 @@
   "home_page":"Home Page",
     "vehicle_info": "Vehicle Information",
   "owner_name": "Owner Name",
+  "driver_name": "Driver Name",
   "owner_national_id": "Owner National ID",
   "car_plate_number": "Car Plate Number",
   "vehicle_model": "Vehicle Model",
@@ -81,6 +82,7 @@
   "gallery": "Choose a photo from gallery",
   "back_to_previous_page": "Return to previous page",
   "driver_data": "(Driver data)",
+  "driver_info": "Driver data",
   "add_passenger_data": "Add passenger data",
   "add_driver_data": "Add driver data",
   "add_vehicle_data": "Add vehicle data",
@@ -102,7 +104,8 @@
   "delete": "Delete",
   "add": "Add",
   "add_new_vehicle": "Add New Vehicle",
-  "capacity": "Capacity"
+  "capacity": "Capacity",
+  "vehicle_type":"Vehicle Type"
 
 
 

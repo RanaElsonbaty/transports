@@ -57,6 +57,22 @@ class SharedPrefs {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_driverProfileKey);
   }
+
+  static const String _vehicleKey = 'vehicle';
+  Future<void> saveVehicle(int vehicle) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_vehicleKey, vehicle);
+  }
+
+  Future<int?> getVehicle() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_vehicleKey);
+  }
+
+  Future<void> removeVehicle() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_vehicleKey);
+  }
 }
 
 
