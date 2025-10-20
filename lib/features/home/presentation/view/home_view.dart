@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:transports/core/helper_function/snack_bar.dart';
 import 'package:transports/core/service/service_locater.dart';
+import 'package:transports/core/storage/shared_prefs.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/icons.dart';
 import 'package:transports/core/theming/images.dart';
@@ -49,14 +50,45 @@ class _HomeViewState extends State<HomeView> {
     final bytes = imageFile.readAsBytesSync();
     return base64Encode(bytes);
   }
-  void _onBusCardTapped(bool isBigBus) {
-    setState(() {
-      miniBusSelected = !isBigBus;
-      isBigBusSelected = isBigBus;
+
+  Future<void> _autoSelectBusType() async {
+    final sharedPrefs = SharedPrefs();
+    final type = await sharedPrefs.getVehicleType();
+
+    if (type != null) {
+      // ✅ استخدم النوع مباشرة من SharedPrefs
+      await _onBusCardTapped(type);
+    }
+
+    // ✅ كمان اسمع أي تغييرات جديدة بدون ريستارت
+    SharedPrefs.vehicleTypeNotifier.addListener(() {
+      final newType = SharedPrefs.vehicleTypeNotifier.value;
+      if (newType != null) {
+        _onBusCardTapped(newType);
+      }
     });
-    final busType = isBigBus ? "bus" : "minibus";
-    context.read<SeatsCubit>().getSeats(busType);
   }
+
+  Future<void> _onBusCardTapped([String? vehicleType]) async {
+    final sharedPrefs = SharedPrefs();
+    // ✅ لو النوع مش متبعت كـ parameter، هاته من SharedPrefs
+    final type = vehicleType ?? await sharedPrefs.getVehicleType();
+
+    if (type == null) return;
+
+    setState(() {
+      isBigBusSelected = type == 'bus';
+      miniBusSelected = type == 'minibus';
+    });
+
+    // ✅ Cubit بيجيب المقاعد بناءً على النوع
+    context.read<SeatsCubit>().getSeats(type);
+  }
+
+
+
+
+
   // final Set<String> selectedSeats = {};
   List<String> selectedBusSeats = [];
   List<String> selectedMiniBusSeats = [];
@@ -719,6 +751,13 @@ class _HomeViewState extends State<HomeView> {
     });
 
   }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _autoSelectBusType();
+  }
   @override
   Widget build(BuildContext context) {
     final bool isBusSelected = miniBusSelected || isBigBusSelected;
@@ -753,8 +792,8 @@ class _HomeViewState extends State<HomeView> {
                   }
 
                   return TopWidget(
-                    onMiniBusTap: () => _onBusCardTapped(false),
-                    onBigBusTap: () => _onBusCardTapped(true),
+                    onMiniBusTap: () => _onBusCardTapped(),
+                    onBigBusTap: () => _onBusCardTapped(),
                     miniBusMaxPassengers: miniMax,
                     bigBusMaxPassengers: bigMax,
                   );

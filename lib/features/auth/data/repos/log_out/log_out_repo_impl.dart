@@ -18,6 +18,10 @@ class LogOutRepoImpl extends LogOutRepo{
   'Authorization':"Bearer $token"
     });
     await sharedPrefService.removeToken();
+    await sharedPrefService.removeCapacity();
+    await sharedPrefService.removeDriverProfile();
+    await sharedPrefService.removeVehicle();
+    await sharedPrefService.removeVehicleType();
   final data=  LogOutModel.fromJson(response);
     return right(data);
 } on Failure catch (e) {

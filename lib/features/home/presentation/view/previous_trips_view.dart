@@ -7,7 +7,7 @@ import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/back_button.dart';
 import 'package:transports/features/home/data/models/previous_trips.dart';
-import 'package:transports/features/home/presentation/view/update_trip_date_view.dart';
+import 'package:transports/features/home/presentation/view/update_trip_data_view.dart';
 import 'package:transports/features/home/presentation/view/widget/custom_shimmer_body.dart';
 import 'package:transports/features/home/presentation/view/widget/language_drop_down.dart';
 import 'package:transports/features/home/presentation/view/widget/previous_empty_trip.dart';
@@ -24,48 +24,50 @@ class PreviousTripsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      body: BlocBuilder<PreviousTripsCubit, PreviousTripsState>(
-        builder: (context, state) {
-          if (state is PreviousTripsSuccess) {
-            if(state.trips.isEmpty){
-              return PreviousEmptyTrip();
-            }
-  return Column(
-    children: [
-      const SizedBox(height: 8),
-      Row(
-        children: [
-          LanguageRowSelector()
-        ],
-      ),
-      const SizedBox(height: 10),
-      Align(
-        alignment: context.locale.languageCode == "ar"
-            ? Alignment.topRight
-            : Alignment.topLeft,
-        child: BackButtonWidget(),
-      ),
-      SizedBox(height: 20.w),
-      Center(child: Text("previous_trips".tr(), style: TextStyles.font20Black700Weight)),
-      Expanded(
-        child: ListView.builder(
-
-            itemCount:state.trips.length ,
-            itemBuilder: (context, index) {
-              return PreviousTripItem(trips:state.trips[index] ,);
-            },
-          ),
-      ),
-    ],
-  );
-}else if(state is PreviousTripsFailure){
-  return Center(child: Text(state.errorMessage,style: TextStyle(color: AppColors.red,fontSize: 24),));
-}else{
- return CustomPreviouseTripsShimmerBody();
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppColors.whiteColor,
+        body: BlocBuilder<PreviousTripsCubit, PreviousTripsState>(
+          builder: (context, state) {
+            if (state is PreviousTripsSuccess) {
+              if(state.trips.isEmpty){
+                return PreviousEmptyTrip();
               }
-        },
+        return Column(
+      children: [
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            LanguageRowSelector()
+          ],
+        ),
+        const SizedBox(height: 10),
+        Align(
+          alignment: context.locale.languageCode == "ar"
+              ? Alignment.topRight
+              : Alignment.topLeft,
+          child: BackButtonWidget(),
+        ),
+        SizedBox(height: 20.w),
+        Center(child: Text("previous_trips".tr(), style: TextStyles.font20Black700Weight)),
+        Expanded(
+          child: ListView.builder(
+
+              itemCount:state.trips.length ,
+              itemBuilder: (context, index) {
+                return PreviousTripItem(trips:state.trips[index] ,);
+              },
+            ),
+        ),
+      ],
+        );
+      }else if(state is PreviousTripsFailure){
+        return Center(child: Text(state.errorMessage,style: TextStyle(color: AppColors.red,fontSize: 24),));
+      }else{
+       return CustomPreviouseTripsShimmerBody();
+                }
+          },
+        ),
       ),
     );
   }

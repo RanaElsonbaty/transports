@@ -12,7 +12,6 @@ import 'package:transports/core/service/service_locater.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/core/validator/validator.dart';
-import 'package:transports/features/auth/register/presentation/view/register_view.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/back_button.dart';
 import 'package:transports/features/auth/register/presentation/view/widgets/camera_banner.dart';
 import 'package:transports/features/auth/register/presentation/view_model/cubits/driver_info/driver_info_cubit.dart';
@@ -49,22 +48,20 @@ class _AttachmentsViewState extends State<AttachmentsView> {
     final ImageSource? source = await showModalBottomSheet<ImageSource>(
       context: context,
       builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: Text('camera'.tr()),
-                onTap: () => Navigator.pop(context, ImageSource.camera),
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: Text('gallery'.tr()),
-                onTap: () => Navigator.pop(context, ImageSource.gallery),
-              ),
-            ],
-          ),
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: Text('camera'.tr()),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: Text('gallery'.tr()),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+          ],
         );
       },
     );
@@ -93,22 +90,20 @@ class _AttachmentsViewState extends State<AttachmentsView> {
     final ImageSource? source = await showModalBottomSheet<ImageSource>(
       context: context,
       builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title:  Text('camera'.tr()),
-                onTap: () => Navigator.pop(context, ImageSource.camera),
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title:  Text('gallery'.tr()),
-                onTap: () => Navigator.pop(context, ImageSource.gallery),
-              ),
-            ],
-          ),
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title:  Text('camera'.tr()),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title:  Text('gallery'.tr()),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+          ],
         );
       },
     );
@@ -183,173 +178,175 @@ class _AttachmentsViewState extends State<AttachmentsView> {
             },
           ),
         ],
-        child: Scaffold(
-          backgroundColor: AppColors.whiteColor,
-          body: Directionality(
-            textDirection: context.locale.languageCode == 'ar'
-                ? ui.TextDirection.rtl
-                : ui.TextDirection.ltr,
-            child: SingleChildScrollView(
-              child: Form(
-                key: globalKey,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 40),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          LanguageRowSelector()
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      BackButtonWidget(),
-                      const SizedBox(height: 16),
-                      /// Circle Avatar for profile photo
-                      Center(
-                        child: GestureDetector(
-                          onTap: () => _pickProfilePhoto(context),
-                          child: Stack(
-                            children: [
-                              CircleAvatar(
-                                radius: 50,
-                                backgroundColor: AppColors.greyColor.withOpacity(0.3),
-                                backgroundImage: profilePhoto != null
-                                    ? FileImage(profilePhoto!)
-                                    : null,
-                                child: profilePhoto == null
-                                    ? const Icon(
-                                  Icons.camera_alt,
-                                  size: 40,
-                                  color: Colors.black54,
-                                )
-                                    : null,
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primaryColor,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
+        child: SafeArea(
+          child: Scaffold(
+            backgroundColor: AppColors.whiteColor,
+            body: Directionality(
+              textDirection: context.locale.languageCode == 'ar'
+                  ? ui.TextDirection.rtl
+                  : ui.TextDirection.ltr,
+              child: SingleChildScrollView(
+                child: Form(
+                  key: globalKey,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 40),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            LanguageRowSelector()
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        BackButtonWidget(),
+                        const SizedBox(height: 16),
+                        /// Circle Avatar for profile photo
+                        Center(
+                          child: GestureDetector(
+                            onTap: () => _pickProfilePhoto(context),
+                            child: Stack(
+                              children: [
+                                CircleAvatar(
+                                  radius: 50,
+                                  backgroundColor: AppColors.greyColor.withOpacity(0.3),
+                                  backgroundImage: profilePhoto != null
+                                      ? FileImage(profilePhoto!)
+                                      : null,
+                                  child: profilePhoto == null
+                                      ? const Icon(
+                                    Icons.camera_alt,
+                                    size: 40,
+                                    color: Colors.black54,
+                                  )
+                                      : null,
+                                ),
+                                Positioned(
+                                  bottom: 0,
+                                  right: 0,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryColor,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    padding: const EdgeInsets.all(6),
+                                    child: const Icon(
+                                      Icons.camera_alt,
+                                      size: 16,
                                       color: Colors.white,
-                                      width: 2,
                                     ),
                                   ),
-                                  padding: const EdgeInsets.all(6),
-                                  child: const Icon(
-                                    Icons.camera_alt,
-                                    size: 16,
-                                    color: Colors.white,
-                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      CameraBanner(
-                        title: "add_driver_data".tr(),
-                        onTap: () => _pickAndExtract(context),
-                      ),
-                      if (isLoadingImage &&
-                          nameController.text.isEmpty &&
-                          nationalIdController.text.isEmpty &&
-                          nationalityController.text.isEmpty)
-                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 24,
-                                width: 24,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              ),
-                              SizedBox(width: 12),
-                              Text(
-                                "extract_data_from_image".tr(),
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      else if (selectedImage != null)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.file(
-                              selectedImage!,
-                              width: double.infinity,
-                              height: 200,
-                              fit: BoxFit.cover,
+                              ],
                             ),
                           ),
                         ),
+                        const SizedBox(height: 16),
+                        CameraBanner(
+                          title: "add_driver_data".tr(),
+                          onTap: () => _pickAndExtract(context),
+                        ),
+                        if (isLoadingImage &&
+                            nameController.text.isEmpty &&
+                            nationalIdController.text.isEmpty &&
+                            nationalityController.text.isEmpty)
+                           Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                                SizedBox(width: 12),
+                                Text(
+                                  "extract_data_from_image".tr(),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        else if (selectedImage != null)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.file(
+                                selectedImage!,
+                                width: double.infinity,
+                                height: 200,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
 
 
-                      const SizedBox(height: 30),
-                      Row(
-                        children: [
-                          Text(
-                            'attachments'.tr(),
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(width: 10),
-                           Text(
-                            'driver_data'.tr(),
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      buildInput('nameForm'.tr(), nameController,
-                              (value) => Validators.validateName(value!)),
-                      buildInput('national_id'.tr(), nationalIdController,
-                              (value) => Validators.validateNationalId(value!)),
-                      buildInput('nationality'.tr(), nationalityController,
-                              (value) => Validators.validateNationality(value!)),
-                      SizedBox(height: 60.h),
-                      BlocBuilder<DriverInfoCubit, DriverInfoState>(
-                        builder: (context, state) {
-                          return state is DriverInfoLoading
-                              ? const Center(child: CircularProgressIndicator())
-                              : CustomPrimaryButton(
-                            text: 'next'.tr(),
-                            onPressed: () {
-                              if (globalKey.currentState!.validate()) {
-                                context
-                                    .read<DriverInfoCubit>()
-                                    .addDriverInfo(
-                                  name: nameController.text,
-                                  nationalId:
-                                  nationalIdController.text,
-                                  nationality:
-                                  nationalityController.text,
-                                  avatar: profilePhoto,
-                                  nationalIdPhoto: selectedImage
-                                );
-                              }
-                            },
-                          );
-                        },
-                      ),
-                      SizedBox(height: 20.h),
-                      BlocProvider(
-                        create: (_) => SettingsCubit()..getSettings(),
-                        child: const ContactSupportWidget(),
-                      )
-                    ],
+                        const SizedBox(height: 30),
+                        Row(
+                          children: [
+                            Text(
+                              'attachments'.tr(),
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(width: 10),
+                             Text(
+                              'driver_data'.tr(),
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        buildInput('nameForm'.tr(), nameController,
+                                (value) => Validators.validateName(value!)),
+                        buildInput('national_id'.tr(), nationalIdController,
+                                (value) => Validators.validateNationalId(value!)),
+                        buildInput('nationality'.tr(), nationalityController,
+                                (value) => Validators.validateNationality(value!)),
+                        SizedBox(height: 60.h),
+                        BlocBuilder<DriverInfoCubit, DriverInfoState>(
+                          builder: (context, state) {
+                            return state is DriverInfoLoading
+                                ? const Center(child: CircularProgressIndicator())
+                                : CustomPrimaryButton(
+                              text: 'next'.tr(),
+                              onPressed: () {
+                                if (globalKey.currentState!.validate()) {
+                                  context
+                                      .read<DriverInfoCubit>()
+                                      .addDriverInfo(
+                                    name: nameController.text,
+                                    nationalId:
+                                    nationalIdController.text,
+                                    nationality:
+                                    nationalityController.text,
+                                    avatar: profilePhoto,
+                                    nationalIdPhoto: selectedImage
+                                  );
+                                }
+                              },
+                            );
+                          },
+                        ),
+                        SizedBox(height: 20.h),
+                        BlocProvider(
+                          create: (_) => SettingsCubit()..getSettings(),
+                          child: const ContactSupportWidget(),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),

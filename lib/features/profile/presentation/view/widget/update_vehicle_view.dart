@@ -7,7 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:transports/core/helper_function/extension.dart';
 import 'package:transports/core/helper_function/snack_bar.dart';
-import 'package:transports/core/routing/app_routing.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/core/validator/validator.dart';
@@ -63,22 +62,20 @@ class _UpdateVehicleViewState extends State<UpdateVehicleView> {
     final ImageSource? source = await showModalBottomSheet<ImageSource>(
       context: context,
       builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: Text('camera'.tr()),
-                onTap: () => Navigator.pop(context, ImageSource.camera),
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: Text('gallery'.tr()),
-                onTap: () => Navigator.pop(context, ImageSource.gallery),
-              ),
-            ],
-          ),
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: Text('camera'.tr()),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: Text('gallery'.tr()),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+          ],
         );
       },
     );
@@ -162,158 +159,160 @@ class _UpdateVehicleViewState extends State<UpdateVehicleView> {
             },
           ),
         ],
-        child: Scaffold(
-          backgroundColor: AppColors.whiteColor,
-          body: Directionality(
-            textDirection: context.locale.languageCode == 'ar'
-                ? ui.TextDirection.rtl
-                : ui.TextDirection.ltr,
-            child: SingleChildScrollView(
-              child: Form(
-                key: globalKey,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 40),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          LanguageRowSelector()
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      BackButtonWidget(),
-                      const SizedBox(height: 16),
-                      CameraBanner(
-                        title: "add_vehicle_data".tr(),
-                        onTap: () => _pickAndExtract(context),
-                      ),
+        child: SafeArea(
+          child: Scaffold(
+            backgroundColor: AppColors.whiteColor,
+            body: Directionality(
+              textDirection: context.locale.languageCode == 'ar'
+                  ? ui.TextDirection.rtl
+                  : ui.TextDirection.ltr,
+              child: SingleChildScrollView(
+                child: Form(
+                  key: globalKey,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 40),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            LanguageRowSelector()
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        BackButtonWidget(),
+                        const SizedBox(height: 16),
+                        CameraBanner(
+                          title: "add_vehicle_data".tr(),
+                          onTap: () => _pickAndExtract(context),
+                        ),
 
-                      if (isLoadingImage &&
-                          ownerNameController.text.isEmpty &&
-                          ownerIdController.text.isEmpty &&
-                          plateNumberController.text.isEmpty &&
-                          vehicleModelController.text.isEmpty &&
-                          capacityController.text.isEmpty &&
-                          manufacturingYearController.text.isEmpty)
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 24,
-                                width: 24,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              ),
-                              SizedBox(width: 12),
-                              Text(
-                                "extract_data_from_image".tr(),
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black54,
+                        if (isLoadingImage &&
+                            ownerNameController.text.isEmpty &&
+                            ownerIdController.text.isEmpty &&
+                            plateNumberController.text.isEmpty &&
+                            vehicleModelController.text.isEmpty &&
+                            capacityController.text.isEmpty &&
+                            manufacturingYearController.text.isEmpty)
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
                                 ),
+                                SizedBox(width: 12),
+                                Text(
+                                  "extract_data_from_image".tr(),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        else if (extractionImage != null)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.file(
+                                extractionImage!,
+                                width: double.infinity,
+                                height: 200,
+                                fit: BoxFit.cover,
                               ),
-                            ],
-                          ),
-                        )
-                      else if (extractionImage != null)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.file(
-                              extractionImage!,
-                              width: double.infinity,
-                              height: 200,
-                              fit: BoxFit.cover,
                             ),
                           ),
+                        const SizedBox(height: 30),
+                        Text(
+                          'vehicle_info'.tr(),
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                      const SizedBox(height: 30),
-                      Text(
-                        'vehicle_info'.tr(),
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 16),
-                      buildInput('owner_name'.tr(), ownerNameController,
-                              (value) => Validators.validateName(value!)),
-                      buildInput('owner_national_id'.tr(), ownerIdController,
-                              (value) => Validators.validateNationalId(value!)),
-                      buildInput('car_plate_number'.tr(), plateNumberController,
-                              (value) => Validators.validatePlateNumber(value!)),
-                      buildInput('vehicle_model'.tr(), vehicleModelController,
-                              (value) => Validators.validateVehicleModel(value!)),
-                      buildInput('capacity'.tr(), capacityController,
-                              (value) => Validators.validateCapacity(value!)),
-                      buildInput(
-                          'manufacturing_year'.tr(),
-                          manufacturingYearController,
-                              (value) =>
-                              Validators.validateManufacturingYear(value!)),
-                      Text(
-                        'attachments_if_any'.tr(),
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 20.h),
-                      UploadPhotosView(
-                        onImagesSelected: (File? stamp, File? logo) {
-                          setState(() {
-                            stampImage = stamp;
-                            boardImage = logo;
-                          });
-                        },
-                      ),
-                      SizedBox(height: 20.h),
-                      buildInput('company_number'.tr(), companyPhoneController,null),
-                      buildInput('company_tax_number'.tr(), companyTaxNumberController,null),
-                      buildInput('company_address'.tr(), companyAddressController,null),
-                      SizedBox(height: 20.h),
-                      BlocBuilder<UpdateVehicleCubit, UpdateVehicleState>(
-                        builder: (context, state) {
-                          return state is UpdateVehicleLoading
-                              ? const Center(child: CircularProgressIndicator())
-                              : CustomPrimaryButton(
-                            text: 'update'.tr(),
-                            onPressed: () {
-                              if (globalKey.currentState!.validate()) {
-                                context.read<UpdateVehicleCubit>().updateVehicle(
-                                  vehicleId: widget.vehicleId,
-                                  ownerName: ownerNameController.text,
-                                  ownerNationalId: ownerIdController.text,
-                                  plateNumber: plateNumberController.text,
-                                  vehicleModel: vehicleModelController.text,
-                                  capacity: int.parse(capacityController.text),
-                                  manufacturingYear: manufacturingYearController.text,
-                                  logo: boardImage,
-                                  stamp: stampImage,
-                                  companyPhone: companyPhoneController.text.isNotEmpty
-                                      ? companyPhoneController.text
-                                      : null,
-                                  companyTaxNumber: companyTaxNumberController.text.isNotEmpty
-                                      ? companyTaxNumberController.text
-                                      : null,
-                                  companyAddress: companyAddressController.text.isNotEmpty
-                                      ? companyAddressController.text
-                                      : null,
-                                  drivingLicensePhoto: extractionImage,
-                                );
+                        const SizedBox(height: 16),
+                        buildInput('owner_name'.tr(), ownerNameController,
+                                (value) => Validators.validateName(value!)),
+                        buildInput('owner_national_id'.tr(), ownerIdController,
+                                (value) => Validators.validateNationalId(value!)),
+                        buildInput('car_plate_number'.tr(), plateNumberController,
+                                (value) => Validators.validatePlateNumber(value!)),
+                        buildInput('vehicle_model'.tr(), vehicleModelController,
+                                (value) => Validators.validateVehicleModel(value!)),
+                        buildInput('capacity'.tr(), capacityController,
+                                (value) => Validators.validateCapacity(value!)),
+                        buildInput(
+                            'manufacturing_year'.tr(),
+                            manufacturingYearController,
+                                (value) =>
+                                Validators.validateManufacturingYear(value!)),
+                        Text(
+                          'attachments_if_any'.tr(),
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 20.h),
+                        UploadPhotosView(
+                          onImagesSelected: (File? stamp, File? logo) {
+                            setState(() {
+                              stampImage = stamp;
+                              boardImage = logo;
+                            });
+                          },
+                        ),
+                        SizedBox(height: 20.h),
+                        buildInput('company_number'.tr(), companyPhoneController,null),
+                        buildInput('company_tax_number'.tr(), companyTaxNumberController,null),
+                        buildInput('company_address'.tr(), companyAddressController,null),
+                        SizedBox(height: 20.h),
+                        BlocBuilder<UpdateVehicleCubit, UpdateVehicleState>(
+                          builder: (context, state) {
+                            return state is UpdateVehicleLoading
+                                ? const Center(child: CircularProgressIndicator())
+                                : CustomPrimaryButton(
+                              text: 'update'.tr(),
+                              onPressed: () {
+                                if (globalKey.currentState!.validate()) {
+                                  context.read<UpdateVehicleCubit>().updateVehicle(
+                                    vehicleId: widget.vehicleId,
+                                    ownerName: ownerNameController.text,
+                                    ownerNationalId: ownerIdController.text,
+                                    plateNumber: plateNumberController.text,
+                                    vehicleModel: vehicleModelController.text,
+                                    capacity: int.parse(capacityController.text),
+                                    manufacturingYear: manufacturingYearController.text,
+                                    logo: boardImage,
+                                    stamp: stampImage,
+                                    companyPhone: companyPhoneController.text.isNotEmpty
+                                        ? companyPhoneController.text
+                                        : null,
+                                    companyTaxNumber: companyTaxNumberController.text.isNotEmpty
+                                        ? companyTaxNumberController.text
+                                        : null,
+                                    companyAddress: companyAddressController.text.isNotEmpty
+                                        ? companyAddressController.text
+                                        : null,
+                                    drivingLicensePhoto: extractionImage,
+                                  );
 
-                              }
-                            },
-                          );
-                        },
-                      ),
-                      SizedBox(height: 20.h),
-                      BlocProvider(
-                        create: (_) => SettingsCubit()..getSettings(),
-                        child: const ContactSupportWidget(),
-                      )
-                    ],
+                                }
+                              },
+                            );
+                          },
+                        ),
+                        SizedBox(height: 20.h),
+                        BlocProvider(
+                          create: (_) => SettingsCubit()..getSettings(),
+                          child: const ContactSupportWidget(),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),

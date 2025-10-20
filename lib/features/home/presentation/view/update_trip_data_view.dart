@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -119,7 +120,11 @@ class _UpdateTripDataViewState extends State<UpdateTripDataView> {
         "national_id": passenger?.nationalId,
         "nationality": passenger?.nationality,
       });
+      log("🪑 SEAT: ${seat.seatNumber}, passengerId: ${seat.passengerId}");
+      log("👤 MATCHED PASSENGER: ${passenger?.name}, ID: ${passenger?.id}");
+
     }
+      log("🚍 passengersData: $passengersData");
 
     selectedFromCity = trip.departureLocation;
     selectedToCity = trip.destinationLocation;
@@ -634,395 +639,397 @@ class _UpdateTripDataViewState extends State<UpdateTripDataView> {
       busType = 'minibus'.tr();
     }
 
-    return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  LanguageRowSelector()
-                ],
-              ),
-              const SizedBox(height: 10),
-              Align(
-                alignment: context.locale.languageCode == "ar"
-                    ? Alignment.topRight
-                    : Alignment.topLeft,
-                child: BackButtonWidget(),
-              ),
-              SizedBox(height: 20.w),
-              Center(child: Text("Edit_trip_data".tr(), style: TextStyles.font20Black700Weight)),
-              const SizedBox(height: 20),
-
-              if (busType.isNotEmpty) ...[
-                const SizedBox(height: 10),
-        Container(
-          height: 120.h,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [
-                AppColors.primaryLightGradientColor,
-                AppColors.primaryDarkGradientColor,
-              ],
-            ),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Stack(
-            children: [
-              maxPassengers == 50?
-                   Positioned(
-                bottom: 0,
-                left: 0,
-                child: Image.asset(AppImages.realBigBus, width: 110.w, height: 110.h),
-              )
-                  : Positioned(
-                top: 0,
-                right: 0,
-                child: Image.asset(AppImages.realSmallBus, width: 110.w, height: 110.h),
-              ),
-              Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppColors.whiteColor,
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8),
+                Row(
                   children: [
-                    Text(
-                      busType,
-                      style: TextStyles.font16White500Weight,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 3),
-                      child: TickerText(
-                        speed: 20,
-                        primaryCurve: Curves.linear,
-                        returnCurve: Curves.easeOut,
-                        returnDuration: const Duration(milliseconds: 400),
-                        startPauseDuration: const Duration(seconds: 1),
-                        child: Text(
-                          context.locale.languageCode == 'en'
-                              ? '1 to $maxPassengers passenger${maxPassengers > 1 ? "s" : ""}'
-                              : 'passenger_range'.tr(args: ["$maxPassengers"]),
-                          style: TextStyles.font20White700Weight,
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
+                    LanguageRowSelector()
                   ],
                 ),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: context.locale.languageCode == "ar"
+                      ? Alignment.topRight
+                      : Alignment.topLeft,
+                  child: BackButtonWidget(),
+                ),
+                SizedBox(height: 20.w),
+                Center(child: Text("Edit_trip_data".tr(), style: TextStyles.font20Black700Weight)),
+                const SizedBox(height: 20),
+
+                if (busType.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+          Container(
+            height: 120.h,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [
+                  AppColors.primaryLightGradientColor,
+                  AppColors.primaryDarkGradientColor,
+                ],
               ),
-            ],
-          ),
-        )
-        ],
-              const SizedBox(height: 20),
-              maxPassengers == 12
-                  ? _buildMiniBusLayout(maxPassengers)
-                  : _buildBigBusLayout(maxPassengers),
-              const SizedBox(height: 20),
-              Card(
-                color: AppColors.whiteColor,
-                elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: Stack(
+              children: [
+                maxPassengers == 50?
+                     Positioned(
+                  bottom: 0,
+                  left: 0,
+                  child: Image.asset(AppImages.realBigBus, width: 110.w, height: 110.h),
+                )
+                    : Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Image.asset(AppImages.realSmallBus, width: 110.w, height: 110.h),
+                ),
+                Center(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            'tripdetails'.tr(),
-                            style: TextStyles.font18MainBlack500Weight,
+                      Text(
+                        busType,
+                        style: TextStyles.font16White500Weight,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 3),
+                        child: TickerText(
+                          speed: 20,
+                          primaryCurve: Curves.linear,
+                          returnCurve: Curves.easeOut,
+                          returnDuration: const Duration(milliseconds: 400),
+                          startPauseDuration: const Duration(seconds: 1),
+                          child: Text(
+                            context.locale.languageCode == 'en'
+                                ? '1 to $maxPassengers passenger${maxPassengers > 1 ? "s" : ""}'
+                                : 'passenger_range'.tr(args: ["$maxPassengers"]),
+                            style: TextStyles.font20White700Weight,
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-
-                      /// Distance Display
-                      BlocBuilder<DistanceCubit, DistanceState>(
-                        builder: (context, state) {
-                          if (state is DistanceLoading) {
-                            return const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: CircularProgressIndicator(),
-                            );
-                          } else if (state is DistanceSuccess) {
-                            final km = state.distanceModel.data?.distanceKm ?? 0;
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text.rich(
-                                TextSpan(
-                                  children: [
-                                    const TextSpan(
-                                      text: 'المسافة: ',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: '${km.toInt()}',
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                    const TextSpan(
-                                      text: ' كم',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          } else if (state is DistanceFailure) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'خطأ: ${state.error}',
-                                style: const TextStyle(fontSize: 16, color: Colors.red),
-                              ),
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
-
-                      /// Route Line
-                      TripArrowAnimation(tripStarted: true,),
-
-                      /// Dropdowns for cities
-                      BlocListener<UpdateTripCubit, UpdateTripState>(
-                        listener: (context, state) {
-                          if (state is UpdateTripSuccess) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(state.message),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
-                          } else if (state is UpdateTripFailure) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(state.errorMessage),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-                        },
-                        child: Row(
-                          children: [
-                            /// To City Dropdown
-                            Expanded(
-                              child: BlocBuilder<CityCubit, CityState>(
-                                builder: (context, state) {
-                                  if (state is CityLoading) {
-                                    return Shimmer.fromColors(
-                                      baseColor: Colors.grey.shade300,
-                                      highlightColor: Colors.grey.shade100,
-                                      child: Container(
-                                        height: 48,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey,
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                    );
-                                  }
-
-                                  if (state is CityFailure) {
-                                    return Text(
-                                      "فشل في تحميل المدن",
-                                      style: TextStyles.font12SecondaryBlack500Weight,
-                                    );
-                                  }
-
-                                  if (state is CitySuccess) {
-                                    final cities = state.cities;
-
-                                    if (cities.isEmpty) {
-                                      return Text(
-                                        "لا توجد مدن متاحة",
-                                        style: TextStyles.font12SecondaryBlack500Weight,
-                                      );
-                                    }
-
-                                    final cityNames = cities
-                                        .map((e) => context.locale.languageCode == 'ar'
-                                        ? e.nameAr
-                                        : e.nameEn)
-                                        .whereType<String>()
-                                        .toSet()
-                                        .toList();
-
-                                    return DropdownButton<String>(
-                                      isExpanded: true,
-                                      value: cityNames.contains(toCity) ? toCity : null,
-                                      hint: Text(
-                                        'to'.tr(),
-                                        style: TextStyles.font12SecondaryBlack500Weight,
-                                      ),
-                                      onChanged: (value) {
-                                        if (value != null) {
-                                          final cityId = cities.firstWhere(
-                                                (city) =>
-                                            (context.locale.languageCode == 'ar'
-                                                ? city.nameAr
-                                                : city.nameEn) ==
-                                                value,
-                                          ).id;
-
-                                          setState(() {
-                                            toCity = value;
-                                            toCityId = cityId;
-                                          });
-
-                                          if (fromCityId != null && toCityId != null) {
-                                            context.read<DistanceCubit>().calculateDistance(
-                                              fromCityId: fromCityId!,
-                                              toCityId: toCityId!,
-                                            );
-
-                                            context.read<UpdateTripCubit>().updateTrip(
-                                              tripId: widget.tripId,
-                                              departureLocation: fromCity!,
-                                              destinationLocation: toCity!,
-                                              distanceKm: widget.trips.distanceKm!
-                                            );
-                                          }
-                                        }
-                                      },
-                                      items: cityNames.map((city) {
-                                        return DropdownMenuItem<String>(
-                                          value: city,
-                                          child: Text(city),
-                                        );
-                                      }).toList(),
-                                    );
-                                  }
-                                  return const SizedBox.shrink();
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            /// From City Dropdown
-                            Expanded(
-                              child: BlocBuilder<CityCubit, CityState>(
-                                builder: (context, state) {
-                                  if (state is CityLoading) {
-                                    return Shimmer.fromColors(
-                                      baseColor: Colors.grey.shade300,
-                                      highlightColor: Colors.grey.shade100,
-                                      child: Container(
-                                        height: 48,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey,
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                    );
-                                  }
-
-                                  if (state is CityFailure) {
-                                    return Text(
-                                      "فشل في تحميل المدن",
-                                      style: TextStyles.font12SecondaryBlack500Weight,
-                                    );
-                                  }
-
-                                  if (state is CitySuccess) {
-                                    final cities = state.cities;
-
-                                    if (cities.isEmpty) {
-                                      return Text(
-                                        "لا توجد مدن متاحة",
-                                        style: TextStyles.font12SecondaryBlack500Weight,
-                                      );
-                                    }
-
-                                    final cityNames = cities
-                                        .map((e) => context.locale.languageCode == 'ar'
-                                        ? e.nameAr
-                                        : e.nameEn)
-                                        .whereType<String>()
-                                        .toSet()
-                                        .toList();
-
-                                    return DropdownButton<String>(
-                                      isExpanded: true,
-                                      value: cityNames.contains(fromCity) ? fromCity : null,
-                                      hint: Text(
-                                        'from'.tr(),
-                                        style: TextStyles.font12SecondaryBlack500Weight,
-                                      ),
-                                      onChanged: (value) {
-                                        if (value != null) {
-                                          final cityId = cities.firstWhere(
-                                                (city) => (context.locale.languageCode == 'ar'
-                                                ? city.nameAr
-                                                : city.nameEn) ==
-                                                value,
-                                          ).id;
-
-                                          setState(() {
-                                            fromCity = value;
-                                            fromCityId = cityId;
-                                          });
-
-                                          if (fromCityId != null && toCityId != null) {
-                                            context.read<DistanceCubit>().calculateDistance(
-                                              fromCityId: fromCityId!,
-                                              toCityId: toCityId!,
-                                            );
-
-                                            context.read<UpdateTripCubit>().updateTrip(
-                                              tripId: widget.tripId,
-                                              departureLocation: fromCity!,
-                                              destinationLocation: toCity!,
-                                              distanceKm: widget.trips.distanceKm!
-                                            );
-                                          }
-                                        }
-                                      },
-                                      items: cityNames.map((city) {
-                                        return DropdownMenuItem<String>(
-                                          value: city,
-                                          child: Text(city),
-                                        );
-                                      }).toList(),
-                                    );
-                                  }
-
-                                  return const SizedBox.shrink();
-                                },
-                              ),
-                            ),
-                          ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 30),
-              CustomPrimaryButton(
-                text: "update".tr(),
-                onPressed: () {
-                  _handleFinalUpdate(context);
-                },
-              ),
-            ],
+              ],
+            ),
+          )
+          ],
+                const SizedBox(height: 20),
+                maxPassengers == 12
+                    ? _buildMiniBusLayout(maxPassengers)
+                    : _buildBigBusLayout(maxPassengers),
+                const SizedBox(height: 20),
+                Card(
+                  color: AppColors.whiteColor,
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'tripdetails'.tr(),
+                              style: TextStyles.font18MainBlack500Weight,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+
+                        /// Distance Display
+                        BlocBuilder<DistanceCubit, DistanceState>(
+                          builder: (context, state) {
+                            if (state is DistanceLoading) {
+                              return const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: CircularProgressIndicator(),
+                              );
+                            } else if (state is DistanceSuccess) {
+                              final km = state.distanceModel.data?.distanceKm ?? 0;
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      const TextSpan(
+                                        text: 'المسافة: ',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: '${km.toInt()}',
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                      const TextSpan(
+                                        text: ' كم',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            } else if (state is DistanceFailure) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'خطأ: ${state.error}',
+                                  style: const TextStyle(fontSize: 16, color: Colors.red),
+                                ),
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          },
+                        ),
+
+                        /// Route Line
+                        TripArrowAnimation(tripStarted: true,),
+
+                        /// Dropdowns for cities
+                        BlocListener<UpdateTripCubit, UpdateTripState>(
+                          listener: (context, state) {
+                            if (state is UpdateTripSuccess) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(state.message),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            } else if (state is UpdateTripFailure) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(state.errorMessage),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          },
+                          child: Row(
+                            children: [
+                              /// To City Dropdown
+                              Expanded(
+                                child: BlocBuilder<CityCubit, CityState>(
+                                  builder: (context, state) {
+                                    if (state is CityLoading) {
+                                      return Shimmer.fromColors(
+                                        baseColor: Colors.grey.shade300,
+                                        highlightColor: Colors.grey.shade100,
+                                        child: Container(
+                                          height: 48,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey,
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                      );
+                                    }
+
+                                    if (state is CityFailure) {
+                                      return Text(
+                                        "فشل في تحميل المدن",
+                                        style: TextStyles.font12SecondaryBlack500Weight,
+                                      );
+                                    }
+
+                                    if (state is CitySuccess) {
+                                      final cities = state.cities;
+
+                                      if (cities.isEmpty) {
+                                        return Text(
+                                          "لا توجد مدن متاحة",
+                                          style: TextStyles.font12SecondaryBlack500Weight,
+                                        );
+                                      }
+
+                                      final cityNames = cities
+                                          .map((e) => context.locale.languageCode == 'ar'
+                                          ? e.nameAr
+                                          : e.nameEn)
+                                          .whereType<String>()
+                                          .toSet()
+                                          .toList();
+
+                                      return DropdownButton<String>(
+                                        isExpanded: true,
+                                        value: cityNames.contains(toCity) ? toCity : null,
+                                        hint: Text(
+                                          'to'.tr(),
+                                          style: TextStyles.font12SecondaryBlack500Weight,
+                                        ),
+                                        onChanged: (value) {
+                                          if (value != null) {
+                                            final cityId = cities.firstWhere(
+                                                  (city) =>
+                                              (context.locale.languageCode == 'ar'
+                                                  ? city.nameAr
+                                                  : city.nameEn) ==
+                                                  value,
+                                            ).id;
+
+                                            setState(() {
+                                              toCity = value;
+                                              toCityId = cityId;
+                                            });
+
+                                            if (fromCityId != null && toCityId != null) {
+                                              context.read<DistanceCubit>().calculateDistance(
+                                                fromCityId: fromCityId!,
+                                                toCityId: toCityId!,
+                                              );
+
+                                              context.read<UpdateTripCubit>().updateTrip(
+                                                tripId: widget.tripId,
+                                                departureLocation: fromCity!,
+                                                destinationLocation: toCity!,
+                                                distanceKm: widget.trips.distanceKm!
+                                              );
+                                            }
+                                          }
+                                        },
+                                        items: cityNames.map((city) {
+                                          return DropdownMenuItem<String>(
+                                            value: city,
+                                            child: Text(city),
+                                          );
+                                        }).toList(),
+                                      );
+                                    }
+                                    return const SizedBox.shrink();
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              /// From City Dropdown
+                              Expanded(
+                                child: BlocBuilder<CityCubit, CityState>(
+                                  builder: (context, state) {
+                                    if (state is CityLoading) {
+                                      return Shimmer.fromColors(
+                                        baseColor: Colors.grey.shade300,
+                                        highlightColor: Colors.grey.shade100,
+                                        child: Container(
+                                          height: 48,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey,
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                      );
+                                    }
+
+                                    if (state is CityFailure) {
+                                      return Text(
+                                        "فشل في تحميل المدن",
+                                        style: TextStyles.font12SecondaryBlack500Weight,
+                                      );
+                                    }
+
+                                    if (state is CitySuccess) {
+                                      final cities = state.cities;
+
+                                      if (cities.isEmpty) {
+                                        return Text(
+                                          "لا توجد مدن متاحة",
+                                          style: TextStyles.font12SecondaryBlack500Weight,
+                                        );
+                                      }
+
+                                      final cityNames = cities
+                                          .map((e) => context.locale.languageCode == 'ar'
+                                          ? e.nameAr
+                                          : e.nameEn)
+                                          .whereType<String>()
+                                          .toSet()
+                                          .toList();
+
+                                      return DropdownButton<String>(
+                                        isExpanded: true,
+                                        value: cityNames.contains(fromCity) ? fromCity : null,
+                                        hint: Text(
+                                          'from'.tr(),
+                                          style: TextStyles.font12SecondaryBlack500Weight,
+                                        ),
+                                        onChanged: (value) {
+                                          if (value != null) {
+                                            final cityId = cities.firstWhere(
+                                                  (city) => (context.locale.languageCode == 'ar'
+                                                  ? city.nameAr
+                                                  : city.nameEn) ==
+                                                  value,
+                                            ).id;
+
+                                            setState(() {
+                                              fromCity = value;
+                                              fromCityId = cityId;
+                                            });
+
+                                            if (fromCityId != null && toCityId != null) {
+                                              context.read<DistanceCubit>().calculateDistance(
+                                                fromCityId: fromCityId!,
+                                                toCityId: toCityId!,
+                                              );
+
+                                              context.read<UpdateTripCubit>().updateTrip(
+                                                tripId: widget.tripId,
+                                                departureLocation: fromCity!,
+                                                destinationLocation: toCity!,
+                                                distanceKm: widget.trips.distanceKm!
+                                              );
+                                            }
+                                          }
+                                        },
+                                        items: cityNames.map((city) {
+                                          return DropdownMenuItem<String>(
+                                            value: city,
+                                            child: Text(city),
+                                          );
+                                        }).toList(),
+                                      );
+                                    }
+
+                                    return const SizedBox.shrink();
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                CustomPrimaryButton(
+                  text: "update".tr(),
+                  onPressed: () {
+                    _handleFinalUpdate(context);
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:transports/core/storage/shared_prefs.dart';
 import 'package:transports/core/theming/colors.dart';
 import 'package:transports/core/theming/styles.dart';
 import 'package:transports/features/home/presentation/view/widget/start_your_trip.dart';
@@ -365,6 +366,9 @@ class _TripDetailsWidgetState extends State<TripDetailsWidget> {
             },
           ),
         ),
+        const SizedBox(height: 20),
+        // CapacityText(),
+
       ],
     );
   }
@@ -485,3 +489,63 @@ class _TripArrowAnimationState extends State<TripArrowAnimation>
     );
   }
 }
+// class CapacityText extends StatefulWidget {
+//   const CapacityText({super.key});
+//
+//   @override
+//   State<CapacityText> createState() => _CapacityTextState();
+// }
+//
+// class _CapacityTextState extends State<CapacityText> {
+//   String? capacityText;
+//   String? vehicleTypeText;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _loadCapacity();
+//   }
+//
+//   Future<void> _loadCapacity() async {
+//     final sharedPrefs = SharedPrefs();
+//     final capacity = await sharedPrefs.getCapacity();
+//     final vehicleType = await sharedPrefs.getVehicleType();
+//     setState(() {
+//       capacityText = capacity != null ? "Capacity: $capacity" : "No capacity found";
+//       vehicleTypeText = vehicleType != null ? "vehicleType: $vehicleType" : "No vehicleType found";
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       children: [
+//         GestureDetector(
+//           onTap: _loadCapacity,
+//           child: Text(
+//             capacityText ?? 'Loading...',
+//             style: const TextStyle(
+//               color: Colors.blue,
+//               fontSize: 16,
+//               decoration: TextDecoration.underline,
+//               fontWeight: FontWeight.w600,
+//             ),
+//           ),
+//         ),
+//         SizedBox(width: 20,),
+//         GestureDetector(
+//           onTap: _loadCapacity,
+//           child: Text(
+//             vehicleTypeText ?? 'Loading...',
+//             style: const TextStyle(
+//               color: Colors.blue,
+//               fontSize: 16,
+//               decoration: TextDecoration.underline,
+//               fontWeight: FontWeight.w600,
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }

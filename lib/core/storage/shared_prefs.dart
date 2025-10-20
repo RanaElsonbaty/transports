@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:transports/features/auth/data/models/otp/verify_otp_model.dart';
 
@@ -59,6 +60,7 @@ class SharedPrefs {
   }
 
   static const String _vehicleKey = 'vehicle';
+
   Future<void> saveVehicle(int vehicle) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_vehicleKey, vehicle);
@@ -73,6 +75,43 @@ class SharedPrefs {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_vehicleKey);
   }
+
+  static const String _capacityKey = 'capacity';
+
+  Future<void> saveCapacity(int capacity) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_capacityKey, capacity);
+  }
+
+  Future<int?> getCapacity() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_capacityKey);
+  }
+
+  Future<void> removeCapacity() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_capacityKey);
+  }
+
+  static const String _vehicleTypeKey = 'vehicleType';
+  static final ValueNotifier<String?> vehicleTypeNotifier = ValueNotifier(null);
+
+  Future<void> saveVehicleType(String vehicleType) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_vehicleTypeKey, vehicleType);
+    vehicleTypeNotifier.value = vehicleType; // 🔥 يحدث الواجهة فورًا
+  }
+
+  Future<String?> getVehicleType() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_vehicleTypeKey);
+  }
+
+  Future<void> removeVehicleType() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_vehicleTypeKey);
+  }
+
 }
 
 

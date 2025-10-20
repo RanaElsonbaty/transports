@@ -56,150 +56,152 @@ class _OtpViewState extends State<OtpView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Directionality(
-textDirection: context.locale.languageCode == 'ar'
-    ? ui.TextDirection.rtl
-    :ui.TextDirection.ltr,
-        child: BlocProvider(
-          create: (context) => getIt.get<VerifyingOtpCubit>(),
-          child: BlocConsumer<VerifyingOtpCubit, VerifyingOtpState>(
-            listener: (context, state) async {
-              if (state is VerifyingOtpSuccess) {
-                showAppSnackBar(
-                  backgroundColor: AppColors.primaryDarkGradientColor,
-                  context: context,
-                  message: state.verifyingOtpModel.message ?? "no message",
-                );
+    return SafeArea(
+      child: Scaffold(
+        body: Directionality(
+      textDirection: context.locale.languageCode == 'ar'
+      ? ui.TextDirection.rtl
+      :ui.TextDirection.ltr,
+          child: BlocProvider(
+            create: (context) => getIt.get<VerifyingOtpCubit>(),
+            child: BlocConsumer<VerifyingOtpCubit, VerifyingOtpState>(
+              listener: (context, state) async {
+                if (state is VerifyingOtpSuccess) {
+                  showAppSnackBar(
+                    backgroundColor: AppColors.primaryDarkGradientColor,
+                    context: context,
+                    message: state.verifyingOtpModel.message ?? "no message",
+                  );
 
-                // تحقق من وجود driverProfile في الكاش
-                final sharedPrefs = getIt.get<SharedPrefs>();
-                final profile = await sharedPrefs.getDriverProfile();
-                final vehicle = await sharedPrefs.getVehicle();
+                  // تحقق من وجود driverProfile في الكاش
+                  final sharedPrefs = getIt.get<SharedPrefs>();
+                  final profile = await sharedPrefs.getDriverProfile();
+                  final vehicle = await sharedPrefs.getVehicle();
 
-                if (profile == null) {
-                  // لو مفيش بروفايل يروح على شاشة البيانات
-                  context.pushNamed(Routes.attachmentInfo);
-                } else if (vehicle == null || vehicle == 0) {
-                  // لو البروفايل موجود لكن المركبة = 0 يروح على شاشة المركبة
-                  context.pushNamed(Routes.vehicleInfo);
-                } else {
-                  // لو كل حاجة تمام يروح على الهوم
-                  context.pushNamed(Routes.home);
+                  if (profile == null) {
+                    // لو مفيش بروفايل يروح على شاشة البيانات
+                    context.pushNamed(Routes.attachmentInfo);
+                  } else if (vehicle == null || vehicle == 0) {
+                    // لو البروفايل موجود لكن المركبة = 0 يروح على شاشة المركبة
+                    context.pushNamed(Routes.vehicleInfo);
+                  } else {
+                    // لو كل حاجة تمام يروح على الهوم
+                    context.pushNamed(Routes.home);
+                  }
+                } else if (state is VerifyingOtpFailure) {
+                  showAppSnackBar(
+                    context: context,
+                    message: state.errorMessage,
+                    backgroundColor: AppColors.red,
+                  );
                 }
-              } else if (state is VerifyingOtpFailure) {
-                showAppSnackBar(
-                  context: context,
-                  message: state.errorMessage,
-                  backgroundColor: AppColors.red,
+              },
+
+              builder: (context, state) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 30),
+                      Row(
+                        children: [
+                          LanguageRowSelector()
+                        ],
+                      ),
+                      const SizedBox(height: 100),
+
+                      // Title
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'enter_code'.tr(),
+                          style: TextStyles.font30Black700Weight,
+                        ),
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      // Subtitle
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'enter_code_subtitle'.tr(),
+                          style: TextStyles.font16Black400Weight,
+                        ),
+                      ),
+
+                      const SizedBox(height: 40),
+
+                      // OTP Field
+                      Directionality(
+                  textDirection: ui.TextDirection.ltr,
+                        child: OtpTextField(
+                          numberOfFields: 6,
+                          borderColor: AppColors.greyColor,
+                          focusedBorderColor: AppColors.blackColor,
+                          fieldWidth: 45,
+
+                          borderRadius: BorderRadius.circular(8),
+                          showFieldAsBox: true,
+                          onSubmit: (code) {
+                            setState(() {
+                              otpCode = code;
+                            });
+                            print("OTP is => $code");
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Timer Text
+                      CustomResendOtpTextButton(phoneNumber: widget.phoneNumber,),
+
+                      const SizedBox(height: 40),
+
+      state is VerifyingOtpLoading?Center(child: CircularProgressIndicator(),):
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                          ),
+                          onPressed: () {
+                            context.read<VerifyingOtpCubit>().verifyingOtp(
+                                phoneNumber: widget.phoneNumber,
+                                otpCode: otpCode);
+                          },
+                          child: Ink(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [
+                                  AppColors.primaryLightGradientColor,
+                                  AppColors.primaryDarkGradientColor
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'confirm_code'.tr(),
+                                style: TextStyles.font14White700Weight,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 );
-              }
-            },
-
-            builder: (context, state) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 30),
-                    Row(
-                      children: [
-                        LanguageRowSelector()
-                      ],
-                    ),
-                    const SizedBox(height: 100),
-
-                    // Title
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        'enter_code'.tr(),
-                        style: TextStyles.font30Black700Weight,
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    // Subtitle
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        'enter_code_subtitle'.tr(),
-                        style: TextStyles.font16Black400Weight,
-                      ),
-                    ),
-
-                    const SizedBox(height: 40),
-
-                    // OTP Field
-                    Directionality(
-                textDirection: ui.TextDirection.ltr,
-                      child: OtpTextField(
-                        numberOfFields: 6,
-                        borderColor: AppColors.greyColor,
-                        focusedBorderColor: AppColors.blackColor,
-                        fieldWidth: 45,
-
-                        borderRadius: BorderRadius.circular(8),
-                        showFieldAsBox: true,
-                        onSubmit: (code) {
-                          setState(() {
-                            otpCode = code;
-                          });
-                          print("OTP is => $code");
-                        },
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Timer Text
-                    CustomResendOtpTextButton(phoneNumber: widget.phoneNumber,),
-
-                    const SizedBox(height: 40),
-
-state is VerifyingOtpLoading?Center(child: CircularProgressIndicator(),):
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                        ),
-                        onPressed: () {
-                          context.read<VerifyingOtpCubit>().verifyingOtp(
-                              phoneNumber: widget.phoneNumber,
-                              otpCode: otpCode);
-                        },
-                        child: Ink(
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [
-                                AppColors.primaryLightGradientColor,
-                                AppColors.primaryDarkGradientColor
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'confirm_code'.tr(),
-                              style: TextStyles.font14White700Weight,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
+              },
+            ),
           ),
         ),
       ),
